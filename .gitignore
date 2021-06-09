@@ -1,7 +1,6 @@
 local.ini
 marche-entreprise.ini
 /www/images/*
-/library/*
 tmp/*
 logs/*
 translate/*
