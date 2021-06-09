@@ -6,12 +6,29 @@
  * @copyright Copyright (c) 2015
  * @version 0.1
  */
-class Aurel_Table_Config extends Aurel_Table_Abstract {
-
+class Aurel_Table_Config extends Aurel_Table_Abstract
+{
+    /**
+     * Undocumented variable
+     *
+     * @var string
+     */
     protected $_name = 'config';
+
+    /**
+     * Undocumented variable
+     *
+     * @var string
+     */
     protected $_rowClass = 'Aurel_Table_Row_Config';
 
-    public static function getConfig() {
+    /**
+     * Undocumented function
+     *
+     * @return Config
+     */
+    public static function getConfig()
+    {
         $oConfig = new self;
         $results = $oConfig->fetchAll();
 
@@ -25,14 +42,29 @@ class Aurel_Table_Config extends Aurel_Table_Abstract {
         return $config;
     }
 
-    public function getByKey($key) {
+    /**
+     * Undocumented function
+     *
+     * @param  string $key key for finding things
+     * @return void
+     */
+    public function getByKey($key)
+    {
         $select = $this->select()
-                ->where("`key` = ?", $key);
+            ->where("`key` = ?", $key);
 
         return $this->fetchRow($select);
     }
 
-    public function insertOrUpdate($key, $value) {
+    /**
+     * Undocumented function
+     *
+     * @param [type] $key
+     * @param [type] $value
+     * @return void
+     */
+    public function insertOrUpdate($key, $value)
+    {
         $row = $this->getByKey($key);
         if (!$row) {
             $row = $this->createRow();
@@ -43,19 +75,39 @@ class Aurel_Table_Config extends Aurel_Table_Abstract {
 
         return $row;
     }
-
 }
 
-class Config {
-
-    /**  Variable pour les données surchargées.  */
+/**
+ * Undocumented class
+ */
+class Config
+{
+    /**
+     * Undocumented variable
+     *
+     * @var array
+     */
     private $data = array();
 
-    public function __set($name, $value) {
+    /**
+     * Undocumented function
+     *
+     * @param string $name 
+     * @param string $value 
+     */
+    public function __set($name, $value)
+    {
         $this->data[$name] = $value;
     }
 
-    public function __get($name) {
+    /**
+     * Undocumented function
+     *
+     * @param  string $name 
+     * @return void
+     */
+    public function __get($name)
+    {
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         }
@@ -69,14 +121,25 @@ class Config {
         return null;
     }
 
-    /**  Depuis PHP 5.1.0  */
-    public function __isset($name) {
+    /**
+     * Undocumented function
+     *
+     * @param  string $name 
+     * @return boolean
+     */
+    public function __isset($name)
+    {
         return isset($this->data[$name]);
     }
 
-    /**  Depuis PHP 5.1.0  */
-    public function __unset($name) {
+    /**
+     * Undocumented function
+     *
+     * @param  string $name Name of config
+     * @return void
+     */
+    public function __unset($name)
+    {
         unset($this->data[$name]);
     }
-
 }
