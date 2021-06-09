@@ -1,0 +1,15 @@
+SetEnv APPLICATION_ENV local
+ 
+RewriteEngine On
+RewriteCond %{HTTP_REFERER} ^http://.*savetubevideo\.com/ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://.*kambasoft\.com/ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://.*buttons\-for\-website\.com/ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://.*7makemoneyonline\.com/ [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://.*econom\.co [NC,OR]
+RewriteCond %{HTTP_REFERER} ^http://.*semalt\.com/ [NC]
+RewriteRule ^(.*)$ – [F,L]
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
