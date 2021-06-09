@@ -1,0 +1,195 @@
+    <div class="modal-header">
+        <button type="button" class="close clos" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Question</h4>
+    </div>
+    <form class="form-horizontal" method="post" action="<?php echo $this->url(); ?>" id="formQuestion">
+    <div class="modal-body">
+        <div class="form-group">
+            <?php echo $this->formLabel("question","Intitulé de la question",array("class"=>"control-label col-xs-3"));?>
+            <div class="col-xs-9">
+                <?php echo $this->formText("question",$this->sondage_question->question,array("class"=>"form-control")); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("type","Type de question",array("class"=>"control-label col-xs-3"));?>
+            <div class="col-xs-9">
+                <?php echo $this->formSelect("type",$this->sondage_question->type,array("class"=>"form-control"),$this->select); ?>
+            </div>
+        </div>
+        <div class="choix-cases <?php echo $this->sondage_question->type == Aurel_Table_SondageQuestion::TYPE_TEXT ? "hidden" : ""?>">
+            <div class="form-group">
+                <div class="options row">
+                    <?php if($this->options): ?>
+                    <?php foreach($this->options as $key => $option): ?>
+                        <div class="col-xs-offset-3 col-xs-4 line ">
+                            <div class="handle"><span class="glyphicon glyphicon-resize-vertical"></span></div>
+                            <div class="">
+                                <input class="cases" type="checkbox" name="type">
+                                <input type="text" value="<?php echo $option->name ?>" class="form-control input-sm" name="option[id_<?php echo $option->id_sondage_option; ?>]" placeholder="Option n°<?php echo $key + 1; ?>" />
+                                <button type="button" class="close hidden">&times;</button>
+                            </div>
+                        </div>
+                    <?php endforeach ?>
+                    <?php else: ?>
+                        <div class="col-xs-offset-3 col-xs-4 line ">
+                            <div class="handle"><span class="glyphicon glyphicon-resize-vertical"></span></div>
+                            <div class="">
+                                <input class="cases" type="checkbox" name="type">
+                                <input type="text" value="" class="form-control input-sm" name="option[1]" placeholder="Option n°1" />
+                                <button type="button" class="close hidden">&times;</button>
+                            </div>
+                        </div>
+                    <?php endif ?>
+                </div>
+                <div id="option-other" class="option-other line col-xs-offset-3 col-xs-4 <?php echo !$this->optionsLibre ? "hidden" : ""?>">
+                    <div class="">
+                        <input class="cases" type="checkbox" name="type">
+                        Autre : <input type="text" name="option[utilisateur]" class="form-control input-sm" placeholder="Réponse de l'utilisateur" readonly="readonly" <?php echo !$this->optionsLibre ? 'disabled="disabled"' : ""?> />
+                        <button type="button" class="close">&times;</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-offset-3 col-xs-9">
+                    <span class="ghost-input option-add">
+                        <button class="btn btn-primary btn-sm" type="button"><span class="glyphicon glyphicon-plus"></span> Ajouter Option</button>
+                    </span>
+                    <span class="add-other-link <?php echo $this->optionsLibre ? "hidden" : ""?>">ou <button class="add-other btn btn-info btn-sm" type="button">Ajouter "Autre :"</button></span>
+                </div>
+            </div>
+        </div>
+        <div class="choix-text <?php echo $this->sondage_question->type != Aurel_Table_SondageQuestion::TYPE_TEXT ? "hidden" : ""?>">
+            <div class="form-group">
+                <div class="col-xs-offset-3 col-xs-4 option-other">
+                    <input type="text" readonly="readonly" class="form-control input-sm" placeholder="Réponse de l'utilisateur" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <?php echo $this->formButton("valid-question","OK",array("class"=>"btn btn-primary disabled","disabled"=>"disabled")); ?>
+    </div>
+    </form>
+    <script type="text/javascript">
+        function addLine(){
+            var nbOptions = $('.options .line').length;
+            var newnbOptions = nbOptions + 1;
+            var newOne = $('.options .line:first').clone();
+
+            newOne.find('.form-control').prop({
+                "placeholder": "Option n°" + newnbOptions,
+                "name":"option[" + newnbOptions + "]"
+            }).val('');
+
+            $('.options').append(newOne);
+            $('.ghost-input input').blur();
+            newOne.find('.form-control').focus().select();
+
+            if($('.options .line').length > 1) {
+                $('.options .line .close').removeClass('hidden');
+            } else {
+                $('.options .line .close').addClass('hidden');
+            }
+        }
+        function initThis(elt){
+            var value = elt.val();
+            switch(value){
+                case "-1":
+                    $('.choix-cases').addClass('hidden');
+                    $('.choix-text').addClass('hidden');
+                    $('#valid-question').addClass("disabled").prop("disabled","disabled");
+                    break;
+                case "0":
+                    $('.choix-cases').removeClass('hidden');
+                    $('.choix-text').addClass('hidden');
+                    $('.cases').prop('type',"checkbox");
+                    $('#valid-question').removeClass("disabled").prop("disabled",false);
+                    break;
+                case "1":
+                    $('.choix-cases').removeClass('hidden');
+                    $('.choix-text').addClass('hidden');
+                    $('.cases').prop('type',"radio");
+                    $('#valid-question').removeClass("disabled").prop("disabled",false);
+                    break;
+                case "2":
+                    $('.choix-cases').addClass('hidden');
+                    $('.choix-text').removeClass('hidden');
+                    $('.cases').prop('type',"checkbox");
+                    $('#valid-question').removeClass("disabled").prop("disabled",false);
+                    break;
+                case "3":
+                    $('.choix-cases').removeClass('hidden');
+                    $('.choix-text').addClass('hidden');
+                    $('.cases').prop('type',"radio");
+                    $('#valid-question').removeClass("disabled").prop("disabled",false);
+                    $('.add-other-link').hide();
+                    break;
+            }
+        }
+        $(function(){
+            $(".options").sortable({
+                items: ".line",
+                placeholder :'ui-sortable-placeholder col-xs-offset-3 col-xs-4',
+                update: function(event, ui) {
+                    if($('.options .line').length > 1) {
+                        $('.options .line .close').removeClass('hidden');
+                    } else {
+                        $('.options .line .close').addClass('hidden');
+                    }
+
+                    var i = 1;
+                    $('.options .form-control').each(function(){
+                        $(this).prop({
+                            "placeholder": "Option n°" + i
+                        });
+                        i++;
+                    });
+                }
+            });
+            $('#valid-question').click(function() {
+                $('#valid-question').button('loading');
+                $.post(
+                    "<?php echo $this->url(array()) ?>",
+                    $('#formQuestion').serialize(),
+                    function(response){
+                        $('#valid-question').button('reset');
+                        if(response.id_sondage_question){
+                            var div = $('#question_' + response.id_sondage_question);
+                            if (div.length == 0)
+                                $('.questions').append(response.question);
+                            else{
+                                div.html($(response.question).html());
+                            }
+                            $('#myLargeModal').modal('hide');
+                        }
+                        if(response.errors){
+                            for (i in response.errors){
+                                $(response.errors[i]).parent().parent().addClass('has-error');
+                            }
+                        }
+                    },'json'
+                );
+                return false;
+            });
+            $('.add-other').click(function(){
+                $('#option-other').removeClass('hidden');
+                $('#option-other .form-control').prop('disabled',false);
+                $('.add-other-link').addClass('hidden');
+                return false;
+            });
+            $('.ghost-input').click(function(){
+                addLine();
+                return false;
+            });
+            initThis($('#type'));
+            $('#type').change(function(){
+                initThis($(this));
+            });
+
+            if($('.options .line').length > 1) {
+                $('.options .line .close').removeClass('hidden');
+            } else {
+                $('.options .line .close').addClass('hidden');
+            }
+        });
+    </script>

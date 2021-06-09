@@ -1,0 +1,151 @@
+<div>
+	<ul class="myTab nav nav-tabs" role="tablist">
+		<li class="active"><a role="tab" data-toggle="tab" href='#attente'>Annonces en attente de validation</a></li>
+		<li class=""><a role="tab" data-toggle="tab" href='#cours'>Annonces en cours</a></li>
+		<li class=""><a role="tab" data-toggle="tab" href='#archive'>Annonces archivés</a></li>
+		<li class=""><a role="tab" data-toggle="tab" href='#refuse'>Annonces refusées</a></li>
+	</ul>
+	<div class="tab-content nav-tabs-content">
+		<div class="tab-pane active fade in" id="attente">
+			<table class="table table-hover table-condensed article">
+				<thead>
+					<tr>
+						<th>Ref Annonce</th>
+						<th>Titre</th>
+						<th>Catégorie</th>
+						<th>Création</th>
+						<th>Annonceur</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach($this->annoncesAttente as $annonce):?>
+						<tr class="<?php echo $annonce->getClassAnnonce()?>">
+							<td><?php echo $annonce->id_article?></td>
+							<td><?php echo $annonce->title?></td>
+							<td><?php echo $annonce->sous_menu_name?></td>
+							<td><?php echo $annonce->getDate('date_creation')->get(Aurel_Date::DATETIME_SHORT)?></td>
+							<td><?php echo $annonce->email?></td>
+							<td class="text-right" style="white-space:nowrap">
+								<a title="Contacter annonceur" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('controller'=>'articles','action'=>'envoi-mail-annonceur','id_annonce'=>$annonce->id_article,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'admin',true)?>'><span class="glyphicon glyphicon-envelope"></span></a>
+								<a data-toggle="modal" data-target="#myLargeModal" title="Voir l'annonce" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('basename_article'=>$annonce->basename),'basename_annonce',true)?>'><span class="glyphicon glyphicon-eye-open"></span></a>
+								<a data-toggle="modal" data-target="#myModal" title="Accepter" class="voir btn btn-success btn-sm" href='<?php echo $this->url(array('controller'=>'articles','action'=>'status-annonce','status'=>Aurel_Table_Article::STATE_ANNONCE_SUCCESS,'id_annonce'=>$annonce->id_article),'admin',true)?>'><span class="glyphicon glyphicon-ok"></span></a>
+								<a data-toggle="modal" data-target="#myModal" title="Refuser" class="voir btn btn-danger btn-sm" href='<?php echo $this->url(array('controller'=>'articles','action'=>'status-annonce','status'=>Aurel_Table_Article::STATE_ANNONCE_REFUSED,'id_annonce'=>$annonce->id_article),'admin',true)?>'><span class="glyphicon glyphicon-remove"></span></a>
+							</td>
+						</tr>
+					<?php endforeach;?>
+				</tbody>
+			</table>
+		</div>
+		<div class="tab-pane fade" id="cours">
+			<table class="table table-hover table-condensed article">
+				<thead>
+					<tr>
+						<th>Ref Annonce</th>
+						<th>Titre</th>
+						<th>Catégorie</th>
+						<th>Création</th>
+						<th>Evaluation</th>
+						<th>Fin de parution</th>
+						<th>Annonceur</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach($this->annonces as $annonce):?>
+						<tr class="<?php echo $annonce->getClassAnnonce()?>">
+							<td><?php echo $annonce->id_article?></td>
+							<td><?php echo $annonce->title?></td>
+							<td><?php echo $annonce->sous_menu_name?></td>
+							<td><?php echo $annonce->getDate('date_creation')->get(Aurel_Date::DATETIME_SHORT)?></td>
+							<td><?php echo $annonce->date_validation ? $annonce->getDate('date_validation')->get(Aurel_Date::DATETIME_SHORT) : ''?></td>
+							<td><?php echo $annonce->date_validation ? $annonce->getDate('date_validation')->addDay($this->config->daysArchiveAnnonce)->get(Aurel_Date::DATE_SHORT) : ''?></td>
+							<td><?php echo $annonce->email?></td>
+							<td class="text-right" style="white-space:nowrap">
+								<a data-toggle="modal" data-target="#mySmallModal" title="<?php echo $annonce->hide_home ? "Mettre à la Une" : "Retirer de la Une"?>" class="voir btn <?php echo $annonce->hide_home ? "btn-default" : "btn-success"?> btn-sm" href='<?php echo $this->url(array('action'=>'post-home','controller'=>'articles','id_article'=>$annonce->id_article),'admin',true)?>?url_redirect=<?php echo urlencode($_SERVER["REQUEST_URI"]."#cours")?>'><span class="glyphicon glyphicon-star"></span></a>
+								<a title="Contacter annonceur" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('controller'=>'articles','action'=>'envoi-mail-annonceur','id_annonce'=>$annonce->id_article,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'admin',true)?>'><span class="glyphicon glyphicon-envelope"></span></a>
+								<a data-toggle="modal" data-target="#myLargeModal" title="Voir l'annonce" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('basename_article'=>$annonce->basename),'basename_annonce',true)?>'><span class="glyphicon glyphicon-eye-open"></span></a>
+								<a data-toggle="modal" data-target="#mySmallModal" title="Supprimer" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('action'=>'delete-annonce','controller'=>'articles','id_article'=>$annonce->id_article),'admin',true)?>?return=cours'><span class="glyphicon glyphicon-remove"></span></a>
+							</td>
+						</tr>
+					<?php endforeach;?>
+				</tbody>
+			</table>
+		</div>
+		<div class="tab-pane fade" id="archive">
+			<table class="table table-hover table-condensed article">
+				<thead>
+					<tr>
+						<th>Ref Annonce</th>
+						<th>Titre</th>
+						<th>Catégorie</th>
+						<th>Création</th>
+						<th>Archivage</th>
+						<th>Annonceur</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach($this->annoncesArchives as $annonce):?>
+						<tr class="<?php echo $annonce->getClassAnnonce()?>">
+							<td><?php echo $annonce->id_article?></td>
+							<td><?php echo $annonce->title?></td>
+							<td><?php echo $annonce->sous_menu_name?></td>
+							<td><?php echo $annonce->getDate('date_creation')->get(Aurel_Date::DATETIME_SHORT)?></td>
+							<td><?php echo $annonce->date_validation ? $annonce->getDate('date_validation')->addDay($this->config->daysArchiveAnnonce)->get(Aurel_Date::DATE_SHORT) : ''?></td>
+							<td><?php echo $annonce->email?></td>
+							<td class="text-right" style="white-space:nowrap">
+								<a title="Contacter annonceur" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('controller'=>'articles','action'=>'envoi-mail-annonceur','id_annonce'=>$annonce->id_article,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'admin',true)?>'><span class="glyphicon glyphicon-envelope"></span></a>
+								<a data-toggle="modal" data-target="#myLargeModal" title="Voir l'annonce" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('basename_article'=>$annonce->basename),'basename_annonce',true)?>'><span class="glyphicon glyphicon-eye-open"></span></a>
+								<a data-toggle="modal" data-target="#mySmallModal" title="Supprimer" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('action'=>'delete-annonce','controller'=>'articles','id_article'=>$annonce->id_article),'admin',true)?>?return=archive'><span class="glyphicon glyphicon-remove"></span></a>
+							</td>
+						</tr>
+					<?php endforeach;?>
+				</tbody>
+			</table>
+		</div>
+		<div class="tab-pane fade" id="refuse">
+			<table class="table table-hover table-condensed article">
+				<thead>
+					<tr>
+						<th>Ref Annonce</th>
+						<th>Titre</th>
+						<th>Catégorie</th>
+						<th>Création</th>
+						<th>Annonceur</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach($this->annonceRefuses as $annonce):?>
+						<tr class="<?php echo $annonce->getClassAnnonce()?>">
+							<td><?php echo $annonce->id_article?></td>
+							<td><?php echo $annonce->title?></td>
+							<td><?php echo $annonce->sous_menu_name?></td>
+							<td><?php echo $annonce->getDate('date_creation')->get(Aurel_Date::DATETIME_MEDIUM)?></td>
+							<td><?php echo $annonce->email?></td>
+							<td class="text-right">
+								<a title="Contacter annonceur" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('controller'=>'articles','action'=>'envoi-mail-annonceur','id_annonce'=>$annonce->id_article,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'admin',true)?>'><span class="glyphicon glyphicon-envelope"></span></a>
+								<a data-toggle="modal" data-target="#myLargeModal" title="Voir l'annonce" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('basename_article'=>$annonce->basename),'basename_annonce',true)?>'><span class="glyphicon glyphicon-eye-open"></span></a>
+								<a data-toggle="modal" data-target="#mySmallModal" title="Supprimer" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('action'=>'delete-annonce','controller'=>'articles','id_article'=>$annonce->id_article),'admin',true)?>?return=refuse'><span class="glyphicon glyphicon-remove"></span></a>
+							</td>
+						</tr>
+					<?php endforeach;?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.voir').tooltip();
+		var hash = window.location.hash;
+		if(hash){
+			$('.myTab a[href="'+hash+'"]').tab('show');
+		}
+		$('.myTab a').click(function(){
+			var hashLink = $(this).prop('href').replace("http://<?php echo $_SERVER['HTTP_HOST']?><?php echo $_SERVER['REQUEST_URI']?>","");
+			window.location.hash = hashLink;
+		});
+	});
+</script>

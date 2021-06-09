@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+  <appname>March&#xE9; entreprise</appname>
+  <col1>&lt;div&gt;&lt;strong&gt;ADIDAS France&lt;/strong&gt;&lt;/div&gt;&lt;div&gt;&lt;strong&gt;&lt;/strong&gt;March&#xE9; Entreprises&lt;strong&gt;&lt;/strong&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;1, Rue Blanche&lt;br&gt;&lt;/div&gt;&lt;div&gt;75 009 PARIS&lt;br&gt;&lt;/div&gt;</col1>
+  <col2>&lt;div&gt;&lt;strong&gt;Contact T&#xE9;l&#xE9;phonique&lt;/strong&gt;&lt;/div&gt;&lt;div&gt;&lt;strong&gt;&lt;/strong&gt;Cindy BARICHELLO : 06 78 85 43 68&lt;br&gt;&lt;/div&gt;&lt;div&gt;Gilles WAGNON :&nbsp; &nbsp; &nbsp; &nbsp;06 60 53 54 52&lt;br&gt;&lt;/div&gt;</col2>
+  <col3>&lt;div&gt;&lt;strong&gt;Contact mail&lt;/strong&gt;&lt;/div&gt;&lt;div&gt;&lt;a data-cke-saved-href="mailto:cindy.barichello@adidas.com?subject=CONTACT%20SITE%20MARCHE%20ENTREPRISES%20ADIDAS" href="mailto:cindy.barichello@adidas.com?subject=CONTACT%20SITE%20MARCHE%20ENTREPRISES%20ADIDAS"&gt;cindy.barichello@adidas.com&lt;/a&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;a data-cke-saved-href="mailto:gilles.wagnon@toofoot.com?subject=CONTACT%20SITE%20MARCHE%20ENTREPRISES%20ADIDAS" href="mailto:gilles.wagnon@toofoot.com?subject=CONTACT%20SITE%20MARCHE%20ENTREPRISES%20ADIDAS"&gt;gilles.wagnon@btob-adidas.com&lt;/a&gt;&lt;br&gt;&lt;/div&gt;</col3>
+  <minArticlesInPage>12</minArticlesInPage>
+  <delaiArticlesPage>15</delaiArticlesPage>
+  <daysArchiveAnnonce>28</daysArchiveAnnonce>
+  <max_char_descriptif>200</max_char_descriptif>
+  <max_char_horaires>200</max_char_horaires>
+  <active_access>1</active_access>
+  <password>0000</password>
+  <start_date_access>2015-01-01</start_date_access>
+  <end_date_access>2015-01-31</end_date_access>
+  <title_popup_inscription/>
+  <text_popup_inscription/>
+  <connexion_access_code>1</connexion_access_code>
+</zend-config>

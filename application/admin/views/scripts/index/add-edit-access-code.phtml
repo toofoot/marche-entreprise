@@ -1,0 +1,24 @@
+<form method="post" action="<?= $_SERVER["REQUEST_URI"] ?>">
+    <div class="modal-body">
+        <div class="form-group">
+            <?= $this->formLabel('code','Code opération'); ?>
+            <?= $this->formText('code',$this->access_code->code, ['class'=>'form-control']); ?>
+        </div>
+        <div class="form-group">
+            <?= $this->formLabel('delai','Délai de connexion en heure'); ?>
+            <input type="number" name="delai" id="delai" value="<?= $this->access_code->delai ?>" class="form-control">
+        </div>
+        <div class="form-group">
+            <?= $this->formLabel('date_start','Date de début de validité'); ?>
+            <input type="date" name="date_start" id="date_start" value="<?= $this->access_code->date_start ?>" class="form-control">
+        </div>
+        <div class="form-group">
+            <?= $this->formLabel('date_end','Date de fin de validité'); ?>
+            <input type="date" name="date_end" id="date_end" value="<?= $this->access_code->date_end ?>" class="form-control">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-primary">Valider</button>
+    </div>
+</form>

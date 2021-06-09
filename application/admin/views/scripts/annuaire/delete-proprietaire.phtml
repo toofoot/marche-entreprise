@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel">Supprimer le proprietaire</h4>
+</div>
+<form id="formProprio" class="form-horizontal" method='post' action='<?php echo $this->url()?>' role="form">
+    <div class="modal-body">
+        <div><strong><?php echo $this->proprio->firstname ?> <?php echo $this->proprio->lastname ?></strong> : <?php echo $this->proprio->email ?></div>
+        <div> est le proprietaire de cette fiche</div>
+        <div>Si vous cliquez sur "supprimer", la fiche reviendra à son état initial (sans proprietaire et sans statut de validation)</div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+        <?php echo $this->formSubmit('supprimer',"Supprimer",array('class'=>'btn btn-primary','data-loading-text'=>"Suppression en cours...","aria-hidden"=>"hidden"))?>
+    </div>
+</form>
+<script type="text/javascript">
+    $(function(){
+        $("#formProprio").submit(function() {
+            $('#supprimer').button('loading');
+        });
+    });
+</script>

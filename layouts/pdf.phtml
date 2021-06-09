@@ -1,0 +1,30 @@
+<html>
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
+	    <style>
+		    * {font-size:10pt;font-family:helvetica}
+		    @page { margin: 10pt 15pt; }
+
+		</style>
+	</head>
+	<body>
+		<?php echo $this->layout()->content; ?>
+		<?php
+			$footer = nl2br($this->footer);
+			$tabFooter = explode('<br />', $footer);
+			$lignes = count($tabFooter);
+		?>
+		<script type="text/php">
+		if ( isset($pdf) ) {
+			$w = $pdf->get_width();
+			$h = $pdf->get_height();
+			$size = 10;
+			$font = Font_Metrics::get_font("helvetica");
+			$heightFont = Font_Metrics::get_font_height($font,$size);
+
+			$width = Font_Metrics::get_text_width("Page 1/2", $font, 12);
+			$pdf->page_text($w - $width - 15, 190, "Page {PAGE_NUM}/{PAGE_COUNT}", $font, 12, array(0.3,0.3,0.3));
+		}
+		</script>
+	</body>
+</html>

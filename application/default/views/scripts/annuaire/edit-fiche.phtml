@@ -1,0 +1,417 @@
+<form id="formFiche" class="form-horizontal" method='post' action='<?php echo $this->url()?>' role="form">
+	<div class="modal-header">
+		<a class='btn btn-primary' href='<?php echo $this->url_retour ?>'><span class="glyphicon glyphicon-chevron-left"></span> Retour</a>
+		<?php if(!$this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE) && !$this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ANNUAIRE)):?>
+		<h4 class="modal-title text-center" id="myModalLabel">Afin de mettre à jour et valider votre fiche, vous devez vous connecter</h4>
+		<?php endif?>
+	</div>
+	<div class="modal-body">
+		<?php if(!$this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE) && !$this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ANNUAIRE)):?>
+		<div class="modal-header">
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-9">
+					<div class="alert alert-danger">
+						<ul>
+							<li><strong>Si vous êtes déjà inscrit sur le site, saisissez votre adresse email ci dessous</strong></li>
+							<li><strong>Si vous n'êtes pas encore inscrit sur le site, saisissez votre adresse email ci dessous, vous compléterez ensuite votre inscription</strong></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<?php echo $this->formLabel('email_connexion','Adresse Email *',array('class'=>'control-label col-sm-3'))?>
+				<div class="col-sm-9">
+					<?php echo $this->formText('email_connexion',null,array('class'=>'form-control'))?>
+					<span class="message text-danger"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-9">
+					<?php echo $this->formButton('verif','Valider',array('class'=>'btn btn-success',"data-loading-text"=>"Recherche..."))?>
+				</div>
+			</div>
+		</div>
+		<?php else:?>
+		<div class="form-group has-feedback">
+			<?php echo $this->formLabel('id_annuaire_sous_categorie','Catégorie *',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">	
+				<?php echo $this->formSelect('id_annuaire_sous_categorie',$this->annuaire_fiche->id_annuaire_sous_categorie,array("class"=>"form-control"),$this->selectCategorie)?>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">
+			<?php echo $this->formLabel('nom_etablissement','Nom Etablissement *',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formText('nom_etablissement',$this->annuaire_fiche->nom_etablissement,array('placeholder'=>'Nom Etablissement',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">
+			<?php echo $this->formLabel('contact_nom','Nom Contact',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-3">
+				<?php echo $this->formText('contact_nom',$this->annuaire_fiche->contact_nom,array('placeholder'=>'Nom Contact',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+			<?php echo $this->formLabel('contact_prenom','Prénom Contact',array('class'=>'col-xs-2 control-label'))?>
+			
+			<div class="col-xs-4">
+				<?php echo $this->formText('contact_prenom',$this->annuaire_fiche->contact_prenom,array('placeholder'=>'Prénom Contact',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('adresse_1','Adresse 1',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formText('adresse_1',$this->annuaire_fiche->adresse_1,array('placeholder'=>'Adresse 1',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('adresse_2','Adresse 2',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formText('adresse_2',$this->annuaire_fiche->adresse_2,array('placeholder'=>'Adresse 2',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('code_postal','Code Postal',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-3">
+				<?php echo $this->formText('code_postal',$this->annuaire_fiche->code_postal,array('placeholder'=>'Code Postal',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+			<?php echo $this->formLabel('ville','Ville',array('class'=>'col-xs-2 control-label'))?>
+			<div class="col-xs-4">
+				<?php echo $this->formText('ville',$this->annuaire_fiche->ville,array('placeholder'=>'Ville',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('tel_1','Telephone',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formText('tel_1',$this->annuaire_fiche->tel_1,array('placeholder'=>'Telephone',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('tel_2','Telephone Mobile',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formText('tel_2',$this->annuaire_fiche->tel_2,array('placeholder'=>'Telephone Mobile',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('mail','Email',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formText('mail',$this->annuaire_fiche->mail,array('placeholder'=>'Email',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('website','Site Web',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formText('website',$this->annuaire_fiche->website,array('placeholder'=>'Site Web',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('horaires','Horaires',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formTextarea('horaires',$this->annuaire_fiche->horaires,array('placeholder'=>'Horaires',"class"=>"form-control","rows"=>4,"maxlength"=>$this->config->max_char_horaires))?>
+				<div class="compteur"></div>
+			</div>
+		</div>
+		<div class="form-group has-feedback">	
+			<?php echo $this->formLabel('descriptif','Descriptif',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">
+				<?php echo $this->formTextarea('descriptif',$this->annuaire_fiche->descriptif,array('placeholder'=>'Descriptif',"class"=>"form-control","rows"=>4,"maxlength"=>$this->config->max_char_descriptif))?>
+				<div class="compteur"></div>
+			</div>
+		</div>
+		<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ANNUAIRE)):?>
+		<div class="form-group">
+			<?php echo $this->formLabel('status','Statut',array('class'=>'col-xs-3 control-label'))?>
+			<div class="col-xs-9">	
+				<?php echo $this->formSelect('status',$this->annuaire_fiche->status,array("class"=>"form-control"),$this->selectStatus)?>
+			</div>
+		</div>
+		<?php endif?>
+		<div class="form-group">
+			<div class="col-sm-3"></div>
+			<?php for($i = 1; $i <= 3 ; $i++):?>
+			<div class="col-sm-3">
+				<div class="thumbnail blockUploadPhoto">
+					<div class="wait hidden"><img src='/images/wait.gif' alt='wait' /></div>
+					<div class="header text-center">Photo <?php echo $i?></div>
+					<div class="img">
+						<?php if(isset($this->tabPhotos[$i])):?>
+							<img src='/images/upload/fiche_<?php echo $this->annuaire_fiche->id_annuaire_fiche?>/smallthumb<?php echo $this->tabPhotos[$i]->id_photo . '.' . $this->tabPhotos[$i]->extension?>' alt='Photo_<?php echo $i?>' />
+						<?php elseif(isset($this->file[$i]) && $this->file[$i] != ''):?>
+							<img src='/images/upload/tmp/smallthumb<?php echo $this->file[$i]?>' alt='Photo_<?php echo $i?>' />
+						<?php endif?>
+					</div>
+					<div class="buttonUpload text-center <?php echo isset($this->tabPhotos[$i]) || (isset($this->file[$i]) && $this->file[$i] != '') ? 'hidden' : ''?>">
+						<?php echo $this->formButton("buttonfile$i","Choisir le fichier",array('class'=>'btn btn-success btn-xs'))?>
+					</div>
+					<div class="buttonRemove text-center <?php echo isset($this->tabPhotos[$i]) || (isset($this->file[$i]) && $this->file[$i] != '') ? '' : 'hidden'?>">
+						<?php echo $this->formButton("buttonSup$i","Supprimer",array('class'=>'supFile btn btn-danger btn-xs'))?>
+					</div>
+					<input type="file" class="inputFilePhoto <?php echo isset($this->tabPhotos[$i]) || (isset($this->file[$i]) && $this->file[$i] != '') ? 'hidden' : ''?>" name="photo_<?php echo $i?>" />
+					<?php $fileName = isset($this->tabPhotos[$i]) ? $this->tabPhotos[$i]->id_photo : null?>
+					<?php $fileName = isset($this->file[$i]) && $this->file[$i] != '' ? $this->file[$i] : $fileName?>
+					<?php echo $this->formHidden("file[{$i}]",$fileName,array('class'=>'fileHidden'))?>
+				</div>
+			</div>
+			<?php endfor;?>
+		</div>
+		
+		<div class="text-right">
+			* Elements obligatoires
+		</div>
+		<div class="modal-footer">
+		<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ANNUAIRE) && $this->proprietaire):?>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">Le proprietaire de cette fiche est <strong><?php echo $this->proprietaire->firstname?> <?php echo $this->proprietaire->lastname?></strong></div>
+		</div>
+		<?php endif?>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<?php echo $this->formSubmit('envoyer','Valider',array('class'=>'btn btn-success',"data-loading-text"=>"Chargement..."))?>
+			</div>
+		</div>
+		</div>
+		<?php endif ?>
+		
+	</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	$('textarea[maxlength]').each(function(){  
+		var compteur = $(this).parent().find('.compteur');
+        var limit = parseInt($(this).attr('maxlength'));  
+        var text = $(this).val();  
+        var chars = text.length; 
+        var reste = limit - chars;
+        compteur.text(reste);
+    }); 
+	$('textarea[maxlength]').keyup(function(){  
+		var compteur = $(this).parent().find('.compteur');
+        var limit = parseInt($(this).attr('maxlength'));  
+        var text = $(this).val();  
+        var chars = text.length;  
+ 
+        if(chars > limit){  
+            var new_text = text.substr(0, limit);  
+            $(this).val(new_text);  
+        }  
+        var reste = limit - chars;
+        compteur.text(reste);
+    }); 
+    
+	$('.inputFilePhoto').change(function(){
+		var inputFile = $(this);
+		var parent = $(this).parent();
+		var blockImg = $(this).parent().find('.img');
+		var blockHidden = $(this).parent().find('.fileHidden');
+		
+		var img, reader, formData = false;
+		var file = this.files[0];
+		if (window.FormData) {
+		    formdata = new FormData();
+		}
+
+		if (!!file.type.match(/image.*/)) {
+			$('.wait',parent).removeClass('hidden');
+            if ( window.FileReader ) {
+                reader = new FileReader();
+                reader.onloadend = function (e) {
+                
+                };
+                reader.readAsDataURL(file);
+            }
+            if (formdata) {
+                formdata.append("images", file);
+            }
+            
+        } else {
+	        alert("Veuillez selectionner une image");
+        }
+
+		if (formdata) {
+	        $.ajax({
+	            url: "<?php echo $this->url(array('action'=>'upload-tmp'),'action',true)?>",
+	            type: "POST",
+	            data: formdata,
+	            processData: false,
+	            contentType: false,
+	            dataType : 'json',
+	            success: function (res) {
+	            	blockImg.html($('<img>').prop('src',res.src));
+	            	blockHidden.val(res.name);
+	            	inputFile.addClass('hidden');
+	            	$('.buttonUpload',parent).addClass('hidden');
+	            	$('.buttonRemove',parent).removeClass('hidden');
+	    			$('.wait',parent).addClass('hidden');
+	            }
+	        });
+	    } 
+	});
+
+	$('#verif').click(function(){
+		$('#verif').button('loading');
+		$('.form-group').removeClass('has-error');
+		$('.message').html('');
+		$.post(
+			'<?php echo $this->url(array('action'=>'is-user'))?>',
+			$('#formFiche').serialize(),
+			function(response){
+				if(response.user !== undefined){
+					if(response.user){
+						$('#myModal .modal-content').load('<?php echo $this->url(array('action'=>'login','url_redirect'=>$this->logout_url_redirect,'after'=>'valid-annuaire','url_validation'=>urlencode($_SERVER['REQUEST_URI'])),'compte',true)?>?emailLogin='+response.email,function(result){
+						    $('#myModal').modal('show');
+							$('#verif').button('reset');
+						});
+					} else {
+						$('#myLargeModal .modal-content').load('<?php echo $this->url(array("action"=>"register",'url_redirect'=>$this->logout_url_redirect,'after'=>'valid-annuaire','url_validation'=>urlencode($_SERVER['REQUEST_URI'])),'compte',true)?>?emailLogin='+response.email,function(result){
+						    $('#myLargeModal').modal('show');
+							$('#verif').button('reset');
+						});
+					}
+				} else {
+					if(response.errors){
+						for(i in response.errors){
+							$('#'+i).parent().parent().addClass('has-error').find('.message').html(response.errors[i]);
+						}
+					}
+					$('#verif').button('reset');
+				}
+			},'json'
+		);
+	});
+
+	$('.supFile').click(function(){
+		var parent = $(this).parent().parent();
+		var inputFile = $('input[type=file]',parent);
+		
+		var blockImg = $('.img',parent);
+		var blockHidden = $('.fileHidden',parent);
+
+		blockImg.html('');
+		blockHidden.val('');
+		inputFile.removeClass('hidden');
+		$('.buttonUpload',parent).removeClass('hidden');
+    	$('.buttonRemove',parent).addClass('hidden');
+	});
+
+
+	<?php if($this->interdictionProprietaire):?>
+		$('#myModal .modal-content').prepend(
+			'<div class="modal-header">'+
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+			'<h4 class="modal-title" id="myModalLabel">Une seule fiche par compte</h4>' +
+			'</div>'
+		);
+		$('#myModal .modal-body').html(
+			'<div class="text-center">' +
+			'Vous ne pouvez pas mettre à jour cette fiche car vous êtes déja propriétaire d\'une autre.' +
+			'</div>'
+		);
+		<?php if($this->url_mafiche):?>
+			$('#myModal .modal-content').append(
+				"<div class='modal-footer'>"+
+				"<a class='btn btn-primary' href='<?php echo $this->url_mafiche?>'>Aller à la page d'edition de ma fiche</a>"+
+				"</div>"
+			);
+		<?php endif?>
+		$('#myModal').modal('show');
+		$('#formFiche input,#formFiche textarea,#formFiche select').prop('disabled','disabled');
+		$('.blockUploadPhoto button').prop('disabled','disabled');
+		$('#formFiche').submit(function(){
+			return false;
+		});
+    <?php elseif($this->interdictionProprietaireExistant):?>
+        $('#myModal .modal-content').prepend(
+            '<div class="modal-header">'+
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+            '<h4 class="modal-title" id="myModalLabel">Une seule fiche par compte</h4>' +
+            '</div>'
+        );
+        $('#myModal .modal-body').html(
+            '<div class="text-center">' +
+            'Vous n\'avez pas les droits pour modifier cette fiche. <br/>Celle ci a déjà été modifié par un autre utilisateur' +
+            '</div>'
+        );
+        $('#myModal .modal-content').append(
+            "<div class='modal-footer'>"+
+            "<button class='btn btn-primary' data-dismiss='modal' aria-hidden='true'>Fermer</button>"+
+            "</div>"
+        );
+        $('#myModal').modal('show');
+        $('#formFiche input,#formFiche textarea,#formFiche select').prop('disabled','disabled');
+        $('.blockUploadPhoto button').prop('disabled','disabled');
+        $('#formFiche').submit(function(){
+            return false;
+        });
+
+	<?php else:?>
+		$('#formFiche').submit(function(){
+			$('#envoyer').button('loading');
+			$('.form-group').removeClass('has-error');
+			$('.message').html('');
+			$('.form-control-feedback').addClass('hidden');
+			$.post(
+				'<?php echo $this->url()?>',
+				$(this).serialize(),
+				function(transport){
+					if(transport.errors){
+						for(i in transport.errors){
+							$('#'+i).parent().parent().addClass('has-error').find('.message').html(transport.errors[i]);
+						}
+						$('#envoyer').button('reset');
+					}
+					if(transport.interdictionProprietaire){
+						$('#mySmallModal').modal('hide');
+						$('#envoyer').button('reset');
+						$('#myModal .modal-content').prepend(
+							'<div class="modal-header">'+
+							'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+							'<h4 class="modal-title" id="myModalLabel">Une seule fiche par compte</h4>' +
+							'</div>'
+						);
+						$('#myModal .modal-body').html(
+							'<div class="text-center">' +
+							'Vous ne pouvez pas mettre à jour cette fiche car vous êtes déja propriétaire d\'une autre.' +
+							'</div>'
+						);
+						<?php if($this->url_mafiche):?>
+							$('#myModal .modal-content').append(
+								"<div class='modal-footer'>"+
+								"<a class='btn btn-primary' href='<?php echo $this->url_mafiche?>'>Aller à la page d'edition de ma fiche</a>"+
+								"</div>"
+							);
+						<?php endif?>
+						$('#myModal').modal('show');
+					}
+					if(transport.code == 'ok'){
+						if(transport.url_redirect)
+							location.href = transport.url_redirect;
+						else
+							location.href = '<?php echo $this->url(array('action'=>'index','controller'=>'annuaire'),'admin',true)?>';
+					}
+				},'json'
+			);
+			return false;
+		});
+	<?php endif?>
+});
+</script>

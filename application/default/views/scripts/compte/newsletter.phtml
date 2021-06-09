@@ -1,0 +1,45 @@
+<?php echo $this->render('compte/tabs.phtml')?>
+<div class="nav-tabs-content">
+	<form id="formNewsletter" class="" method='post' action='<?php echo $this->url()?>' role="form">
+		<div class="form-group">
+            <div class="checkbox">
+                <label>
+                <?php echo $this->formCheckbox('newsletter',null,array('checked'=>$this->user->newsletter))?> J'accepte de recevoir la newsletter et les informations de la plateforme adidas marché entreprises
+                </label>
+            </div>
+        </div>
+	</form>
+</div>
+
+<div id="modalConfirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+	    <div class="modal-content">
+	    	<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="modalConfirmationLabel">Confirmation</h4>
+			</div>
+			<div class="modal-body">
+				Votre choix a bien été enregistré.
+			</div>
+			<div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.disabled a').click(function (e) {
+			return false;
+		});
+		$('#newsletter').click(function(){
+			$.post(
+				'<?php echo $this->url()?>',
+				$('#formNewsletter').serialize(),
+				function(){
+					$("#modalConfirmation").modal('show');
+				}
+			);
+		});
+	});
+</script>

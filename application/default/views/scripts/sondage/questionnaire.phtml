@@ -1,0 +1,86 @@
+<div class="article" id="sondage">
+    <div class="modal-header">
+        <?php if ($this->ajax): ?>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <?php endif ?>
+        <div class="text-center">
+            <h1><?php echo $this->sondage->name ?><br>
+                <small><?php echo nl2br($this->sondage->description) ?></small></h1>
+        </div>
+    </div>
+    <?php if (!$this->sondage->several_answers && !empty($this->reponses)): ?>
+       <div class="formSend text-center alert" style="">
+            <h3>Merci d'avoir répondu au questionnaire</h3>
+        </div>
+    <?php elseif (!$this->avant && !$this->apres): ?>
+        <form id="frmSondage" method="post" action="<?php echo $this->url() ?>">
+            <?php if ($this->questions): ?>
+                <div class="form-group">
+                    <div class="questions">
+                        <?php foreach ($this->questions as $question): ?>
+                            <?php echo $this->partial("sondage/show-question.phtml", array("question" => $question, "reponses" => $this->reponses)) ?>
+                        <?php endforeach ?>
+                    </div>
+                </div>
+            <?php endif ?>
+            <div class="form-group text-center">
+                <?php if ($this->ajax): ?>
+                    <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Annuler</button>
+                <?php endif ?>
+                <button type="submit" class="btn btn-primary btn-lg" data-loading-text="Envoi de vos réponses...">Valider ce formulaire</button>
+            </div>
+        </form>
+        <div class="formSend text-center alert" style="display: none">
+            <h3>Votre questionnaire a bien été enregistré</h3>
+            <p>
+                <?php if ($this->sondage->several_answers): ?>
+                    <a class="btn btn-primary btn-lg newAnswer" href="<?php echo $this->url_redirect ?>"><?php echo $this->sondage->link_new_answer ?></a>
+                <?php endif ?>
+            </p>
+        </div>
+    <?php elseif ($this->avant): ?>
+        <div class="formSend text-center alert" style="">
+            <h3>Ce sondage sera disponible du <br/><?php echo $this->sondage->getDate('start_date')->get(Aurel_Date::DATE_SHORT) ?> au <?php echo $this->sondage->getDate('end_date')->get(Aurel_Date::DATE_SHORT) ?></h3>
+            </div>
+    <?php elseif ($this->apres): ?>
+        <div class="formSend text-center alert" style="">
+            <h3>Ce sondage est terminé depuis le <?php echo $this->sondage->getDate('end_date')->get(Aurel_Date::DATE_SHORT) ?></h3>
+        </div>
+    <?php endif ?>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.check-other').keyup(function () {
+            $(this).parent().find('input[type=radio],input[type=checkbox]').prop('checked', 'checked');
+        });
+        $('input[type=radio],input[type=checkbox]').click(function () {
+            var parentElt = $(this).parent().parent();
+            var inputText = parentElt.find('input[type=text]');
+            if (inputText.length > 0 && $(this).prop('checked') == true) {
+                inputText.focus();
+            }
+        });
+        $('#frmSondage').submit(function () {
+            $('.block-questions-front .message').fadeOut();
+            $('#frmSondage button').button('loading');
+            $.post(
+                    '<?php echo $this->url() ?>',
+                    $('#frmSondage').serialize(),
+                    function (response) {
+                        $('#frmSondage button').button('reset');
+                        if (response.errors) {
+                            for (i in response.errors) {
+                                $('#question_' + i + ' .message').html(response.errors[i]).fadeIn();
+                            }
+                        }
+                        if (response.returncode == true) {
+                            $('#frmSondage').hide();
+                            $('.formSend').fadeIn();
+                            $(window).trigger('resize');
+                        }
+                    }, 'json'
+                    )
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,101 @@
+<div id="question_<?php echo $this->question->id_sondage_question ?>" class="block-questions-front row">
+    <div class="col-sm-12">
+        <?php $reponses = isset($this->reponses) && isset($this->reponses[$this->question->id_sondage_question]) ? $this->reponses[$this->question->id_sondage_question] : null ?>
+
+        <?php if ($this->question->type == Aurel_Table_SondageQuestion::TYPE_TITLE): ?>
+            <h2><?php echo $this->question->question ?></h2>
+        <?php else : ?>
+            <h4><?php echo $this->question->question ?></h4>
+        <?php endif; ?>
+        <?php if ($this->question->type == Aurel_Table_SondageQuestion::TYPE_SELECT): ?>
+            <?php $reponse = is_array($reponses) ? current($reponses) : null; ?>
+            <select class="form-control" name="question[<?php echo $this->question->id_sondage_question ?>][]">
+                <?php foreach ($this->question->getOptions() as $option): ?>
+                    <option value='<?php echo $option->id_sondage_option ?>' <?php echo $reponse && $reponse->id_sondage_option == $option->id_sondage_option ? 'selected="selected"' : '' ?>><?php echo $option->name ?></option>
+                <?php endforeach ?>
+            </select>
+        <?php elseif ($this->question->type == Aurel_Table_SondageQuestion::TYPE_RADIO_INLINE): ?>
+            <table class="table table-no-border">
+                <tr>
+                    <?php foreach ($this->question->getOptions() as $option): ?>
+                        <th class="text-center h4"><label for='question-<?php echo $this->question->id_sondage_question ?>-<?php echo $option->id_sondage_option ?>'><?php echo $option->name ?></label></th>
+                    <?php endforeach ?>
+                </tr>
+                <tr>
+                    <?php foreach ($this->question->getOptions() as $option): ?>
+                        <?php $reponse = isset($reponses[$option->id_sondage_option]) ? $reponses[$option->id_sondage_option] : null; ?>
+                        <td class="text-center ">
+                            <div class="radio">
+                                <input type='radio' name='question[<?php echo $this->question->id_sondage_question ?>][]' value='<?php echo $option->id_sondage_option ?>' <?php echo $reponse && $reponse->id_sondage_option == $option->id_sondage_option ? 'checked="checked"' : '' ?>/>
+
+                                <label for='question-<?php echo $this->question->id_sondage_question ?>-<?php echo $option->id_sondage_option ?>'></label>
+                            </div>
+                        </td>
+                    <?php endforeach ?>
+                </tr>
+            </table>
+        <?php else: ?>
+            <?php foreach ($this->question->getOptions() as $option): ?>
+                <?php $reponse = isset($reponses[$option->id_sondage_option]) ? $reponses[$option->id_sondage_option] : null; ?>
+                <div class="<?php echo $this->question->getTypeOption() ?> <?= $this->question->type != Aurel_Table_SondageQuestion::TYPE_TEXT ? "form-inline" : "" ?>">
+                    <?php if($this->question->type != Aurel_Table_SondageQuestion::TYPE_TEXT): ?>
+                    <label>
+                        <?php endif; ?>
+                        <?php
+                        switch ($this->question->type):
+                            case Aurel_Table_SondageQuestion::TYPE_CHECKBOX :
+                                ?>
+                                <?php echo $this->formCheckbox("question[{$this->question->id_sondage_question}][{$option->id_sondage_option}]", $option->id_sondage_option, array('checked' => $reponse && $reponse->id_sondage_option == $option->id_sondage_option)); ?>
+                                <?php
+                                break;
+                            case Aurel_Table_SondageQuestion::TYPE_RADIO :
+                                ?>
+                                <input type='radio' name='question[<?php echo $this->question->id_sondage_question ?>][]' value='<?php echo $option->id_sondage_option ?>' <?php echo $reponse && $reponse->id_sondage_option == $option->id_sondage_option ? 'checked="checked"' : '' ?>/>
+                                <?php
+                                break;
+                            default:
+                                ?>
+                                <input type="hidden" name="question[<?php echo $this->question->id_sondage_question ?>][<?php echo $option->id_sondage_option ?>]" value="<?php echo $option->id_sondage_option ?>" />
+                                <textarea name="text[<?php echo $this->question->id_sondage_question ?>][<?php echo $option->id_sondage_option ?>]" class="form-control" placeholder="Votre réponse"><?php echo $reponse ? $reponse->reponse : null ?></textarea>
+                                <?php
+                                break;
+                        endswitch
+                        ?>
+                        <?php if ($this->question->type != Aurel_Table_SondageQuestion::TYPE_TEXT): ?>
+                            <?php
+                            switch ($option->type):
+                                case Aurel_Table_SondageOption::REPONSE_LIBRE :
+                                    ?>
+                                    Autre :
+                                    <?php
+                                    break;
+                                case Aurel_Table_SondageOption::REPONSE_INT :
+                                    ?>
+                                    <?php echo $option->name ?>
+                                    <?php
+                                    break;
+                                default:
+                                    ?>
+                                    <?php
+                                    break;
+                            endswitch
+                            ?>
+                        <?php endif ?>
+                     <?php if($this->question->type != Aurel_Table_SondageQuestion::TYPE_TEXT): ?>
+                    </label>
+                        <?php endif; ?>
+                    <?php if ($this->question->type != Aurel_Table_SondageQuestion::TYPE_TEXT && $option->type == Aurel_Table_SondageOption::REPONSE_LIBRE) : ?>
+                        
+                        <input type="text" name="text[<?php echo $this->question->id_sondage_question ?>][<?php echo $option->id_sondage_option ?>]" class="form-control check-other" placeholder="Votre réponse" <?php echo $reponse && $reponse->id_sondage_option == $option->id_sondage_option && $reponse->reponse ? "value='{$reponse->reponse}'" : '' ?>/>
+                    <?php endif ?>
+                </div>
+            <?php endforeach ?>
+        <?php endif ?>
+    </div>
+    <div class="col-sm-6">
+        <div class="message alert alert-danger" style="display:none"></div>
+    </div>
+</div>
+<?php if ($this->question->type != Aurel_Table_SondageQuestion::TYPE_TITLE): ?>
+    <hr />
+<?php endif; ?>

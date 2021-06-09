@@ -1,0 +1,32 @@
+<form method="post">
+	<ul class="column">
+		<?php foreach($this->menus as $menu):?>
+		<?php $lblMenu = "menu_".$menu->id_menu; ?>
+		<li>
+			<?php if(!$menu->sous_menus_name): ?>
+				<?php echo $this->formCheckbox("active_menu[".$menu->id_menu."]",null,array("checked"=>$this->configMenu->menu->$lblMenu))?> 
+				<?php echo $this->formLabel("active_menu-".$menu->id_menu,$menu->name)?>
+			<?php else:?>
+				<?php echo $menu->name?>
+			<?php endif?>
+			<?php if($menu->sous_menus_name): ?>
+				<ul>
+				<?php $liste_basename = explode(",",$menu->sous_menus_basename)?>
+				<?php $liste_name = explode(",",$menu->sous_menus_name)?>
+				<?php $liste_id = explode(",",$menu->sous_menus_id)?>
+				<?php foreach($liste_basename as $key=>$basename):?>
+					<?php $lblSousMenu = "sous_menu_".$liste_id[$key]; ?>
+					<li id="sousmenu-<?php echo $liste_id[$key]?>">
+						<?php echo $this->formCheckbox("active_menu_secondaire[".$liste_id[$key]."]",null,array("checked"=>$this->configMenu->sous_menu->$lblSousMenu))?> 
+						<?php echo $this->formLabel("active_menu_secondaire-".$liste_id[$key],$liste_name[$key])?>
+					</li>
+				<?php endforeach;?>
+				</ul>
+			<?php endif?>
+		</li>
+		<?php endforeach;?>
+	</ul>
+	<div class="form-group">
+		<button type="submit" class="btn btn-default">Envoyer</button>
+	</div>
+</form>

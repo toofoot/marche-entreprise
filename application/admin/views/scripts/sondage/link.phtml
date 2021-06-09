@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">URL vers le sondage</h4>
+</div>
+<div class="modal-body">
+    <h4>Copier ce lien et ajouter le dans un article</h4>
+    <input title="Appuyez sur Ctrl+C pour copier le lien à partager." type="text" value="<?php echo "http://" . $_SERVER["HTTP_HOST"] . $this->url(array('basename_sondage'=>$this->sondage->basename),'basename_sondage',true) ?>" id="link" class="form-control" readonly="readonly" />
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('#link').tooltip({
+            trigger : 'focus',
+            placement: 'bottom'
+        })
+        $('#link').focus(function(){
+            $(this).select();
+            $(this).tooltip('show')
+        }).mouseup(function(){
+            return false;
+        });
+        $('#link').focus();
+    });
+</script>

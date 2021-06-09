@@ -1,0 +1,79 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title" id="myModalLabel">Upload</h4>
+</div>
+<div class="modal-body">
+	<div class="">
+		<h4>FICHIERS TELECHARGES</h4>
+	</div>
+	<div id='list-of-files'>
+		<?php echo $this->render('articles/list-of-files.phtml')?>
+	</div>
+	<hr>
+	<div>
+		<button id="ajouter" type="button" class="btn btn-success">
+	    Ajouter un fichier <span class="caret"></span>
+		</button>
+	</div>
+	<div id="formUpload" style="display:none">
+		<form method="post" target="uploadFrame" enctype="multipart/form-data" id="formFile" action="<?php echo $this->url()?>">
+			<div class="form-group">
+				<?php echo $this->formLabel('name','Nom du fichier')?>
+				<?php echo $this->formText('name',null,array("class"=>"form-control","placeholder"=>"Nom du fichier"))?>	
+			</div>
+			<div class="form-group">
+				<?php echo $this->formLabel('file','Fichier')?>
+				<input id="file" type="file" name="file" />
+			</div>
+			<div id="uploadInfos">
+			    <iframe id="uploadFrame" name="uploadFrame" style="display:none"></iframe>
+			</div>
+			<div class="form-group">
+				<?php echo $this->formSubmit('telecharger','Télécharger',array('class'=>'btn btn-primary','data-loading-text'=>"Loading..."))?>
+			    <span id="uploadStatus"><img src="/images/ajax-loader-small.gif" alt="Loading..." style="display:none" /></span>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal-footer">
+	<?php echo $this->formButton('fermer','Fermer',array('class'=>'btn btn-default','data-loading-text'=>"Loading...","data-dismiss"=>"modal","aria-hidden"=>"hidden"))?>
+</div>
+<script type="text/javascript">
+	function uploadEnd(response) {
+		$.post(
+			"<?php echo $this->url(array('action'=>'list-of-files'))?>",
+			function(response){
+				$('#list-of-files').html(response);
+				$('#uploadStatus img').hide();
+				$('#formFile')[0].reset();
+			}
+		);
+	}
+	$(function(){
+		$('#envoie').button();
+		$('#formFile').submit(function(){
+			$('#formFile input').removeClass('inputerror');
+			$('#messageFile').val(' ');
+			var continu = true;
+			if($('#name').val() == ''){
+				continu = false;
+				$('#name').addClass('inputerror');
+			}
+			if($('#file').val() == ''){
+				continu = false;
+				$('#file').addClass('inputerror');
+			}
+			if(continu){
+				$('#uploadStatus img').show();
+			}
+			return continu;
+		});
+		$('#fermer').click(function(){
+			document.location.reload();
+		});
+
+		$('#ajouter').click(function(){
+			$('#formUpload').toggle();
+		});
+	});
+</script>

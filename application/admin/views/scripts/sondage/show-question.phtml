@@ -1,0 +1,45 @@
+<div id="question_<?php echo $this->question->id_sondage_question ?>" class="block-questions">
+    <h4><?php echo $this->question->question ?></h4>
+    <div class="actions btn-group btn-group-sm" role="group" aria-label="...">
+        <a class="btn btn-default" data-toggle="modal" data-target="#myLargeModal" title="Modifier" class="voir" href='<?php echo $this->url(array('action'=>'edit-question','id_sondage_question'=>$this->question->id_sondage_question))?>'><span class="glyphicon glyphicon-pencil"></span></a>
+        <a class="btn btn-default" data-toggle="modal" data-target="#mySmallModal" title="Supprimer" class="voir" href='<?php echo $this->url(array('id_sondage_question'=>$this->question->id_sondage_question,'action'=>'delete-question'))?>'><span class="glyphicon glyphicon-trash"></span></a>
+    </div>
+    <?php if($this->question->type == Aurel_Table_SondageQuestion::TYPE_SELECT): ?>
+    <select class="form-control" name="question[<?php echo $this->question->id_sondage_question ?>][]">
+        <?php foreach($this->question->getOptions() as $option): ?>
+            <option value='<?php echo $option->id_sondage_option ?>'><?php echo $option->name ?></option>
+        <?php endforeach ?>
+    </select>
+    <?php else: ?>
+        <?php foreach($this->question->getOptions() as $option): ?>
+            <div class="<?php echo $this->question->getTypeOption()?> form-inline">
+            <label>
+                <?php switch($this->question->type):
+                    case Aurel_Table_SondageQuestion::TYPE_CHECKBOX :?>
+                        <?php echo $this->formCheckbox("question[{$this->question->id_sondage_question}][{$option->id_sondage_option}]",null,array());?>
+                    <?php break;
+                    case Aurel_Table_SondageQuestion::TYPE_RADIO :?>
+                        <input type='radio' name='question[<?php echo $this->question->id_sondage_question ?>]' value='<?php echo $option->id_sondage_option ?>'/>
+                    <?php break;
+                    default:?>
+                        <input type="text" name="option[utilisateur]" class="form-control input-sm" placeholder="Réponse de l'utilisateur" readonly="readonly" disabled="disabled" />
+
+                    <?php break;
+                endswitch ?>
+                <?php if($this->question->type != Aurel_Table_SondageQuestion::TYPE_TEXT): ?>
+                <?php switch($option->type):
+                    case Aurel_Table_SondageOption::REPONSE_LIBRE :?>
+                        Autre : <input type="text" name="option[utilisateur]" class="form-control input-sm" placeholder="Réponse de l'utilisateur" readonly="readonly" disabled="disabled" />
+                        <?php break;
+                    case Aurel_Table_SondageOption::REPONSE_INT :?>
+                        <?php echo $option->name ?>
+                        <?php break;
+                    default:?>
+                    <?php break;
+                endswitch ?>
+                <?php endif ?>
+            </label>
+            </div>
+        <?php endforeach ?>
+    <?php endif ?>
+</div>

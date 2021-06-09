@@ -1,0 +1,23 @@
+<?php if ($this->pageCount > 1): ?>
+	<ul class="pagination">
+		<?php if (isset($this->previous)): ?>
+			<li><a href="<?php echo $this->url(array('p'=>$this->previous)); ?>">&laquo;</a></li>
+		<?php else: ?>
+			<li class="disabled"><span>&laquo;</a></span></li>
+		<?php endif; ?>
+		 
+		<?php foreach ($this->pagesInRange as $page): ?>
+			<?php if ($page != $this->current): ?>
+				<li><a href="<?php echo $this->url(array('p'=>$page)); ?>"><?php echo $page; ?></a></li>
+			<?php else: ?>
+				<li class="active"><a href="<?php echo $this->url(array('p'=>$page)); ?>"><?php echo $page; ?></a></li>
+			<?php endif; ?>
+		<?php endforeach; ?>
+		 
+		<?php if (isset($this->next)): ?>
+			<li><a href="<?php echo $this->url(array('p'=>$this->next)); ?>">&raquo;</a></li>
+		<?php else: ?>
+			<li class="disabled"><span>&raquo;</a></span></li>
+		<?php endif; ?>
+	</ul>
+<?php endif; ?>

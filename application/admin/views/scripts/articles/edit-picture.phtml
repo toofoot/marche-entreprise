@@ -1,0 +1,62 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title" id="myModalLabel">Ajouter photos ou vidéo</h4>
+</div>
+<form method='post' action='<?php echo $this->url()?>' enctype="multipart/form-data" id="formPicture">
+	<div class="modal-body">
+			<div style="margin-top:20px;text-align:center">
+				<input class="changeType" type="radio" name="choixType" id="typePicture" value="picture" <?php echo $this->article->picture ? 'checked="checked"' : ''?> />
+				<?php echo $this->formLabel('typePicture','Images')?>
+				<input class="changeType" type="radio" name="choixType" id="typeYoutube" value="youtube" <?php echo $this->article->youtube ? 'checked="checked"' : ''?> />
+				<?php echo $this->formLabel('typeYoutube','Vidéo (Lien youtube)')?>
+				<br/>
+				<hr/>
+				<div class='divpicture' style="<?php echo $this->article->picture ? '' : 'display:none'?>">
+					<a class='btn btn-default ajoutphotos' href='#'>Ajouter photos</a>
+					
+					<div id="add_photos" style="display:none"><?php echo $this->render('photos/add-photos.phtml')?></div>
+					<div id="list_photos"><?php echo $this->render('photos/voir-photos.phtml')?></div>
+				</div>
+				<div class='divyoutube' style="<?php echo $this->article->youtube ? '' : 'display:none'?>">
+					<?php echo $this->formLabel('linkyoutube','Inscrivez ici le lien youtube de la vidéo')?><br/>
+					
+					<?php echo $this->formText('linkyoutube',$this->article->youtube,array('style'=>'width:300px'))?>
+					<br/><br/>
+					<div style="font-size:10px;" class='ui-state-highlight'>
+						<strong>Le lien peut etre sous différents formats :<br/></strong>
+						http://www.youtube.com/watch?v=W11xhBoqk3g<br/>
+						http://youtu.be/W11xhBoqk3g<br/>
+						//www.youtube.com/embed/W11xhBoqk3g
+					</div>
+					<br/>
+					<?php echo $this->formSubmit('valider2','Valider',array('class'=>'btn btn-default'))?>
+				</div>
+			</div>
+		<br/>
+		<div class="align-center">
+			<div class="wait" style="display:none"><img src="/images/wait.gif" alt="wait" /></div>
+			<div class="messageRegistered ui-state-active" style="display:none;margin-top:5px"></div>
+		</div>
+	</div>
+	
+	<div class="modal-footer">
+		<?php echo $this->formSubmit('fermer','Fermer',array('class'=>'btn btn-default','data-loading-text'=>"Loading..."))?>
+	</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	$('.ajoutphotos').click(function(){
+		$('#add_photos').show();
+		$('#list_photos').hide();
+	});
+	$('.changeType').click(function(){
+		if($(this).prop('value') == 'picture'){
+			$('.divpicture').show();
+			$('.divyoutube').hide();
+		} else {
+			$('.divpicture').hide();
+			$('.divyoutube').show();
+		}
+	});
+});
+</script>

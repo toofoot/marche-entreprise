@@ -1,0 +1,146 @@
+<div>
+	<div class="text-center">
+	<a class="btn btn-primary" href="<?php echo $this->url(array("action"=>"add-annonce"),"action",true)?>">Déposer une nouvelle annonce</a>
+	</div>
+	<br/>
+	<ul class="myTab nav nav-tabs" role="tablist">
+		<li class="active"><a role="tab" data-toggle="tab" href='#attente'>Mes annonces en attente de validation</a></li>
+		<li class=""><a role="tab" data-toggle="tab" href='#cours'>Mes annonces en cours</a></li>
+		<li class=""><a role="tab" data-toggle="tab" href='#archive'>Mes annonces archivés</a></li>
+	</ul>
+	<div class="tab-content nav-tabs-content">
+		<div class="tab-pane active fade in " id="attente">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Ref</th>
+						<th>Titre de l'annonce</th>
+						<th>Catégorie</th>
+						<th>Date de création</th>
+						<th>Date d'évaluation</th>
+						<th>Evaluation</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php foreach($this->annoncesAttente as $annonce):?>
+					<tr class="<?php echo $annonce->getClassAnnonce()?>">
+						<td><?php echo $annonce->id_article?></td>
+						<td><?php echo $annonce->title?></td>
+						<td><?php echo $this->tabCategories[$annonce->id_sous_menu]?></td>
+						<td><?php echo $annonce->getDate('date_creation')->get(Aurel_Date::DATETIME_SHORT)?></td>
+						<td><?php echo $annonce->date_validation ? $annonce->getDate('date_validation')->get(Aurel_Date::DATETIME_SHORT) : ''?></td>
+						<td><?php echo $annonce->getStatusAnnonce()?></td>
+						<td class="text-right">
+							<a data-toggle="modal" data-target="#myLargeModal" title="Voir" class="tool btn btn-default btn-sm" href='<?php echo $this->url(array('basename_article'=>$annonce->basename),'basename_annonce',true)?>'><span class="glyphicon glyphicon-eye-open"></span></a>
+							<?php if($annonce->state_annonce != Aurel_Table_Article::STATE_ANNONCE_REFUSED):?>
+								<a class="tool btn btn-primary btn-sm" title="Modifier annonce" href='<?php echo $this->url(array("action"=>"add-annonce","id_annonce"=>$annonce->id_article),"action",true)?>'><span class="glyphicon glyphicon-pencil"></span></a>
+							<?php else:?>
+								<a class="tool btn btn-primary btn-sm disabled"><span class="glyphicon glyphicon-pencil"></span></a>
+							<?php endif?>
+							<a class="tool btn btn-primary btn-sm" title="Supprimer annonce" data-toggle="modal" data-target="#mySmallModal" href='<?php echo $this->url(array("action"=>"delete-annonce","id_annonce"=>$annonce->id_article),"action",true)?>?return=attente'><span class="glyphicon glyphicon-remove"></span></a>
+						</td>
+					</tr>
+				<?php endforeach;?>
+				</tbody>
+			</table>
+		</div>
+		<div class="tab-pane fade" id="cours">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Ref</th>
+						<th>Titre de l'annonce</th>
+						<th>Catégorie</th>
+						<th>Date de création</th>
+						<th>Date d'évaluation</th>
+						<th>Evaluation</th>
+						<th>Date de fin de parution</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php foreach($this->annonces as $annonce):?>
+					<tr class="<?php echo $annonce->getClassAnnonce()?>">
+						<td><?php echo $annonce->id_article?></td>
+						<td><?php echo $annonce->title?></td>
+						<td><?php echo $this->tabCategories[$annonce->id_sous_menu]?></td>
+						<td><?php echo $annonce->getDate('date_creation')->get(Aurel_Date::DATETIME_SHORT)?></td>
+						<td><?php echo $annonce->date_validation ? $annonce->getDate('date_validation')->get(Aurel_Date::DATETIME_SHORT) : ''?></td>
+						<td><?php echo $annonce->getStatusAnnonce()?></td>
+						<td><?php echo $annonce->date_validation ? $annonce->getDate('date_validation')->addDay($this->config->daysArchiveAnnonce)->get(Aurel_Date::DATE_SHORT) : ''?></td>
+						<td class="text-right">
+							<?php $dateFin = $annonce->getDate('date_validation')->addDay($this->config->daysArchiveAnnonce)->setTime("00:00")?>
+							<?php $date = new Aurel_Date();
+							$date->setTime("00:00");?>
+							<?php $diff = $dateFin->sub($date)->toString(Zend_Date::DAY) - 1 ?>
+							<?php if($annonce->date_validation && $diff <= 3):?>
+							<a title="Renouveler annonce pour <?php echo $this->config->daysArchiveAnnonce ?> jours" data-toggle="modal" data-target="#mySmallModal" class="tool btn btn-success btn-sm" href='<?php echo $this->url(array("action"=>"renew-annonce","id_annonce"=>$annonce->id_article),"action",true)?>?return=attente'><span class="glyphicon glyphicon-retweet"></span></a>
+							<?php endif?>
+							<a data-toggle="modal" data-target="#myLargeModal" title="Voir" class="tool btn btn-default btn-sm" href='<?php echo $this->url(array('basename_article'=>$annonce->basename),'basename_annonce',true)?>'><span class="glyphicon glyphicon-eye-open"></span></a>
+							<?php if($annonce->state_annonce != Aurel_Table_Article::STATE_ANNONCE_REFUSED):?>
+								<a class="tool btn btn-primary btn-sm" title="Modifier annonce" href='<?php echo $this->url(array("action"=>"add-annonce","id_annonce"=>$annonce->id_article),"action",true)?>'><span class="glyphicon glyphicon-pencil"></span></a>
+							<?php else:?>
+								<a class="tool btn btn-primary btn-sm disabled"><span class="glyphicon glyphicon-pencil"></span></a>
+							<?php endif?>
+							<a class="tool btn btn-primary btn-sm" title="Supprimer annonce" data-toggle="modal" data-target="#mySmallModal" href='<?php echo $this->url(array("action"=>"delete-annonce","id_annonce"=>$annonce->id_article),"action",true)?>?return=cours'><span class="glyphicon glyphicon-remove"></span></a>
+						</td>
+					</tr>
+				<?php endforeach;?>
+				</tbody>
+			</table>
+		</div>
+		<div class="tab-pane fade" id="archive">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Ref</th>
+						<th>Titre de l'annonce</th>
+						<th>Catégorie</th>
+						<th>Date de création</th>
+						<th>Date d'évaluation</th>
+						<th>Evaluation</th>
+						<th>Date d'archivage</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php foreach($this->annoncesArchives as $annonce):?>
+					<tr>
+						<td><?php echo $annonce->id_article?></td>
+						<td><?php echo $annonce->title?></td>
+						<td><?php echo $this->tabCategories[$annonce->id_sous_menu]?></td>
+						<td><?php echo $annonce->getDate('date_creation')->get(Aurel_Date::DATETIME_SHORT)?></td>
+						<td><?php echo $annonce->date_validation ? $annonce->getDate('date_validation')->get(Aurel_Date::DATETIME_SHORT) : ''?></td>
+						<td><?php echo $annonce->getStatusAnnonce()?></td>
+						<td><?php echo $annonce->date_validation ? $annonce->getDate('date_validation')->addDay($this->config->daysArchiveAnnonce)->get(Aurel_Date::DATE_SHORT) : ''?></td>
+						<td class="text-right">
+							<a title="Renouveler annonce pour <?php echo $this->config->daysArchiveAnnonce ?> jours" data-toggle="modal" data-target="#mySmallModal" class="tool btn btn-success btn-sm" href='<?php echo $this->url(array("action"=>"renew-annonce","id_annonce"=>$annonce->id_article),"action",true)?>?return=attente'><span class="glyphicon glyphicon-retweet"></span></a>
+							<a data-toggle="modal" data-target="#myLargeModal" title="Voir" class="tool btn btn-default btn-sm" href='<?php echo $this->url(array('basename_article'=>$annonce->basename),'basename_annonce',true)?>'><span class="glyphicon glyphicon-eye-open"></span></a>
+							<?php if($annonce->state_annonce != Aurel_Table_Article::STATE_ANNONCE_REFUSED):?>
+								<a class="tool btn btn-primary btn-sm" title="Modifier annonce" href='<?php echo $this->url(array("action"=>"add-annonce","id_annonce"=>$annonce->id_article),"action",true)?>'><span class="glyphicon glyphicon-pencil"></span></a>
+							<?php else:?>
+								<a class="tool btn btn-primary btn-sm disabled"><span class="glyphicon glyphicon-pencil"></span></a>
+							<?php endif?>
+							<a class="tool btn btn-primary btn-sm" title="Supprimer annonce" data-toggle="modal" data-target="#mySmallModal" href='<?php echo $this->url(array("action"=>"delete-annonce","id_annonce"=>$annonce->id_article),"action",true)?>?return=archive'><span class="glyphicon glyphicon-remove"></span></a>
+						</td>
+					</tr>
+				<?php endforeach;?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.tool').tooltip();
+		var hash = window.location.hash;
+		if(hash){
+			$('.myTab a[href="'+hash+'"]').tab('show');
+		}
+		$('.myTab a').click(function(){
+			var hashLink = $(this).prop('href').replace("http://<?php echo $_SERVER['HTTP_HOST']?><?php echo $_SERVER['REQUEST_URI']?>","");
+			window.location.hash = hashLink;
+		});
+	});
+</script>

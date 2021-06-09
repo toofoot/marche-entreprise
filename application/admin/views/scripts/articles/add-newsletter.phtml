@@ -1,0 +1,157 @@
+<div>
+	<div class="">
+	  	<a class='btn btn-primary' href='<?php echo $this->url(array('action'=>'newsletter','controller'=>'articles'),'admin',true)?>'><span class="glyphicon glyphicon-chevron-left"></span> Retour</a>
+	</div>
+	<form method="post" id="sendNewsletter">
+		<div class="row">
+			<div class="col-sm-6 col-sm-offset-3">
+				<div class="form-group">
+                    <div class="checkbox">
+                        <label>
+					    <?php echo $this->formCheckbox("articles",null,array('checked'=>$this->newsletter->articles))?> Afficher les articles
+                        </label>
+                    </div>
+				</div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+					    <?php echo $this->formCheckbox("annonces",null,array('checked'=>$this->newsletter->annonces))?> Afficher les annonces
+                        </label>
+				    </div>
+                </div>
+                <div class="form-group">
+                    <?php echo $this->formLabel("subject","Objet")?>
+                    <?php echo $this->formText("subject",$this->newsletter->subject,array("class"=>"form-control"))?>
+                </div><div class="form-group">
+                    <?php echo $this->formLabel("from","De")?>
+                    <?php echo $this->formText("from",$this->newsletter->from,array("class"=>"form-control"))?>
+                </div>
+				<div class="form-group">
+					<?php echo $this->formLabel("texte","Texte entête")?>
+					<?php echo $this->formTextarea("texte",$this->newsletter->texte1,array("rows"=>3,"class"=>"form-control"))?>
+				</div>
+				<div class="form-group">
+					<?php echo $this->formLabel("texte2","Editorial")?>
+					<?php echo $this->formTextarea("texte2",$this->newsletter->texte2,array("rows"=>3,"class"=>"form-control"))?>
+				</div>
+			</div>
+		</div>
+		<h4 class="text-center">Aperçu</h4>
+		<iframe id="iframeNews" style="border:1px solid #ccc" width="100%" height="400" src="<?php echo $this->url(array('action'=>'affiche-newsletter','id_newsletter'=>$this->newsletter->id_newsletter))?>"></iframe>
+		<div class="form-group text-center">
+			<?php echo $this->formHidden('send',1)?>
+			<?php /*?><button id="submitFormAll" data-loading-text="Envoi en cours..." class="btn btn-primary" type="button">Envoyer aux <?php echo $this->countAll?> inscrits</button>*/?>
+			<button id="submitFormAdmin" data-loading-text="Envoi en cours..." class="btn btn-primary" type="button">TEST : Envoyer aux <?php echo $this->countAdmin?> administrateurs</button> <img class="hidden imgWait" src='/images/wait.gif' alt='gif' />
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+	function addParam(url, param, value) {
+	   var a = document.createElement('a'), regex = /[?&]([^=]+)=([^&]*)/g;
+	   var match, str = []; a.href = url; value=value||"";
+	   while (match = regex.exec(a.search))
+	       if (encodeURIComponent(param) != match[1]) str.push(match[1] + "=" + match[2]);
+	   str.push(encodeURIComponent(param) + "=" + encodeURIComponent(value));
+	   a.search = (a.search.substring(0,1) == "?" ? "" : "?") + str.join("&");
+	   return a.href;
+	}
+	$(function(){
+		var configCKEDITOR = {
+			height : 100,
+			resize_enabled : false,
+			enterMode : CKEDITOR.ENTER_BR,
+			contentsCss : '/javascript/bootstrap/css/bootstrap.min.css',
+			toolbar : [
+				//{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Scayt' ] },
+	        	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+	        	
+	        	{ name: 'colors', items: [ 'TextColor'] },
+	        	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+	        	{ name: 'links', items: [ 'Link', 'Unlink' ] },
+                { name: 'insert', items: [ 'Image'] }
+			],
+			on :
+            {
+                change :function( ev )
+                {
+                    var value = ev.editor.getData();
+    				var url = $('#iframeNews').prop('src');
+    				url = addParam(url, ev.editor.name, value);
+    				$('#iframeNews').prop('src',url);
+                }
+            },
+            filebrowserBrowseUrl: '<?php echo $this->url(array('action'=>'browser','controller'=>'photos','url'=>'absolute'),'admin',true)?>',
+            filebrowserUploadUrl : '<?php echo $this->url(array('action'=>'upload-misc','controller'=>'photos','url'=>'absolute'),'admin',true)?>'
+		}
+		
+		CKEDITOR.replace( 'texte' , configCKEDITOR);
+		CKEDITOR.replace( 'texte2', configCKEDITOR);
+
+        $('#subject').keyup(function(){
+            var value = $(this).val();
+            var url = $('#iframeNews').prop('src');
+            url = addParam(url, 'subject', value);
+            $('#iframeNews').prop('src',url);
+        })
+		
+		$('#articles').click(function(){
+			var value = $(this).prop('checked') ? "1" : "0";
+			var url = $('#iframeNews').prop('src');
+			url = addParam(url, "articles", value);
+			$('#iframeNews').prop('src',url);
+		});
+		$('#annonces').click(function(){
+			var value = $(this).prop('checked') ? "1" : "0";
+			var url = $('#iframeNews').prop('src');
+			url = addParam(url, "annonces", value);
+			$('#iframeNews').prop('src',url);
+		});
+		
+		$('#submitFormAll').click(function(){
+			$('#send').val('membres');
+			$('#submitForm').button('loading');
+			$('.imgWait').removeClass('hidden');
+
+			$('#texte').val(CKEDITOR.instances.texte.getData());
+			$('#texte2').val(CKEDITOR.instances.texte2.getData());
+			
+			$.post(
+				'<?php echo $this->url()?>',
+				$('#sendNewsletter').serialize(),
+				function(response){
+					if(response.modal)
+						$('#myModal .modal-content').html(response.modal);
+					$('#myModal').modal("show");
+					$('#submitForm').button('reset');
+					$('.imgWait').addClass('hidden');
+				},'json'
+			);
+			return false;
+		});
+		$('#submitFormAdmin').click(function(){
+			$('#send').val('admin');
+			$('#submitForm').button('loading');
+			$('.imgWait').removeClass('hidden');
+
+			$('#texte').val(CKEDITOR.instances.texte.getData());
+			$('#texte2').val(CKEDITOR.instances.texte2.getData());
+			
+			$.post(
+				'<?php echo $this->url()?>',
+				$('#sendNewsletter').serialize(),
+				function(response){
+					if(response.modal)
+						$('#myModal .modal-content').html(response.modal);
+					$('#myModal').modal("show");
+					$('#submitForm').button('reset');
+					$('.imgWait').addClass('hidden');
+				},'json'
+			);
+			return false;
+		});
+			
+		$(document.body).on('hidden.bs.modal', function () {
+		    document.location.href = '<?php echo $this->url(array('action'=>'newsletter'))?>';
+		});
+	});
+</script>

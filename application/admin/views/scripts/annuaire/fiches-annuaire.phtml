@@ -1,0 +1,101 @@
+<?php if($this->fiches->count() > 0):?>
+<?php foreach($this->fiches as $fiche):?>
+	<div class="ficheannuaire media row article thumbnail <?php echo $fiche->status == Aurel_Table_AnnuaireFiche::STATUS_INACTIF ? "inactive" : ""?> <?php echo $fiche->status == Aurel_Table_AnnuaireFiche::STATUS_WAITING ? "waiting" : ""?> <?php echo $fiche->status == Aurel_Table_AnnuaireFiche::STATUS_ACTIF ? "valide" : ""?>" id="fiche-<?php echo $fiche->id_annuaire_fiche?>">
+		<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ANNUAIRE) || ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR) && $fiche->id_user_creation == $this->user->id_user)):?>
+		<div class="actions btn-group-sm">
+			<?php if($fiche->status != Aurel_Table_AnnuaireFiche::STATUS_CORBEILLE):?>
+			<input type="checkbox" value="<?php echo $fiche->id_annuaire_fiche?>" class="checkboxSwitch" <?php echo $fiche->status == Aurel_Table_AnnuaireFiche::STATUS_ACTIF ? "checked='checked'" : ""?> />
+			<?php endif?>
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+				Actions <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu dropdown-menu-right" role="menu">
+				<?php if($fiche->status != Aurel_Table_AnnuaireFiche::STATUS_CORBEILLE):?>
+					<?php if($fiche->status == Aurel_Table_AnnuaireFiche::STATUS_WAITING):?><li><a class='activeFiche' href="<?php echo $this->url(array('action'=>'toggle-fiche','controller'=>'annuaire','id_annuaire_fiche'=>$fiche->id_annuaire_fiche,'state'=>'true'),'admin',true)?>"><span class="glyphicon glyphicon-ok"></span> Valider</a></li><?php endif?>
+					<li><a class='modifFiche' href='<?php echo $this->url(array('action'=>'add-fiche','id_annuaire_fiche'=>$fiche->id_annuaire_fiche,'controller'=>'annuaire','url_retour'=>urlencode($_SERVER['REQUEST_URI'])),'admin',true)?>'><span class="glyphicon glyphicon-pencil"></span> Modifier fiche</a></li>
+				<?php else:?>
+					<li><a class='modifFiche' href='<?php echo $this->url(array('action'=>'restore-fiche','id_annuaire_fiche'=>$fiche->id_annuaire_fiche,'controller'=>'annuaire','url_retour'=>urlencode($_SERVER['REQUEST_URI'])),'admin',true)?>'><span class="glyphicon glyphicon-retweet"></span> Restaurer fiche</a></li>
+				<?php endif?>
+                <?php if($fiche->id_user_proprietaire):?>
+                    <li><a data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action'=>'delete-proprietaire','id_annuaire_fiche'=>$fiche->id_annuaire_fiche,'controller'=>'annuaire','url_retour'=>urlencode($_SERVER['REQUEST_URI'])),'admin',true)?>'><span class="glyphicon glyphicon-user"></span> Supprimer proprietaire/validation</a></li>
+                <?php endif ?>
+				<li class="divider"></li>
+				<?php if($fiche->status == Aurel_Table_AnnuaireFiche::STATUS_CORBEILLE):?>
+				<li><a class='supFiche' href='<?php echo $this->url(array('action'=>'delete-fiche','controller'=>'annuaire','id_annuaire_fiche'=>$fiche->id_annuaire_fiche,'permanent'=>1),'admin',true)?>?comHash=<?php echo md5($fiche->id_annuaire_fiche)?>' title="Supprimer fiche"><span class="glyphicon glyphicon-remove"></span> Supprimer Définitivement</a></li>
+				<?php else:?>
+				<li><a class='supFiche' href='<?php echo $this->url(array('action'=>'delete-fiche','controller'=>'annuaire','id_annuaire_fiche'=>$fiche->id_annuaire_fiche),'admin',true)?>?comHash=<?php echo md5($fiche->id_annuaire_fiche)?>' title="Supprimer fiche"><span class="glyphicon glyphicon-remove"></span> Supprimer</a></li>
+				<?php endif?>
+			</ul>
+		</div>
+		<?php endif?>
+		<div class="col-md-3">
+			<div class="visuel">
+				<?php if($fiche->picture):?>
+                    <a class="popupVideo" data-toggle="modal" data-target="#myLargeModal" href='<?php echo $this->url(array('action'=>'diaporama','id_annuaire_fiche'=>$fiche->id_annuaire_fiche),'action',true)?>'>
+					<?php if($fiche->nbPhotos > 1):?>
+					<div class="cycle-slideshow" data-cycle-speed="200" data-cycle-timeout="1000" style="">
+						<?php foreach($fiche->getIdPhotos(10) as $key=>$id_photo):?>
+					    <img class="<?php echo $key == 0 ? " " : "hidden "?>img-responsive" src='/images/upload/fiche_<?php echo $fiche->id_annuaire_fiche?>/thumb<?php echo $id_photo?>' alt='image<?php echo $fiche->id_annuaire_fiche?>' />
+					    <?php endforeach;?>
+					</div>
+					<div class="nbPhotos">
+						<span class="glyphicon glyphicon-camera"></span> <?php echo $fiche->nbPhotos?>
+					</div>
+					<?php else:?>
+					<img class="img-responsive" src='/images/upload/fiche_<?php echo $fiche->id_annuaire_fiche?>/thumb<?php echo $fiche->picture?>.<?php echo $fiche->extension?>' alt='image<?php echo $fiche->id_annuaire_fiche?>'/>
+					<?php endif?>
+					</a>
+				<?php else: ?>
+					<img class="img-responsive" src='/images/no-photo-fiche.jpg' alt='image<?php echo $fiche->id_annuaire_fiche?>' />
+				<?php endif?>
+			</div>
+			<div class="aplat" style="background-color:<?php echo "#" . $fiche->color_code ?>">
+				<?php echo $fiche->name_sous_categorie?>
+			</div>
+		</div>
+		<div class="content col-md-9" id="fiche<?php echo $fiche->id_annuaire_fiche?>">
+			<?php /*?><div style="height:5px;background-color:<?php echo "#" . $fiche->color_code; ?>"></div>*/?>
+			<div><h3 class="underline" style="margin-top:5px"><?php echo mb_strtoupper($fiche->nom_etablissement);?></h3></div>
+			<div class="">
+				<div class=""><?php echo $fiche->adresse_1;?></div>
+				<div class=""><?php echo $fiche->adresse_2;?></div>
+				<div class=""><?php echo $fiche->code_postal;?> <?php echo $fiche->ville;?></div>
+				<?php if($fiche->website):?>
+					<?php $url = $fiche->website?>
+					<?php $site = str_replace("http://","",$url)?>
+					<?php $site = str_replace("https://","",$site)?>
+					<div><a target="_blank" href='<?php echo $url?>'><?php echo $site?></a></div>
+				<?php endif?>
+			</div>
+			<div class="" style="margin-top : 10px;"></div>
+			<?php if($fiche->descriptif):?>
+			<fieldset class="telechargements">
+				<legend>Description</legend>
+				<div><?php echo nl2br($fiche->descriptif);?></div>
+			</fieldset>
+			<?php endif?>
+			<?php if($fiche->horaires):?>
+			<fieldset class="telechargements">
+				<legend>Horaires</legend>
+				<div><?php echo nl2br($fiche->horaires);?></div>
+			</fieldset>
+			<?php endif?>
+			<?php if($fiche->contact_nom || $fiche->contact_prenom || $fiche->tel_1|| $fiche->tel_2 || $fiche->mail):?>
+			<fieldset class="telechargements">
+				<legend>Contact</legend>
+				<div class=''>
+					<div><strong><?php echo $fiche->contact_nom?> <?php echo $fiche->contact_prenom?></strong></div>
+					<?php if($fiche->tel_1):?><div><span class="glyphicon glyphicon-earphone"></span> Tel : <?php echo $fiche->tel_1?></div><?php endif?>
+					<?php if($fiche->tel_2):?><div><span class="glyphicon glyphicon-phone"></span> Tel : <?php echo $fiche->tel_2?></div><?php endif?>
+					<?php if($fiche->mail):?><div><span class="glyphicon glyphicon-envelope"></span> Email : <a class="" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action'=>'contact','id_annuaire_fiche'=>$fiche->id_annuaire_fiche,'basenamesouscategorie'=>$fiche->basename_sous_categorie,'basenamecategorie'=>$fiche->basename_categorie),'annuaire',true)?>'><?php echo $fiche->mail?></a></div><?php endif?>
+				</div>
+			</fieldset>
+			<?php endif?>
+		</div>
+	</div>
+<?php endforeach;?>
+<?php else:?>
+	<div class="jumbotron">
+  		<h2>Aucune fiche dans cette catégorie</h2>
+	</div>
+<?php endif?>

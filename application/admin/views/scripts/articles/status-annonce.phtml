@@ -1,0 +1,29 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title" id="myModalLabel"><?php echo "Status annonce"?></h4>
+</div>
+<form id="formUser" method='post' action='<?php echo $_SERVER["REQUEST_URI"] ?>' role="form">
+	<div class="modal-body">
+		<?php echo $this->formHidden('status',$this->status)?>
+		<?php if($this->status == Aurel_Table_Article::STATE_ANNONCE_SUCCESS):?>
+			<div>Vous allez accepter cette annonce, elle sera en ligne immédiatement. </div>
+			<div><strong>Êtes vous sûr ?</strong></div>
+		<?php else:?>
+			<div>Vous allez refuser cette annonce. </div>
+			<br/>
+			<div class="form-group">
+				<?php echo $this->formLabel('commentaire','Motif Particulier')?>
+				<?php echo $this->formTextarea('commentaire',null,array('class'=>'form-control','rows'=>'3'))?>
+			</div>
+		<?php endif?>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+		<?php echo $this->formSubmit('valider',$this->status == Aurel_Table_Article::STATE_ANNONCE_SUCCESS ? 'Accepter' : 'Refuser',array('class'=>'btn btn-primary','data-loading-text'=>"Loading..."))?>
+	</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	
+});
+</script>

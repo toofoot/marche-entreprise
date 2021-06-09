@@ -1,0 +1,70 @@
+<div class="text-center">
+  <h3>Modifier directement les textes dans le footer et cliquer sur enregistrer ci dessous</h3>
+  <p><a class="btn btn-primary btn-lg" role="button" id="register">Enregistrer</a> <img src='/images/wait.gif' alt='wait' class="hidden wait" /></p>
+  <div id="myToolbar"></div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$('#register').click(function(){
+		$('.wait').removeClass('hidden');
+		var datas = {
+			'col1' : $('#col1').html(),
+			'col2' : $('#col2').html(),
+			'col3' : $('#col3').html()
+		};
+		$.post(
+			'<?php echo $this->url()?>',
+			datas,
+			function(data){
+				$('.wait').addClass('hidden');
+				alert("Le footer a été modifié");
+			},'json'
+		);
+	});
+	CKEDITOR.disableAutoInline = true;
+	CKEDITOR.config.enterMode = CKEDITOR.ENTER_DIV;
+	CKEDITOR.config.contentsCss = '/javascript/bootstrap/css/bootstrap.min.css';
+	CKEDITOR.config.toolbar = [
+                       	{ name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source'] },
+                    	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+                    	{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Scayt' ] },
+                    	{ name: 'insert', items: [ 'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe' ] },
+                    	'/',
+                    	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+                    	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+                    	{ name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+                    	'/',
+                    	{ name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+                    	{ name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+                    	{ name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] },
+                    	{ name: 'others', items: [ '-' ] }
+	];
+	CKEDITOR.inline( 'col1', {
+		extraPlugins: 'sourcedialog,sharedspace',
+		sharedSpaces: {
+			top: 'myToolbar'
+		},
+	    uiColor: '#9AB8F3',
+		filebrowserBrowseUrl: '<?php echo $this->url(array('action'=>'browser','controller'=>'photos'),'admin',true)?>',
+		filebrowserUploadUrl : '<?php echo $this->url(array('action'=>'upload-misc','controller'=>'photos'),'admin',true)?>',
+	});
+	CKEDITOR.inline( 'col2', {
+		extraPlugins: 'sourcedialog,sharedspace',
+		sharedSpaces: {
+			top: 'myToolbar'
+		},
+	    uiColor: '#9AB8F3',
+		filebrowserBrowseUrl: '<?php echo $this->url(array('action'=>'browser','controller'=>'photos'),'admin',true)?>',
+		filebrowserUploadUrl : '<?php echo $this->url(array('action'=>'upload-misc','controller'=>'photos'),'admin',true)?>',
+	});
+	CKEDITOR.inline( 'col3', {
+		extraPlugins: 'sourcedialog,sharedspace',
+		sharedSpaces: {
+			top: 'myToolbar'
+		},
+	    uiColor: '#9AB8F3',
+		filebrowserBrowseUrl: '<?php echo $this->url(array('action'=>'browser','controller'=>'photos'),'admin',true)?>',
+		filebrowserUploadUrl : '<?php echo $this->url(array('action'=>'upload-misc','controller'=>'photos'),'admin',true)?>',
+	});
+});
+</script>

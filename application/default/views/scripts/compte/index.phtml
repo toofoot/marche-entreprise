@@ -1,0 +1,141 @@
+<?php echo $this->render('compte/tabs.phtml') ?>
+<div class="nav-tabs-content">
+    <form id="formUser" class="form-horizontal" method='post' action='<?php echo $this->url() ?>' role="form">
+        <div class="modal-body">
+            <div class="form-group has-feedback">
+                <?php echo $this->formLabel('lastname', 'Nom', array('class' => 'col-xs-4 control-label')) ?>
+                <div class="col-xs-8">
+                    <?php echo $this->formText('lastname', $this->user->lastname, array('placeholder' => 'Nom', "class" => "form-control")) ?>
+                    <span class="glyphicon form-control-feedback hidden"></span>
+                    <span class="message text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <?php echo $this->formLabel('firstname', 'Prénom', array('class' => 'col-xs-4 control-label')) ?>
+                <div class="col-xs-8">
+                    <?php echo $this->formText('firstname', $this->user->firstname, array('placeholder' => 'Prénom', "class" => "form-control")) ?>
+                    <span class="glyphicon form-control-feedback hidden"></span>
+                    <span class="message text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <?php echo $this->formLabel('societe', 'Société', array('class' => 'col-xs-4 control-label')) ?>
+                <div class="col-xs-8">
+                    <?php echo $this->formText('societe', $this->user->societe, array('placeholder' => 'Société', "class" => "form-control")) ?>
+                    <span class="glyphicon form-control-feedback hidden"></span>
+                    <span class="message text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <?php echo $this->formLabel('fonction', 'Fonction', array('class' => 'col-xs-4 control-label')) ?>
+                <div class="col-xs-8">
+                    <?php echo $this->formText('fonction', $this->user->fonction, array('placeholder' => 'fonction', "class" => "form-control")) ?>
+                    <span class="glyphicon form-control-feedback hidden"></span>
+                    <span class="message text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group has-feedback">
+                <?php echo $this->formLabel('email', 'Votre Email', array('class' => 'col-xs-4 control-label')) ?>
+                <div class="col-xs-8">
+                    <?php echo $this->formText('email', $this->user->email, array('placeholder' => 'Email', "class" => "form-control")) ?>
+                    <span class="glyphicon form-control-feedback hidden"></span>
+                    <span class="message text-danger"></span>
+                </div>
+            </div>
+            <hr/>
+            <span class="help-block text-center">Si vous souhaitez changer le mot de passe, tapez en un nouveau deux fois de suite ci-dessous. Sinon, laissez les champs vides.</span>
+            <div class="form-group has-feedback">
+                <?php echo $this->formLabel('password', 'Nouveau Mot de passe', array('class' => 'col-xs-4 control-label')) ?>
+                <div class="col-xs-8">	
+                    <?php echo $this->formPassword('password', null, array("class" => "form-control", "autocomplete" => "off")) ?>
+                    <span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+                    <span class="message text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <?php echo $this->formLabel('password2', 'Répétez le Nouveau Mot de passe', array('class' => 'col-xs-4 control-label')) ?>
+                <div class="col-xs-8">	
+                    <?php echo $this->formPassword('password2', null, array("class" => "form-control", "autocomplete" => "off")) ?>
+                    <span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+                    <span class="message text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <?php echo $this->formSubmit('valider', 'Enregistrer les modifications', array('class' => 'btn btn-primary', 'data-loading-text' => "Loading...")) ?>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="modalConfirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="modalConfirmationLabel">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                Vos modifications ont été enregistrées.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.disabled a').click(function (e) {
+            return false;
+        })
+        $('.test').click(function () {
+            $(this).button('loading');
+            return false;
+        });
+
+        $('#formUser').submit(function () {
+            $('.message').html('');
+            $.post(
+                    '<?php echo $this->url() ?>',
+                    $(this).serialize(),
+                    function (transport) {
+                        if (transport.errors) {
+                            for (i in transport.errors) {
+                                var elt = transport.errors[i];
+                                $('#' + elt).parent().parent().addClass('has-error').find('.glyphicon').removeClass('hidden').addClass('glyphicon-remove');
+                                if (transport.message[elt])
+                                    $('#' + elt).parent().find('.message').html(transport.message[elt]);
+                            }
+                        }
+                        if (transport.code == 'ok') {
+                            $('#modalConfirmation').modal('show');
+                        }
+                    }, 'json'
+                    );
+            return false;
+        });
+
+        $('input[type=text]').blur(function () {
+            var elt = $(this);
+            elt.parent().parent().removeClass('has-error').removeClass('has-success');
+            elt.parent().find('.glyphicon').addClass('hidden').removeClass('glyphicon-remove').removeClass('glyphicon-ok');
+            elt.parent().find('.message').html('');
+            $.post(
+                    '<?php echo $this->url(array('action' => 'verif-element-register'), 'compte', true) ?>',
+                    {'input': elt.prop('name'), 'value': elt.val(), 'password': $('#password').val()},
+                    function (transport) {
+                        if (transport.obligatoire) {
+                            if (transport.error == true) {
+                                elt.parent().parent().addClass('has-error').find('.glyphicon').addClass('glyphicon-remove').removeClass('hidden');
+                            } else {
+                                elt.parent().parent().addClass('has-success').find('.glyphicon').addClass('glyphicon-ok').removeClass('hidden');
+                            }
+                            if (transport.message) {
+                                elt.parent().find('.message').html(transport.message);
+                            }
+                        }
+                    }, 'json'
+                    );
+        });
+    });
+</script>

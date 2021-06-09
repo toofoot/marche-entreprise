@@ -1,0 +1,193 @@
+<div>
+    <?php if($this->allowmodif): ?>
+    <div class="navbar navbar-default text-center">
+        <div class="panel-body">
+            <a class="btn btn-success" href='<?php echo $this->url(array('action'=>'edit-fiche','url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'annuaire')?>'><span class="glyphicon glyphicon-plus"></span> Ajouter fiche</a>
+            <a class="text-danger pull-right" href="<?php echo $this->url(array('action'=>'logout','url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'annuaire')?>">Déconnexion (accès restreint)</a>
+        </div>
+    </div>
+    <?php else: ?>
+    <div class="dismissiblenavbar navbar navbar-default text-center">
+        <div class="panel-body">
+            <button type="button" class="close closenavbar" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4>Je suis commerçant, artisan, entrepreneur ou profession libérale</h4><h5>Je souhaite modifier ou créer ma fiche "Acteur économique local"</h5>
+            <a class="btn btn-success" href='<?php echo $this->url(array('action'=>'login','url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'annuaire')?>'><span class="glyphicon glyphicon-lock"></span> Cliquez ici (Accès restreint)</a><br/>
+            ou contactez nous sur redaction@lepetitcharsien.com pour obtenir votre code d'accès
+        </div>
+    </div>
+    <?php endif ?>
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<form id="searchForm" class="navbar-form navbar-left" role="search" method="get" action="<?php echo $this->url(array(),'annuaire',true);?>">
+				<div class="form-group has-feedback">
+					<?php echo $this->formText('q',$this->q,array('class'=>'form-control','placeholder'=>'Recherche','autocomplete'=>'off'));?>
+					<a class="deleteSearch form-control-feedback" aria-hidden="true" href="#" style="pointer-events:auto;color:#999;<?php echo $this->q ? "" : "display:none"; ?>" title="Supprimer la recherche"><span class="glyphicon glyphicon-remove"></span></a>
+					<span class="waitingAutocomplete form-control-feedback" aria-hidden="true" style="display:none"><img src='/images/ajax-loader.gif' /></span>
+				</div>
+				<button type="submit" class="btn btn-default" data-loading-text="Recherche en cours...">Rechercher</button>
+			</form>
+		</div>
+	</nav>
+	<div class="row">
+		<div class="col-sm-3">
+			<div class="panel panel-default">
+				<div class="panel-heading"><h3 class="panel-title">Categories</h3></div>
+				<div class="bs-docs-sidebar">
+					<ul class="nav bs-docs-sidenav">
+					<li class="toutes <?php echo $this->tous ? "active" : ""?>">
+						<a class="" href='<?php echo $this->url(array('basename'=>null),'annuaire',true)?>'>Toutes catégories</a>
+					</li>
+					<?php foreach($this->annuaire_categories as $annuaire_categorie):?>
+						<li class="deroule <?php echo $this->annuaire_categorie_active == $annuaire_categorie['categorie']->basename ? "active" : ""?>">
+							<a href='<?php echo $this->url(array('basenamecategorie'=>$annuaire_categorie['categorie']->basename),'annuaire',true)?>'><?php echo $annuaire_categorie['categorie']->name?><span class="badge pull-right"><?php echo $this->tabPastillesCategorie[$annuaire_categorie['categorie']->basename] ?></span></a>
+
+							<ul class="nav" style="<?php echo $annuaire_categorie['categorie']->id_annuaire_categorie == $this->annuaire_categorie_active || $this->annuaire_categorie_active == $annuaire_categorie['categorie']->basename ? "display:block" : ""; ?>">
+								<?php foreach($annuaire_categorie['sous_categories'] as $basename_sous_categorie => $sous_categorie):?>
+									<li class="<?php echo $this->annuaire_sous_categorie_active == $basename_sous_categorie ? "active" : ""?>">
+										<a class="ajax" href='<?php echo $this->url(array('basenamesouscategorie'=>$basename_sous_categorie,'basenamecategorie'=>$annuaire_categorie['categorie']->basename),'annuaire')?>'><?php echo $sous_categorie?><span class="badge pull-right petitbadge"><?php echo $this->tabPastillesSousCategorie[$basename_sous_categorie] ?></span></a>
+									</li>
+								<?php endforeach;?>
+							</ul>
+						</li>
+					<?php endforeach;?>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-9">
+			<div class="article thumbnail waitings text-center" style="display:none">
+				<div>Chargement de la page ...</div>
+				<div><img src='/images/ajax-loader-bar.gif' alt='waiting' /></div>
+			</div>
+			<div class="clearfix toFill">
+				<?php echo $this->render('annuaire/fiches-annuaire.phtml')?>
+			</div>
+		</div>
+	</div>
+
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.bs-docs-sidenav>li.deroule>a').click(function(){
+			var li = $(this).parent();
+			$('.nav .nav').not(li.find('.nav')).slideUp();
+			$('.nav',li).slideDown();
+			return false;
+		});
+        $('.bs-docs-sidenav>li.toutes>a').click(function(){
+			var li = $(this).parent();
+			$('.nav .nav').not(li.find('.nav')).slideUp();
+			return false;
+		});
+		$('.bs-docs-sidenav a').click(function(){
+			$('.waitings').fadeIn();
+			var href = $(this).prop('href');
+			var categorie = $(this).text();
+			var li = $(this).parent();
+            li.addClass('active');
+            $(this).blur();
+			$.post(
+				href,
+				function(response){
+					$('#q').val('');
+					history.pushState(null, null, href);
+					$('.toFill').html(response).fadeIn();
+					$('.waitings').hide();
+					$('.bs-docs-sidenav li').removeClass('active');
+					li.addClass('active');
+				}
+			);
+			return false;
+		});
+		$('.cycle-slideshow img').removeClass('hidden');
+
+		$('#searchForm').submit(function(){
+			if($('#q').val() != ''){
+				$('#searchForm button').button('loading');
+				$('.waitings').fadeIn();
+				$.post(
+					$(this).prop('action'),
+					$(this).serialize(),
+					function(response){
+						$('.bs-docs-sidenav li').removeClass('active');
+						$('.toutes').addClass('active');
+						var url = $('#searchForm').prop('action');
+						if(url.indexOf("?") != '-1')
+							url = url.slice(0, url.indexOf("?"));
+						url += "?" + $('#searchForm').serialize();
+						
+						history.pushState(null, null, url);
+						$('.toFill').html(response).fadeIn();
+						$('.waitings').hide();
+						$('#searchForm button').button('reset');
+					}
+				);
+			}
+			return false;
+		});
+		$('.deleteSearch').click(function(){
+			var url = $('#searchForm').prop('action');
+			if(url.indexOf("?") != '-1')
+				url = url.slice(0, url.indexOf("?"));
+			
+			$('#q').val('');
+			$('.waitings').fadeIn();
+			$.post(
+				url,
+				function(response){
+					history.pushState(null, null, url);
+					$('.toFill').html(response).fadeIn();
+					$('.waitings').hide();
+					$('.deleteSearch').hide();
+				}
+			);
+			return false;
+		});
+		$('#q').keyup(function(){
+			if($('#q').val().length > 0)
+				$('.deleteSearch').show();
+			else
+				$('.deleteSearch').hide();
+		});
+		$('.deleteSearch').tooltip();
+		$('#q').autocomplete({
+			minLength: 3,
+			//source: <?php echo $this->tabAutocomplete?>,
+			source: "<?php echo $this->url(array('action'=>'autocomplete-search'),'annuaire',true)?>",
+			focus: function( event, ui ) {
+		        $( "#q" ).val( ui.item.label );
+		        return false;
+			},
+			select: function( event, ui ) {
+				$('#searchForm').submit();
+			},
+			search: function( event, ui ) {
+				$('.deleteSearch').hide();
+				$('.waitingAutocomplete').show();
+			},
+			response: function( event, ui ) {
+				$('.deleteSearch').show();
+				$('.waitingAutocomplete').hide();
+			},
+			
+		}).autocomplete( "instance" )._renderItem = function( ul, item ) {
+		      return $( "<li>" )
+		        .append( 
+				"<div class='row'>" +
+				"<a>" + 
+					"<div class='col-xs-3'>" +
+						item.pic +
+					"</div>" +
+					"<div class='col-xs-9'>" +
+						item.label + "<br><span class='small'>" + item.desc + "</span>" + 
+					"</div>" +
+				"</a>" +
+				"</div>")
+		        .appendTo( ul );
+		};
+
+        $('.closenavbar').click(function(){
+            $('.dismissiblenavbar').slideUp();
+        });
+	});
+</script>

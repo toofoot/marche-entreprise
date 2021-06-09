@@ -1,0 +1,6 @@
+<ul class="myTab nav nav-tabs">
+	<li class="<?php echo $this->actionName == "index" ? "active" : "" ?>"><a href='<?php echo $this->url(array('action'=>'index','controller'=>'annuaire'),'admin',true)?>'><span class="glyphicon glyphicon-book"></span> Gestion des fiches</a></li>
+	<li class="<?php echo $this->actionName == "categories" ? "active" : "" ?>"><a href='<?php echo $this->url(array('action'=>'categories','controller'=>'annuaire'),'admin',true)?>'><span class="glyphicon glyphicon-th-list"></span> Gestion des categories</a></li>
+	<li class="<?php echo $this->actionName == "config" ? "active" : "" ?>"><a href='<?php echo $this->url(array('action'=>'config','controller'=>'annuaire'),'admin',true)?>'><span class="glyphicon glyphicon-cog"></span> Configuration</a></li>
+	<li class="<?php echo $this->actionName == "downloads" ? "active" : "" ?>"><a href='<?php echo $this->url(array('action'=>'downloads','controller'=>'annuaire'),'admin',true)?>'><span class="glyphicon glyphicon-save"></span> Téléchargements</a></li>
+</ul>

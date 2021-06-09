@@ -1,0 +1,51 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title" id="myModalLabel"><?php echo "Noms et prénoms des participants"?></h4>
+</div>
+<div class="modal-body">
+	<?php if($this->return):?>
+		<a class="return btn btn-primary" href='<?php echo $this->return?>'><span class="glyphicon glyphicon-chevron-left"></span> Retour à la synthèse par catégorie</a>
+	<?php endif?>
+	<h4 class="text-center bg-success"><?php echo $this->inscription->name ?></h4>
+	<?php if($this->article->inscription_nominative):?>
+		<table class='table table-striped'>
+			<thead>
+				<tr>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>Emetteur</th>
+				</tr>
+			</thead>
+			<?php foreach($this->lastnames as $key => $lastname):?>
+				<tr>
+					<td><?php echo $lastname?></td>
+					<td><?php echo $this->firstnames[$key]?></td>
+					<td><span class="small text-success"><?php echo $this->emetteurs[$key]?></span></td>
+				</tr>
+			<?php endforeach;?>
+		</table>
+	<?php else:?>
+		<table class='table table-striped'>
+			<thead>
+				<tr>
+					<th>Emetteur</th>
+					<th>Quantité</th>
+				</tr>
+			</thead>
+			<?php foreach($this->tabFinal as $id_user => $quantite):?>
+				<tr>
+					<td><?php echo $this->emetteurs[$id_user]?></td>
+					<td><?php echo $quantite?></td>
+				</tr>
+			<?php endforeach;?>
+		</table>
+	<?php endif?>
+</div>	
+<script type="text/javascript">
+$(function(){
+	$('.return').click(function(){
+		$('#myModal .modal-content').load($(this).prop('href'));
+		return false;
+	});
+});
+</script>

@@ -1,0 +1,59 @@
+<div class="">
+    <form id="frmConfig" class="form-horizontal" role="form" method="post" action="<?php echo $this->url(); ?>" enctype="multipart/form-data">
+        <div class="well">
+            <b>#INVITEUR_PRENOM#</b> : Prénom de l'inviteur<br>
+            <b>#INVITEUR_NOM#</b> : Nom de l'inviteur<br>
+            <b>#INVITEUR_FONCTION#</b> : Fonction de l'inviteur<br>
+            <b>#INVITEUR_SOCIETE#</b> : Société de l'inviteur<br>
+            <b>#INVITEUR_EMAIL#</b> : Email de l'inviteur<br>
+            <b>#INVITE_EMAIL#</b> : Email de l'invité<br>
+            <b>#INVITE_MESSAGE#</b> : Message de l'inviteur<br>
+            <b>#LIEN#</b> : Lien d'inscription
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("subject_invitation", "Object mail invitation", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-8">
+                <?php echo $this->formText("subject_invitation", $this->config->subject_invitation, array("class" => "form-control")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("body_invitation", "Corps mail invitation", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-8">
+                <?php echo $this->formTextarea("body_invitation", $this->config->body_invitation, array("class" => "form-control", "rows" => "3")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("subject_reinvitation", "Object mail relance", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-8">
+                <?php echo $this->formText("subject_reinvitation", $this->config->subject_reinvitation, array("class" => "form-control")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("body_reinvitation", "Corps mail relance", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-8">
+                <?php echo $this->formTextarea("body_reinvitation", $this->config->body_reinvitation, array("class" => "form-control", "rows" => "3")) ?>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <?php echo $this->formSubmit("sub", "Enregistrer", array("class" => "btn btn-primary", 'data-loading-text' => "Loading...")) ?>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+<?php if ($this->session->message): ?>
+            var html = '<div class="modal-header">' +
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+                    //'<h4 class="modal-title" id="myModalLabel">Commentaire</h4>'.
+                    '&nbsp;</div>';
+            html += "<div class='modal-body'>Données enregistrées</div>";
+            html += '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button></div>';
+            $('#mySmallModal .modal-content').html(html);
+            $('#mySmallModal').modal('show');
+            $('#sub').button('reset');
+<?php endif ?>
+        $('#frmConfig').submit(function () {
+            $('#sub').button('loading');
+        });
+    });
+</script>

@@ -1,0 +1,85 @@
+<div style="Page-Break-After:Always;text-align:center">
+    <img src="http://<?php echo $_SERVER["HTTP_HOST"]?>/images/layout/couverture_annuaire.jpg" style="vertical-align: top;width:90%" />
+</div>
+<?php foreach($this->fiches as $id_annuaire_categorie => $sous_categories):?>
+    <div style="Page-Break-After:Always;">
+        <div style="font-weight:bold; border-bottom:2pt solid <?php echo "#" . $this->libelleCategorie[$id_annuaire_categorie]['color'] ?>;color: <?php echo "#" . $this->libelleCategorie[$id_annuaire_categorie]['color'] ?>; padding: 5pt; font-size: 20pt;">
+            <?php echo $this->libelleCategorie[$id_annuaire_categorie]['name'] ?>
+        </div>
+        <div style="margin: 15pt">
+        <?php foreach($sous_categories as $id_annuaire_sous_categorie => $fiches):?>
+            <div style="font-size: 18pt;">
+                <?php echo $this->libelleSousCategorie[$id_annuaire_sous_categorie]['name'] ?>
+            </div>
+            <?php foreach($fiches as $fiche):?>
+                <div style="border:1px solid #ccc;margin:10pt 0;padding:5pt;border-radius:4pt;Page-Break-Inside:Avoid">
+                    <div style="display:inline-block;width:25%;vertical-align: top">
+                        <div style="margin:5pt">
+                            <div class="visuel">
+                                <?php if($fiche->picture):?>
+                                        <?php if($fiche->nbPhotos > 1):?>
+                                            <div style="">
+                                                <?php foreach($fiche->getIdPhotos(1) as $key=>$id_photo):?>
+                                                    <img style="width:100%" src='http://<?php echo $_SERVER["HTTP_HOST"]?>/images/upload/fiche_<?php echo $fiche->id_annuaire_fiche?>/thumb<?php echo $id_photo?>' alt='image<?php echo $fiche->id_annuaire_fiche?>' />
+                                                <?php endforeach;?>
+                                            </div>
+                                        <?php else:?>
+                                            <img style="width:100%" src='http://<?php echo $_SERVER["HTTP_HOST"]?>/images/upload/fiche_<?php echo $fiche->id_annuaire_fiche?>/thumb<?php echo $fiche->picture?>.<?php echo $fiche->extension?>' alt='image<?php echo $fiche->id_annuaire_fiche?>'/>
+                                        <?php endif?>
+                                <?php else: ?>
+                                    <img style="width:100%" src='http://<?php echo $_SERVER["HTTP_HOST"]?>/images/no-photo-fiche.jpg' alt='image<?php echo $fiche->id_annuaire_fiche?>' />
+                                <?php endif?>
+                            </div>
+                            <?php /*<div style="color: #fff;overflow: hidden;padding: 8pt;text-overflow: ellipsis;text-shadow: 1pt 1pt 2pt #000;white-space: nowrap;background-color:<?php echo "#" . $fiche->color_code ?>">
+                                <?php echo $fiche->name_sous_categorie?>
+                            </div>*/ ?>
+                        </div>
+                    </div>
+                    <div style="display:inline-block;width:70%;vertical-align: top">
+                        <div style="margin:5pt">
+                            <div><h3 style="font-size: 16pt;margin: 0 0 5 0;padding:0"><?php echo mb_strtoupper($fiche->nom_etablissement);?></h3></div>
+                            <div class="">
+                                <div class=""><?php echo $fiche->adresse_1;?></div>
+                                <div class=""><?php echo $fiche->adresse_2;?></div>
+                                <div class=""><?php echo $fiche->code_postal;?> <?php echo $fiche->ville;?></div>
+                                <?php if($fiche->website):?>
+                                    <?php $url = $fiche->website?>
+                                    <?php $site = str_replace("http://","",$url)?>
+                                    <?php $site = str_replace("https://","",$site)?>
+                                    <div><?php echo $site?></div>
+                                <?php endif?>
+                            </div>
+
+                            <div class="" style="margin-top : 10pt;"></div>
+                            <?php if($fiche->descriptif):?>
+                                <div style="position:relative;border-left:none;border-right:none;border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;padding: 5pt;margin: 10pt 0;">
+                                    <div style="position:absolute;top:-12pt;display: block; color: #444;font-weight: bold;margin: 0;padding: 0 5pt;background-color:#ffffff">Description</div>
+                                    <div><?php echo nl2br($fiche->descriptif);?></div>
+                                </div>
+                            <?php endif?>
+                            <?php if($fiche->horaires):?>
+                                <div style="position:relative;border-left:none;border-right:none;border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;padding: 5pt;margin: 10pt 0;">
+                                    <div style="position:absolute;top:-12pt;display: block; color: #444;font-weight: bold;margin: 0;padding: 0 5pt;background-color:#ffffff">Horaires</div>
+                                    <div><?php echo nl2br($fiche->horaires);?></div>
+                                </div>
+                            <?php endif?>
+                            <?php if($fiche->contact_nom || $fiche->contact_prenom || $fiche->tel_1|| $fiche->tel_2 || $fiche->mail):?>
+                                <div style="position:relative;border-left:none;border-right:none;border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;padding: 5pt;margin: 10pt 0;">
+                                    <div style="position:absolute;top:-12pt;display: block; border: medium none;color: #444;font-size: inherit;font-weight: bold;margin: 0;padding: 0 5pt;background-color:#ffffff">Contact</div>
+                                    <div class=''>
+                                        <div><strong><?php echo $fiche->contact_nom?> <?php echo $fiche->contact_prenom?></strong></div>
+                                        <?php if($fiche->tel_1):?><div><img src="http://<?php echo $_SERVER["HTTP_HOST"]?>/images/logos/earphone.png" style="vertical-align: text-bottom;width:16px" /> Tel : <?php echo $fiche->tel_1?></div><?php endif?>
+                                        <?php if($fiche->tel_2):?><div><img src="http://<?php echo $_SERVER["HTTP_HOST"]?>/images/logos/phone.png" style="vertical-align: text-bottom;width:16px" /> Tel : <?php echo $fiche->tel_2?></div><?php endif?>
+                                        <?php if($fiche->mail):?><div><img src="http://<?php echo $_SERVER["HTTP_HOST"]?>/images/logos/envelope.png" style="vertical-align: text-bottom;width:16px" /> Email : <?php echo $fiche->mail?></div><?php endif?>
+                                    </div>
+                                </div>
+                            <?php endif?>
+                        </div>
+                    </div>
+                    <div style="clear:left"></div>
+                </div>
+            <?php endforeach ?>
+        <?php endforeach ?>
+        </div>
+    </div>
+<?php endforeach;?>

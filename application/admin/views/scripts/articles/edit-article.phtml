@@ -1,0 +1,394 @@
+<style type="text/css">
+	.ui-autocomplete {
+		z-index:1050;
+	    max-height: 200px;
+	    overflow-y: auto;
+	    overflow-x: hidden;
+	}
+	/* IE 6 doesn't support max-height
+	   * we use height instead, but this forces the menu to always be this tall
+	*/
+	* html .ui-autocomplete {
+	    height: 200px;
+	}
+</style>
+<div class="modal-header">
+	<a class='btn btn-primary' href='<?php echo $this->url_retour ?>'><span class="glyphicon glyphicon-chevron-left"></span> Retour</a>
+	<h4 class="modal-title text-center" id="myModalLabel"><?php echo $this->article->id_article ? "Editer Article" : "Ajouter Article"?></h4>
+</div>
+<form method="post" enctype="multipart/form-data" id="formFile" action="<?php echo $_SERVER["REQUEST_URI"]?>" class="" role="form">
+	<div class="modal-body">
+		<div class="form-group form-inline">
+			<?php echo $this->formLabel('id_menu','Selectionner menu',array('class'=>'control-label'))?>
+			<?php echo $this->formSelect('id_menu',$this->menu_selected,array("class"=>"form-control"),$this->menus_select)?>
+			<span id="select_sousmenus"><?php echo $this->formSelect('id_sous_menu',$this->sous_menu_selected,array("class"=>"form-control"),$this->sousmenus)?></span>	
+		</div>
+		<?php if(!$this->article->id_article):?>
+		<div class="form-group">
+			<label for="visuel" class="control-label">Visuel</label>
+			<div>
+				<input class="changeType" type="radio" name="choixType" id="typePicture" value="picture" <?php echo $this->article->picture ? 'checked="checked"' : ''?> />
+				<?php echo $this->formLabel('typePicture','Images')?>
+				<input class="changeType" type="radio" name="choixType" id="typeYoutube" value="youtube" <?php echo $this->article->youtube ? 'checked="checked"' : ''?> />
+				<?php echo $this->formLabel('typeYoutube','Vidéo (Lien youtube)')?>
+			</div>
+			<div class='divpicture hidden'>
+				<div><small><strong>1 seul visuel ici, vous pourrez en ajouter d'autres une fois l'article créé</strong></small></div>
+				<input class="btn btn-default" type="file" name="visuel" id="visuel" />
+			</div>	
+			<div class='divyoutube hidden'>
+				<div><small><strong>Le lien peut etre sous différents formats :<br/></strong>
+						http://www.youtube.com/watch?v=W11xhBoqk3g<br/>
+						http://youtu.be/W11xhBoqk3g<br/>
+						//www.youtube.com/embed/W11xhBoqk3g</small></div>
+				<?php echo $this->formText('linkyoutube',$this->article->youtube,array('style'=>'width:300px','placeholder'=>'Lien youtube','class'=>'form-control'))?>
+			</div>
+		</div>
+		<?php endif?>
+		<div class="form-group">
+			<?php echo $this->formLabel('title','Titre',array('class'=>'control-label'))?>
+			<?php echo $this->formText('title',$this->article->title,array("class"=>"form-control","placeholder"=>"Titre"))?>	
+		</div>
+        <?php echo $this->formHidden('hide_home',null)?>
+        <?php echo $this->formHidden('portrait',null)?>
+        <div class="form-group">
+            <div class="checkbox">
+                <label class="control-label">
+		        <?php echo $this->formCheckbox('link_event',null,array('checked'=>$this->event_checked))?> Lier une date evenement
+                </label>
+		    </div>
+        </div>
+		<div class="dateInputs alert alert-warning" <?php if(!$this->article->link_event):?>style="display:none"<?php endif?>>
+			<div class="form-group form-inline text-center">
+				<?php $arrayHours = $this->with_hours ? array("style"=>"width:110px") : array("style"=>"display:none;width:110px")?>
+				Du 
+				<?php echo $this->formText('start_date',$this->article->getDate('start_date')->get('dd/MM/YYYY'),array("class"=>"form-control","placeholder"=>"Date Début"))?> 
+				<?php echo $this->formText('start_hour',$this->article->start_hour,array("class"=>"form-control with_hours","placeholder"=>"Heure Début") + $arrayHours)?> 
+				au 
+				<?php echo $this->formText('end_date',$this->article->getDate('end_date')->get('dd/MM/YYYY'),array("class"=>"form-control","placeholder"=>"Date Fin"))?>
+				<?php echo $this->formText('end_hour',$this->article->end_hour,array("class"=>"form-control with_hours","placeholder"=>"Heure Fin") + $arrayHours)?>
+				<div>
+                    <label class="control-label" style="font-weight:normal">
+				    <?php echo $this->formCheckbox('with_hours',null,array('checked'=>$this->with_hours))?> Spécifier les heures
+                    </label>
+				</div>
+			</div>
+			<div class="form-group text-center">
+			    <?php echo $this->formCheckbox('inscription_fct',null,array('checked'=>$this->article->inscription_fct))?>
+			    <?php echo $this->formLabel('inscription_fct','Activer fonction inscription',array('class'=>'control-label'))?>
+			</div>
+			<div class="row">
+				<div class="alert alert-info inscriptionInputs form-horizontal col-xs-6 col-xs-offset-3" <?php if(!$this->article->inscription_fct):?>style="display:none"<?php endif?>>
+					<div class="form-group">
+					    <?php echo $this->formLabel('inscription_date_limite','Date limite d\'inscription',array('class'=>'control-label col-xs-5'))?>
+					    <div class="col-xs-7">
+					    <?php echo $this->formText('inscription_date_limite',$this->article->inscription_date_limite ? $this->article->getDate('inscription_date_limite')->get('dd/MM/YYYY') : null,array("class"=>"form-control"))?>
+					    </div> 
+					</div>
+					<div class="form-group">
+					    <?php echo $this->formLabel('inscription_quantite_limite','Quantité Limite',array('class'=>'control-label col-xs-5'))?>
+					    <div class="col-xs-7">
+						    <?php echo $this->formText('inscription_quantite_limite',$this->article->inscription_quantite_limite,array("class"=>"form-control"))?>
+						    <span class="message text-primary">Case vide = Pas de limite</span>
+					    </div> 
+					</div>
+					<div class="form-group">
+					    <table class="table tableLibelles">
+					    	<thead>
+					    		<tr>
+					    			<th class="text-center" colspan="3">
+					    				Ajouter une ou plusieurs catégories pour les inscriptions <br/>(Ex : <code>Nombre de personnes</code> OU <code>Adultes / enfants</code> OU <code>Hommes / femmes</code>)
+					    			</th>
+					    		</tr>
+					    	</thead>
+					    	<tbody>
+					    		<?php if(!empty($this->tabInscriptions)):?>
+					    			<?php foreach($this->tabInscriptions as $key => $tab):?>
+					    			<?php $id = $key + 1; ?>
+					    			<tr id="libelle_<?php echo $id; ?>" class="trLibelles">
+							    		<td>Libellé catégorie <?php echo $id; ?></td>
+							    		<td><?php echo $this->formText("inscription[$id]",$tab->name,array("class"=>"libelles form-control"))?></td>
+							    		<td><?php if($id > 1):?><button id="removeLibelle" type="button" class="btn btn-sm btn-primary" onclick="removeLibelleFunction(<?php echo $id; ?>);"><span class="glyphicon glyphicon-minus"></span></button><?php endif?></td>
+							    	</tr>
+					    			<?php endforeach;?>
+					    		<?php else:?>
+							    	<tr id="libelle_1" class="trLibelles">
+							    		<td>Libellé catégorie 1</td>
+							    		<td><?php echo $this->formText('inscription[1]',null,array("class"=>"libelles form-control"))?></td>
+							    		<td></td>
+							    	</tr>
+					    		<?php endif?>
+					    	</tbody>
+					    	<tfoot>
+						    	<tr>
+						    		<td><button id="addLibelle" type="button" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span></button></td>
+						    		<td></td>
+						    		<td></td>
+						    	</tr>
+					    	</tfoot>
+					    </table>
+					</div>
+					
+					<div class="form-group">
+						<div class="text-center">
+							    <?php echo $this->formCheckbox('inscription_nominative',null,array('checked'=>$this->article->inscription_nominative))?>
+					    		<?php echo $this->formLabel('inscription_nominative','Activer inscription nominative',array('class'=>'control-label'))?>
+			    		</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<?php echo $this->formLabel('content','Contenu',array('class'=>'control-label'))?>
+			<?php echo $this->formTextarea('content',$this->article->content,array("class"=>"form-control"))?>
+			<?php echo $this->formHidden('status',$this->article->status)?>	
+		</div>
+	</div>
+	<div class="modal-footer">
+		<?php if($this->article->id_article):?>
+			<?php echo $this->formButton('modifier','Valider les modifications',array('class'=>'btn btn-primary','data-loading-text'=>"Enregistrement en cours..."))?>
+		<?php else: ?>
+			<?php echo $this->formButton('enregistrerbrouillon','Enregistrer comme brouillon',array('class'=>'btn btn-default','data-loading-text'=>"Enregistrement en cours..."))?>
+			<?php echo $this->formButton('enregistrer','Publier immédiatement',array('class'=>'btn btn-primary','data-loading-text'=>"Enregistrement en cours..."))?>
+		<?php endif ?>
+	</div>
+</form>
+<script type="text/javascript">
+	function checkElt(elt){
+		if($('#'+elt).val() == ''){
+			$('#'+elt).parent().addClass('has-error');
+			return false;
+		}
+		return true;
+	}
+	function checkForm(){
+		var $return = false;
+
+		$return = checkElt('title');
+
+		return $return;
+	}
+	function removeLibelleFunction(i){
+		$('#libelle_'+i).remove();
+	}
+	$(function(){
+		$('#addLibelle').click(function(){
+			var last = Number($('.trLibelles:last').prop('id').replace('libelle_',''));
+			var newId = last + 1;
+			var input = '<input type="text" class="libelles form-control" value="" id="inscription-' + newId + '" name="inscription[' + newId + ']">';
+			var button = '<button id="removeLibelle" type="button" class="btn btn-sm btn-primary" onclick="removeLibelleFunction(' + newId + ');"><span class="glyphicon glyphicon-minus"></span></button>'
+			var $tds = $('<tr id="libelle_' + newId + '" class="trLibelles"><td>Libellé catégorie ' + newId + '</td><td>' + input + '<td><td>' + button + '</td></tr>');
+			$('.tableLibelles tbody').append($tds);
+			
+		});
+		
+		CKEDITOR.config.contentsCss = '/javascript/bootstrap/css/bootstrap.min.css';
+		CKEDITOR.config.toolbar = [
+			                    { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source'] },
+								{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+								{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Scayt' ] },
+		                       	{ name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+		                       	{ name: 'insert', items: [ 'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe' ] },
+		                       	{ name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] },
+		                        '/',
+		                       	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+		                       	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] },
+		                       	{ name: 'styles', items: ['Styles', 'Format' ] },
+		                       	{ name: 'others', items: [ '-' ] }
+		];
+		CKEDITOR.replace( 'content', {
+			filebrowserBrowseUrl: '<?php echo $this->url(array('action'=>'browser','controller'=>'photos'),'admin',true)?>',
+			filebrowserUploadUrl : '<?php echo $this->url(array('action'=>'upload-misc','controller'=>'photos'),'admin',true)?>',
+		});
+
+		$('input[type=text]').keyup(function(){
+			$(this).parent().removeClass('has-error');
+		});
+
+		$('#modifier').click(function(){
+            $(this).button('loading');
+			if(checkForm()){
+				$('#formFile').submit();
+			}
+		});
+		$('#enregistrerbrouillon').click(function(){
+            $(this).button('loading');
+			if(checkForm()){
+				$('#status').val("<?php echo Aurel_Table_Article::STATUS_INACTIF?>");
+				$('#formFile').submit();
+			}
+		});
+		$('#enregistrer').click(function(){
+            $(this).button('loading');
+			if(checkForm()){
+				$('#status').val("<?php echo Aurel_Table_Article::STATUS_ACTIF?>");
+				$('#formFile').submit();
+			}
+		});
+
+		$('#link_event').click(function(){
+			if($(this).prop('checked')){
+				$('.dateInputs').stop(true,true).slideDown();
+			} else {
+				$('.dateInputs').stop(true,true).slideUp();
+			}
+		});
+		
+		$('#inscription_fct').click(function(){
+			if($(this).prop('checked')){
+				$('.inscriptionInputs').stop(true,true).slideDown();
+				if($( "#inscription_date_limite" ).val() == "")
+					$( "#inscription_date_limite" ).val("<?php echo Aurel_Date::now()->get('dd/MM/YYYY') ?>");
+			} else {
+				$('.inscriptionInputs').stop(true,true).slideUp();
+			}
+		});
+
+        $('#link_sondage').click(function(){
+            if($(this).prop('checked')){
+                $('.sondageInputs').stop(true,true).slideDown();
+            } else {
+                $('.sondageInputs').stop(true,true).slideUp();
+            }
+        });
+		
+		$( "#start_date" ).datepicker({
+			changeMonth: true,
+			numberOfMonths: 1,
+			onSelect: function( selectedDate ) {
+				var selectedDateISO = selectedDate.replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+				var end_dateISO = $( "#end_date" ).val().replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+				
+				if(selectedDateISO > end_dateISO)
+					$( "#end_date" ).val( selectedDate );
+
+				$( "#inscription_date_limite" ).datepicker( "option", "maxDate", selectedDate ).val(selectedDate);
+			}
+		});
+		$( "#end_date" ).datepicker({
+			changeMonth: true,
+			numberOfMonths: 1,
+			onSelect: function( selectedDate ) {
+				var selectedDateISO = selectedDate.replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+				var start_dateISO = $( "#start_date" ).val().replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+				
+				if(selectedDateISO < start_dateISO)
+					$( "#start_date" ).val( selectedDate );
+			}
+		});
+		
+		$( "#inscription_date_limite" ).datepicker({
+			changeMonth: true,
+			numberOfMonths: 1,
+			maxDate: $( "#start_date" ).val(),
+			onSelect: function( selectedDate ) {
+				
+			}
+		});
+		$('.changeType').click(function(){
+			if($(this).prop('value') == 'picture'){
+				$('.divpicture').removeClass('hidden');
+				$('.divyoutube').addClass('hidden');
+			} else {
+				$('.divpicture').addClass('hidden');
+				$('.divyoutube').removeClass('hidden');
+			}
+		});
+		$('#with_hours').click(function(){
+			if($(this).prop('checked')){
+				$('.with_hours').show();
+			} else {
+				$('.with_hours').hide();
+			}
+		});
+		var availableTags = [
+			"00:00","00:30",
+			"01:00","01:30",
+			"02:00","02:30",
+			"03:00","03:30",
+			"04:00","04:30",
+			"05:00","05:30",
+			"06:00","06:30",
+			"07:00","07:30",
+			"08:00","08:30",
+			"09:00","09:30",
+			"10:00","10:30",
+			"11:00","11:30",
+			"12:00","12:30",
+			"13:00","13:30",
+			"14:00","14:30",
+			"15:00","15:30",
+			"16:00","16:30",
+			"17:00","17:30",
+			"18:00","18:30",
+			"19:00","19:30",
+			"20:00","20:30",
+			"21:00","21:30",
+			"22:00","22:30",
+			"23:00","23:30"  
+		];
+		$('#start_hour').autocomplete({
+			source: availableTags,
+			minLength:0,
+			select: function( event, ui ) {
+				if($( "#start_date" ).val() == $( "#end_date" ).val()){
+					if(ui.item.value > $( "#end_hour" ).val())
+						$( "#end_hour" ).val( ui.item.value );
+				}
+			}
+		}).click(function(){
+			$(this).autocomplete('search','');
+		}).blur(function(){
+			$(this).val(this.value.replace("h",":"));
+			if($( "#start_date" ).val() == $( "#end_date" ).val()){
+				if($(this).val() > $( "#end_hour" ).val())
+					$( "#end_hour" ).val( $(this).val() );
+			}
+		});
+		$('#end_hour').autocomplete({
+			source: availableTags,
+			minLength:0,
+			select: function( event, ui ) {
+				if($( "#start_date" ).val() == $( "#end_date" ).val()){
+					if(ui.item.value < $( "#start_hour" ).val())
+						$( "#start_hour" ).val( ui.item.value );
+				}
+			}
+		}).click(function(){
+			$(this).autocomplete('search','');
+		}).blur(function(){
+			$(this).val(this.value.replace("h",":"));
+			if($( "#start_date" ).val() == $( "#end_date" ).val()){
+				if($(this).val() < $( "#start_hour" ).val())
+					$( "#start_hour" ).val( $(this).val() );
+			} 
+		});
+		$('#hide_home').click(function(){
+			var val = $(this).prop('checked');
+			if(val){
+				$('#portrait').prop('checked',false).prop('disabled','disabled');
+			} else {
+				$('#portrait').prop('disabled',false);
+			}
+		});
+		$('#portrait').click(function(){
+			var val = $(this).prop('checked');
+			if(val){
+				$('#hide_home').prop('checked',false).prop('disabled','disabled');
+			} else {
+				$('#hide_home').prop('disabled',false);
+			}
+		});
+		$('#id_menu').change(function(){
+			var id_menu = $(this).val();
+			$.post(
+				'<?php echo $this->url(array('action'=>'get-sous-menus','controller'=>'articles'),'admin',true)?>',
+				{'id_menu':id_menu},
+				function(response){
+					$('#select_sousmenus').html(response);
+				}
+			);	
+		});
+	});
+</script>

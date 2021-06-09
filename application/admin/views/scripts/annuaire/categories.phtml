@@ -1,0 +1,88 @@
+<?php echo $this->render('annuaire/tabs.phtml')?>
+<div class="nav-tabs-content">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="text-center"><a class="btn btn-success" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action'=>'add-categorie','id_annuaire_categorie'=>null,'id_annuaire_sous_categorie'=>null))?>'>Ajouter une categorie</a></div>
+			<br/>
+			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				<?php foreach($this->annuaire_categories as $annuaire_categorie):?>
+				<div id="annuaire_categorie_<?php echo $annuaire_categorie->id_annuaire_categorie; ?>" class="panel panel-default">
+					<div class="panel-heading" role="tab" id="annuaire_categorie_<?php echo $annuaire_categorie->id_annuaire_categorie; ?>">
+						<h4 class="panel-title relative">
+							<a style="display:block" data-toggle="collapse" data-parent="#accordion" href="#collapseannuaire_categorie_<?php echo $annuaire_categorie->id_annuaire_categorie; ?>" aria-expanded="true" aria-controls="collapseOne">
+							<?php echo $annuaire_categorie->name; ?>
+							</a>
+							<div class="btn-group btn-group-xs hidden">
+				    			<a class="btn btn-default voir" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action'=>'add-categorie','id_annuaire_categorie'=>$annuaire_categorie->id_annuaire_categorie))?>' title="Modifier"><span class="glyphicon glyphicon-pencil"></span></a>
+								<a class="btn btn-default delete voir" href="<?php echo $this->url(array('action'=>'delete-categorie','id_annuaire_categorie'=>$annuaire_categorie->id_annuaire_categorie))?>" title="Supprimer"><span class="glyphicon glyphicon-remove"></span></a>
+							</div>
+						</h4>
+					</div>
+					<div id="collapseannuaire_categorie_<?php echo $annuaire_categorie->id_annuaire_categorie; ?>" class="panel-collapse collapse <?php echo $this->annuaire_categorie && $this->annuaire_categorie->id_annuaire_categorie == $annuaire_categorie->id_annuaire_categorie ? "in" : ""?>" role="tabpanel" aria-labelledby="annuaire_categorie_<?php echo $annuaire_categorie->id_annuaire_categorie; ?>">
+						<div class="panel-body">
+							<div>
+								<div class="text-center"><a class="btn btn-success" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action'=>'add-sous-categorie','id_annuaire_categorie'=>$annuaire_categorie->id_annuaire_categorie,'id_annuaire_sous_categorie'=>null))?>'>Ajouter sous categorie</a></div>
+								<br/>
+								<ul class="list-group list_annuaire_sous_categories">
+									<?php foreach($annuaire_categorie->getSousCategories() as $annuaire_sous_categorie):?>
+								  		<li id="annuaire_sous_categorie_<?php echo $annuaire_sous_categorie->id_annuaire_sous_categorie; ?>" class="list-group-item relative">
+								  			<?php echo $annuaire_sous_categorie->name; ?>
+								  			<div class="btn-group btn-group-xs hidden">
+								    			<a class="btn btn-default voir" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action'=>'add-sous-categorie','id_annuaire_categorie'=>$annuaire_categorie->id_annuaire_categorie,'id_annuaire_sous_categorie'=>$annuaire_sous_categorie->id_annuaire_sous_categorie))?>' title="Modifier"><span class="glyphicon glyphicon-pencil"></span></a>
+												<a class="btn btn-default delete voir" href="<?php echo $this->url(array('action'=>'delete-sous-categorie','id_annuaire_sous_categorie'=>$annuaire_sous_categorie->id_annuaire_sous_categorie))?>" title="Supprimer"><span class="glyphicon glyphicon-remove"></span></a>
+											</div>
+								  		</li>
+								  	<?php endforeach;?>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php endforeach;?>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.voir').tooltip({
+			container : 'body'
+		});
+		$('#accordion').sortable({
+			items: ".panel",
+			update: function(event, ui) {
+				order = $(this).sortable("toArray").toString();
+				$.post(
+					'<?php echo $this->url(array('action' => 'sort-annuaire-categories'))?>',
+					'order='+order,
+					function(data, textStatus, XMLHttpRequest){
+						//$('#result').html(data);
+					}
+				);
+			}
+		});
+		$('.list_annuaire_sous_categories').sortable({
+			items: "li.list-group-item",
+			update: function(event, ui) {
+				order = $(this).sortable("toArray").toString();
+				$.post(
+					'<?php echo $this->url(array('action' => 'sort-annuaire-sous-categories'))?>',
+					'order='+order,
+					function(data, textStatus, XMLHttpRequest){
+						//$('#result').html(data);
+					}
+				);
+			}
+		});
+		$('.list_annuaire_sous_categories .list-group-item').hover(function(){
+			$('.btn-group',this).removeClass('hidden');
+		},function(){
+			$('.btn-group',this).addClass('hidden');
+		});
+		$('.panel-title').hover(function(){
+			$('.btn-group',this).removeClass('hidden');
+		},function(){
+			$('.btn-group',this).addClass('hidden');
+		});
+	});
+</script>

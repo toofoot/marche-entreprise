@@ -1,0 +1,25 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title" id="myModalLabel"><?php echo "Supprimer Utilisateur"?></h4>
+</div>
+<form id="formUser" class="form-horizontal" method='post' action='<?php echo $this->url()?>' role="form">
+	<div class="modal-body">
+		<?php echo $this->formHidden('confirm',1)?>
+		<?php if($this->userToModify->status == Aurel_Table_User::STATUS_ACTIF):?>
+			<div>Êtes vous sur de vouloir supprimer "<?php echo $this->userToModify->email?>" ? </div>
+			<div><strong>Il passera dans les utilisateurs inactifs</strong></div>
+		<?php else:?>
+			<div>Êtes vous sur de vouloir supprimer "<?php echo $this->userToModify->email?>" ? </div>
+			<div><strong>ATTENTION SUPPRESSION DEFINITIVE</strong></div>
+		<?php endif?>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+			<?php echo $this->formSubmit('valider','Supprimer',array('class'=>'btn btn-primary','data-loading-text'=>"Loading..."))?>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	
+});
+</script>

@@ -1,0 +1,9 @@
+
+<div class="jumbotron">
+  <h1>ERREUR <?php echo $this->code?></h1>
+  <p><?php echo $this->message ?></p>
+  <p><a class="btn btn-primary btn-lg" href="<?php echo $this->url(array(),'default',true)?>">Retour à l'accueil</a></p>
+  <?php if($this->showDebug):?>
+  <div class="alert alert-danger"><small><?php echo nl2br($this->debug) ?></small></div>
+  <?php endif?>
+</div>

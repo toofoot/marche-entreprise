@@ -1,0 +1,53 @@
+<div class="modal-header">
+	<?php if($this->ajax):?>
+		<button type="button" class="close <?php if($this->popup):?>rappel<?php endif?>" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<?php else:?>
+		<a class="btn btn-primary" href="<?php echo $this->url_retour ?>"><span class="glyphicon glyphicon-chevron-left"></span> Retour</a>
+		<br/><br/>
+	<?php endif?>
+	<h4 class="modal-title" id="myModalLabel">Synthèse par catégorie</h4>
+</div>
+<div class="modal-body">
+	<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_MEMBRES) && !$this->ajax):?>
+		<div class="text-center"><a class='btn btn-primary' href='<?php echo $this->url(array('controller'=>'articles','action'=>'download-synthese','id_article'=>$this->article->id_article),'admin',true)?>'>Télécharger le reporting (fichier CSV)</a></div>
+	<?php endif?>
+	<table class="table table-condensed article">
+		<thead>
+			<tr>
+				<th class="text-center">Catégorie</th>
+				<th class="text-center">Nombres</th>
+				<th>Détail</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr class="info">
+				<th class="text-center">TOTAL</th>
+				<th class="text-center"><?php echo $this->sumTotal?></th>
+				<th></th>
+			</tr>
+		</tfoot>
+		<tbody>
+			<?php foreach($this->categories as $id_inscription=>$categorie):?>
+				<?php if($this->sumCategories[$id_inscription] > 0):?>
+				<tr>
+					<td class="text-center"><?php echo $this->categories[$id_inscription]?></td>
+					<td class="text-center"><?php echo $this->sumCategories[$id_inscription]?></td>
+					
+					<td>
+						<a <?php if(!$this->ajax):?>data-toggle="modal" data-target="#myModal"<?php endif?> title="Voir le détail" class='comm btn btn-primary btn-sm <?php if($this->ajax):?>popupinpopup<?php endif?>' href="<?php echo $this->url(array('action'=>'names','id_inscription'=>$id_inscription,'return'=>$this->ajax))?>"><span class='glyphicon glyphicon-user'></span></a>
+					</td>
+				</tr>
+				<?php endif?>
+			<?php endforeach;?>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.comm').tooltip();
+		$('.popupinpopup').click(function(){
+			$('#myModal .modal-content').load($(this).prop('href'));
+			return false;
+		});
+	});
+</script>

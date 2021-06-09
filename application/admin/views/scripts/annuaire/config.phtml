@@ -1,0 +1,104 @@
+<?php echo $this->render('annuaire/tabs.phtml')?>
+<div class="clearfix nav-tabs-content">
+	<form id="frmConfig" class="form-horizontal" role="form" method="post" action="<?php echo $this->url(); ?>" enctype="multipart/form-data">
+		<div class="dateInputs alert alert-warning">
+			<div class="form-group form-inline text-center">
+				<div><strong>Accès à la rubrique Annuaire par mot de passe et autorisation de modification en FrontOffice</strong></div>
+                <div class="form-group">
+                <div class="checkbox">
+                    <label>
+					<?php echo $this->formCheckbox('active_access',null,array('checked'=>$this->config->active_access))?> Activer
+                    </label>
+				</div>
+                </div>
+				<div class="">
+					<div class="tohide dates" style="<?php echo $this->config->active_access ? "" : "display:none";?>">
+						Du 
+						<?php echo $this->formText('start_date_access',$this->start_date_access,array("class"=>"form-control","placeholder"=>"Date Début"))?> 
+						au 
+						<?php echo $this->formText('end_date_access',$this->end_date_access,array("class"=>"form-control","placeholder"=>"Date Fin"))?>
+						(inclus)
+					</div>
+					<hr />
+					<div class="form-group">
+						<?php echo $this->formLabel("password","Mot de passe",array("class"=>"col-sm-6 control-label"))?>
+						<div class="col-sm-6">
+							<?php echo $this->formText("password",$this->config->password,array("class"=>"form-control"))?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel("max_char_descriptif","Maximum caractères Description",array("class"=>"col-sm-6 control-label"))?>
+			<div class="col-sm-6">
+				<?php echo $this->formText("max_char_descriptif",$this->config->max_char_descriptif,array("class"=>"form-control"))?>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel("max_char_horaires","Maximum caractères Horaires",array("class"=>"col-sm-6 control-label"))?>
+			<div class="col-sm-6">
+				<?php echo $this->formText("max_char_horaires",$this->config->max_char_horaires,array("class"=>"form-control"))?>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel("imgDefaultFiche","Image par défaut pour les fiches",array("class"=>"col-sm-6 control-label"))?>
+			<div class="col-sm-3">
+				<img src="/images/no-photo-fiche.jpg?<?php echo uniqid()?>" alt="No photo" class="img-responsive" />
+				<?php echo $this->formFile("imgDefaultFiche")?>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<?php echo $this->formSubmit("sub","Enregistrer",array("class"=>"btn btn-primary",'data-loading-text'=>"Loading..."))?>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+	$(function(){
+		<?php if($this->session->message):?>
+			var html = '<div class="modal-header">' +
+			'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+			//'<h4 class="modal-title" id="myModalLabel">Commentaire</h4>'.
+			'&nbsp;</div>';
+			html += "<div class='modal-body'>Données enregistrées</div>";
+			html += '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button></div>';
+			$('#mySmallModal .modal-content').html(html);
+			$('#mySmallModal').modal('show');
+			$('#sub').button('reset');
+		<?php endif?>
+		$('#frmConfig').submit(function(){
+			$('#sub').button('loading');
+		});
+
+		$( "#start_date_access" ).datepicker({
+			changeMonth: true,
+			numberOfMonths: 1,
+			onSelect: function( selectedDate ) {
+				var selectedDateISO = selectedDate.replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+				var end_dateISO = $( "#end_date_access" ).val().replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+				
+				if(selectedDateISO > end_dateISO)
+					$( "#end_date_access" ).val( selectedDate );
+			}
+		});
+		$( "#end_date_access" ).datepicker({
+			changeMonth: true,
+			numberOfMonths: 1,
+			onSelect: function( selectedDate ) {
+				var selectedDateISO = selectedDate.replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+				var start_dateISO = $( "#start_date_access" ).val().replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+				
+				if(selectedDateISO < start_dateISO)
+					$( "#start_date_access" ).val( selectedDate );
+			}
+		});
+
+		$('#active_access').click(function(){
+			var checked = $(this).prop('checked');
+			if(checked)
+				$('.tohide').show();
+			else
+				$('.tohide').hide();
+		});
+	});
+</script>

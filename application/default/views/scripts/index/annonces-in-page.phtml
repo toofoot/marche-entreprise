@@ -1,0 +1,70 @@
+<?php if(count($this->articles) == 0):?>
+<div class="jumbotron text-center">
+  <p>Pas d’annonce active disponible actuellement sur cette rubrique</p>
+</div>
+
+<?php endif?>
+<?php foreach($this->articles as $article):?>
+	<?php if($article->id_article):?>
+	<div class="media row article articleTronque" id="article-<?php echo $article->id_article?>">
+		<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ANNONCES)):?>
+			<div class="actions btn-group-sm">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					Actions <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-right" role="menu">
+					<li><a data-toggle="modal" data-target="#mySmallModal" title="<?php echo $article->hide_home ? "Mettre à la Une" : "Retirer de la Une"?>" class="voir" href='<?php echo $this->url(array('action'=>'post-home','controller'=>'articles','id_article'=>$article->id_article),'admin',true)?>?url_redirect=<?php echo urlencode($_SERVER["REQUEST_URI"])?>'><span class="glyphicon glyphicon-star"></span> <?php echo $article->hide_home ? "Mettre à la Une" : "Retirer de la Une"?></a></li>
+					<li class="divider"></li>
+					<li><a data-toggle="modal" data-target="#mySmallModal" title="Supprimer" class="voir supArticle" href='<?php echo $this->url(array('action'=>'delete-annonce','controller'=>'articles','id_article'=>$article->id_article),'admin',true)?>?return=cours'><span class="glyphicon glyphicon-remove"></span> Supprimer</a></li>
+				</ul>
+			</div>
+		<?php endif?>
+		<a class="hover" href='<?php echo $this->url(array('basename_article'=>$article->basename),'basename_annonce',true); ?>'>
+			<div class="col-xs-5 col-md-3">
+				<div class="visuel">
+					<?php if($article->picture):?>
+						<?php if($article->nbPhotos > 1):?>
+						<div class="cycle-slideshow" data-cycle-speed="200" data-cycle-timeout="1000">
+							<?php foreach($article->getIdPhotos(10) as $key=>$id_photo):?>
+						    <img class="<?php echo $key == 0 ? " " : "hidden "?>img-responsive" src='/images/upload/<?php echo $article->id_article?>/thumb<?php echo $id_photo?>' alt='image<?php echo $article->id_article?>' />
+						    <?php endforeach;?>
+						</div>
+						<div class="nbPhotos">
+							<span class="glyphicon glyphicon-camera"></span> <?php echo $article->nbPhotos?>
+						</div>
+						<?php else:?>
+						<img class="img-responsive" src='/images/upload/<?php echo $article->id_article?>/thumb<?php echo $article->picture?>.<?php echo $article->extension?>' alt='image<?php echo $article->id_article?>' />
+						<?php endif?>
+					<?php elseif($article->youtube):?>
+						<div class="popupVideo">
+							<img class="img-responsive" src='//img.youtube.com/vi/<?php echo $article->youtube?>/0.jpg' alt='image<?php echo $article->id_article?>' />
+							<span class="iconePlay"></span>
+						</div>
+					<?php else: ?>
+						<img class="img-responsive" src='/images/no-photo<?php echo $article->annonce ? "-annonce" : ""?>.jpg' alt='image<?php echo $article->id_article?>' />
+					<?php endif?>
+				</div>
+			</div>
+			<div class="content col-xs-7 col-md-9" id="article<?php echo $article->id_article?>">
+				<div>
+				<h3 class="underline"><?php echo mb_strtoupper($article->title);?> <small class="pull-right">Référence annonce : <?php echo $article->id_article?></small></h3>
+				
+				</div>
+				<div class="hidden-xs contentTronque">
+					<?php echo strip_tags($article->content,"<br>");?>
+				</div>
+				<div>
+				<div class="btn btn-success btn-lg"><strong>Prix : </strong><?php echo $article->prix != '' ? $article->prix : 'A négocier' ?></div>
+				<button class="btn btn-primary btn-sm">ACCEDER A L'ANNONCE</button> 
+				</div>					
+			</div>
+		</a>
+		<div class="bottom">
+			<div class="col-md-3"></div>
+			<div class="col-md-9">
+				<div class="bottomRight"><strong>Publié le <?php echo $article->getDate('date_creation')->get(Aurel_Date::DATE_MEDIUM)?></strong></div>
+			</div>
+		</div>
+	</div>
+	<?php endif?>
+<?php endforeach;?>

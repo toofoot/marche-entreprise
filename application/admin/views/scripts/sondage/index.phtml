@@ -1,0 +1,74 @@
+<div>
+    <a class="btn btn-primary" href="<?php echo $this->url(array("action"=>"edit","id_sondage"=>null)); ?>">Ajouter sondage</a>
+</div>
+<ul class="myTab2 nav nav-tabs" role="tablist">
+    <li class="active"><a role="tab" data-toggle="tab" href='#futur'>Sondages en cours</a></li>
+    <li class=""><a role="tab" data-toggle="tab" href='#historique'>Historique Sondages</a></li>
+</ul>
+<div class="tab-content nav-tabs-content">
+    <div class="tab-pane active fade in" id="futur">
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="col-xs-3">Nom</th>
+                <th class="col-xs-3">Début</th>
+                <th class="col-xs-3">Fin</th>
+                <th class="col-xs-3"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($this->tabSortie as $id_sondage => $sondage):?>
+                <tr>
+                    <td><?php echo $sondage->name ?></td>
+                    <td><?php echo $sondage->getDate("start_date")->get(Aurel_Date::DATE_MEDIUM) ?></td>
+                    <td><?php echo $sondage->getDate("end_date")->get(Aurel_Date::DATE_MEDIUM) ?></td>
+                    <td>
+                        <a title="Editer" class="tool btn btn-primary btn-sm" href="<?php echo $this->url(array('action'=>'edit','id_sondage'=>$id_sondage,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])))?>"><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a title="Télécharger fichier CSV" class='tool btn btn-primary btn-sm' href='<?php echo $this->url(array('action'=>'download-synthese','id_sondage'=>$id_sondage))?>'><span class="glyphicon glyphicon-list-alt"></span></a>
+                        <a data-toggle="modal" data-target="#myModal" title="Lien public" class='tool btn btn-primary btn-sm' href='<?php echo $this->url(array('action'=>'link','id_sondage'=>$id_sondage))?>'><span class="glyphicon glyphicon-link"></span></a>
+                    </td>
+                </tr>
+            <?php endforeach;?>
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="historique">
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="col-xs-3">Nom</th>
+                <th class="col-xs-3">Début</th>
+                <th class="col-xs-3">Fin</th>
+                <th class="col-xs-3"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($this->tabSortieHistorique as $id_sondage => $sondage):?>
+                <tr>
+                    <td><?php echo $sondage->name ?></td>
+                    <td><?php echo $sondage->getDate("start_date")->get(Aurel_Date::DATE_MEDIUM) ?></td>
+                    <td><?php echo $sondage->getDate("end_date")->get(Aurel_Date::DATE_MEDIUM) ?></td>
+                    <td>
+                        <a title="Editer" class="tool btn btn-primary btn-sm" href="<?php echo $this->url(array('action'=>'edit','id_sondage'=>$id_sondage,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])))?>"><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a title="Télécharger fichier CSV" class='tool btn btn-primary btn-sm' href='<?php echo $this->url(array('action'=>'download-synthese','id_sondage'=>$id_sondage))?>'><span class="glyphicon glyphicon-list-alt"></span></a>
+                    </td>
+                </tr>
+            <?php endforeach;?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('.tool').tooltip();
+
+        var hash = window.location.hash;
+        if(hash){
+            $('.myTab2 a[href="'+hash+'"]').tab('show');
+        }
+        $('.myTab2 a').click(function(){
+            var hashLink = $(this).prop('href').replace("http://<?php echo $_SERVER['HTTP_HOST']?><?php echo $_SERVER['REQUEST_URI']?>","");
+            window.location.hash = hashLink;
+        });
+    });
+</script>

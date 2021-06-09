@@ -1,0 +1,33 @@
+<div class="contenuPages">
+	<div id="text" contenteditable="true"><?php echo $this->text ?></div>
+	<br/>
+	<div class="align-center">
+		<?php echo $this->formButton("valider","Enregistrer les modifications")?>
+		<div class="wait" style="display:none"><img src="/images/wait.gif" alt="wait" /></div>
+		<div class="messageRegistered ui-state-active" style="display:none;margin-top:5px"></div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$('#valider').button();
+	CKEDITOR.disableAutoInline = true;
+	CKEDITOR.config.enterMode = CKEDITOR.ENTER_DIV;
+    CKEDITOR.inline( 'text' );
+
+    $('#valider').click(function(){
+    	$('.messageRegistered').text('').hide();
+        $(".wait").show();
+        var datas = {
+        	'text' : CKEDITOR.instances.text.getData(),
+        };
+        $.post(
+        	'<?php echo $this->url()?>',
+        	datas,
+        	function(data){
+                $(".wait").hide();
+                $('.messageRegistered').text(data.message).show();
+        	},'json'
+        );
+    });
+});
+</script>

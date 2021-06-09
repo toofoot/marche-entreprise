@@ -1,0 +1,69 @@
+<div class="">
+  <div class="">
+  	
+  	<div id="articles" class="articles row">
+  		<?php echo $this->render('index/annonces-in-accueil.phtml')?>
+  	</div>
+  	<br/>
+  	<div id="pagination" class="text-center">
+  		<?php echo $this->paginationControl($this->articles,'elastic','index/control-annonces.phtml'); ?>
+  	</div>
+  </div>
+ </div>
+<script type="text/javascript">
+  	function initialisePage(){
+  		$('.cycle-slideshow').cycle();
+		$('.cycle-slideshow').cycle('pause');
+		$('.hover').hover(function(){
+			$(this).find('.cycle-slideshow').cycle('resume').cycle('goto', 1);
+		},function(){
+			$(this).find('.cycle-slideshow').cycle('pause').cycle('goto', 0);
+		});
+		$('.cycle-slideshow img').removeClass('hidden');
+
+		var nbActualites = $('.actualitesinfo').length;
+		var reste = nbActualites % 4;
+		if(reste > 0){
+			var lineDown = nbActualites - reste + 1;
+			var lineUp = lineDown + 2;
+		} else {
+			var lineDown = nbActualites - 3;
+			var lineUp = nbActualites;
+		}
+		$('.actualitesinfo hr.hidden-xs').removeClass('hidden');
+		for(i = lineDown ; i <= lineUp ; i++){
+			$('.actualitesinfo:nth-of-type('+i+') hr.hidden-xs').addClass('hidden');
+		}
+		
+		$('.actualitesinfo').removeClass('lastcolonnes').addClass('colonnes');
+		for(j = 4 ; j <= nbActualites ; j += 4){
+			$('.actualitesinfo:nth-of-type('+j+')').removeClass('colonnes').addClass('lastcolonnes');
+		}
+  	}
+  	function download(){
+  		$('.download-others').click(function(){
+			var btn = $(this)
+		    btn.button('loading');
+			$.get(
+				$(this).prop('href'),
+				function(response){
+					if(response.html){
+						$('.articles').append(response.html);
+					}
+					if(response.pagination){
+						$('#pagination').html(response.pagination);
+					}
+					download();
+					btn.button('reset');
+					btn.blur();
+					initialisePage();
+				},'json'
+			);
+			return false;
+		});
+  	}
+  	$(function(){
+		initialisePage();
+		download();
+  	});
+</script>

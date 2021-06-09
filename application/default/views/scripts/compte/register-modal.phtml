@@ -1,0 +1,194 @@
+<form id="formUser" class="form-horizontal" method='post' action='<?php echo $this->url()?>' role="form">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Inscription</h4>
+    </div>
+    <div class="modal-body">
+        <div class="">
+            <img src="/images/layout/header_ssbar.png" class="img-responsive center-block" />
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('email','Votre Email',array('class'=>'col-xs-4 control-label'))?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('email',$this->emailLogin,array('placeholder'=>'Email',"class"=>"form-control"))?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('email2','Confirmer votre Email',array('class'=>'col-xs-4 control-label'))?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('email2',null,array('placeholder'=>'Confirmer votre Email',"class"=>"form-control"))?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('lastname','Nom',array('class'=>'col-xs-4 control-label'))?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('lastname',null,array('placeholder'=>'Nom',"class"=>"form-control"))?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('firstname','Prénom',array('class'=>'col-xs-4 control-label'))?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('firstname',null,array('placeholder'=>'Prénom',"class"=>"form-control"))?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('password','Votre Mot de passe personnel',array('class'=>'col-xs-4 control-label'))?>
+            <div class="col-xs-8">
+                <?php echo $this->formPassword('password',null,array("class"=>"form-control","autocomplete"=>"off"))?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('password2','Confirmer votre Mot de passe personnel',array('class'=>'col-xs-4 control-label'))?>
+            <div class="col-xs-8">
+                <?php echo $this->formPassword('password2',null,array("class"=>"form-control","autocomplete"=>"off"))?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <?php if($this->adminAnnuaire):?>
+            <hr/>
+            <div class="form-group">
+                <div class="col-xs-offset-4 col-xs-8">
+                    <h4>Fiche annuaire</h4>
+                </div>
+                <div class="col-xs-offset-4 col-xs-8">
+                    <div class="checkbox disabled">
+                        <label>
+                            <?php echo $this->formCheckbox('adminannuaire',null,array('checked'=>true,'disabled'=>'disabled'))?> Je deviens administrateur de ma propre fiche annuaire
+                        </label>
+                    </div>
+                </div>
+            </div>
+        <?php endif?>
+        <hr/>
+        <div class="form-group">
+            <div class="col-xs-offset-4 col-xs-8">
+                <h4>Abonnement Newsletter</h4>
+            </div>
+            <div class="col-xs-offset-4 col-xs-8">
+                <div class="checkbox">
+                    <label>
+                        <?php echo $this->formCheckbox('newsletter',null,array('checked'=>true))?> J'accepte de recevoir la newsletter et les informations du petit charsien
+                    </label>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+            <div class="col-xs-offset-4 col-xs-8">
+                <h4>Service Annonces</h4>
+            </div>
+            <div class="col-xs-8 col-xs-offset-4">
+                <?php echo $this->formText('tel',null,array('placeholder'=>'Mon n° de téléphone',"class"=>"form-control","autocomplete"=>"off"))?>
+            </div>
+            <div class="col-xs-8 col-xs-offset-4">
+                <div class="checkbox">
+                    <label>
+                        <?php echo $this->formCheckbox('masque_tel',null,array('checked'=>false))?> Masquer le numéro de téléphone dans mes annonces
+                    </label>
+                </div>
+            </div>
+            <div class="col-xs-8 col-xs-offset-4">
+                <div class="checkbox">
+                    <label>
+                        <?php echo $this->formCheckbox('regles',null,array('checked'=>true))?> Je m'engage à prendre connaissance et à accepter les règles générales et particulières de diffusion des annonces (consultable à la rubriques ANNONCES)
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <?php echo $this->formSubmit('envoyer','Je m\'inscris',array("class"=>"btn btn-primary","data-loading-text"=>"Chargement..."))?>
+    </div>
+</form>
+<script type="text/javascript">
+    function addParam(url, param, value) {
+        var a = document.createElement('a'), regex = /[?&]([^=]+)=([^&]*)/g;
+        var match, str = []; a.href = url; value=value||"";
+        while (match = regex.exec(a.search))
+            if (encodeURIComponent(param) != match[1]) str.push(match[1] + "=" + match[2]);
+        str.push(encodeURIComponent(param) + "=" + encodeURIComponent(value));
+        a.search = (a.search.substring(0,1) == "?" ? "" : "?") + str.join("&");
+        return a.href;
+    }
+
+    $(function(){
+        $('.disabled a').click(function (e) {
+            return false;
+        })
+
+        $('#formUser input[type=text],#formUser input[type=password]').blur(function(){
+            var elt = $(this);
+            elt.parent().parent().removeClass('has-error').removeClass('has-success');
+            elt.parent().find('.glyphicon').addClass('hidden').removeClass('glyphicon-remove').removeClass('glyphicon-ok');
+            elt.parent().find('.message').html('');
+            $.post(
+                '<?php echo $this->url(array('action'=>'verif-element-register'),'compte',true)?>',
+                {'input':elt.prop('name'),'value':elt.val(),'email':$('#email').val(),'password':$('#password').val()},
+                function(transport){
+                    if(transport.obligatoire){
+                        if(transport.error == true){
+                            elt.parent().parent().addClass('has-error').find('.glyphicon').addClass('glyphicon-remove').removeClass('hidden');
+                        } else {$
+                            elt.parent().parent().addClass('has-success').find('.glyphicon').addClass('glyphicon-ok').removeClass('hidden');
+                        }
+                        if(transport.message){
+                            elt.parent().find('.message').html(transport.message);
+                            var newHref = addParam($('#formUser .connect').prop('href'),'emailLogin',$('#email').val());
+                            $('#formUser .connect').click(function(){
+                                $('#myLargeModal').modal('hide');
+                                $('#myModal .modal-content').load(newHref);
+                                $('#myModal').modal('show');
+                                return false;
+                            });
+                        }
+                    }
+                },'json'
+            );
+        });
+
+        $('#formUser').submit(function(){
+            $('#envoyer').button('loading');
+            $('.form-group').removeClass('has-error').removeClass('has-success');
+            $('.glyphicon').addClass('hidden').removeClass('glyphicon-remove').removeClass('glyphicon-ok');
+            $('.message').html('');
+            $.post(
+                '<?php echo $this->url()?>',
+                $(this).serialize(),
+                function(transport){
+                    if(transport.errors){
+                        for(i in transport.errors){
+                            var elt = transport.errors[i];
+                            $('#'+elt).parent().parent().addClass('has-error').find('.glyphicon').removeClass('hidden').addClass('glyphicon-remove');
+                            if(transport.message[elt])
+                                $('#'+elt).parent().find('.message').html(transport.message[elt]);
+                        }
+                        var newHref = addParam($('#formUser .connect').prop('href'),'emailLogin',$('#email').val());
+                        $('#formUser .connect').click(function(){
+                            $('#myLargeModal').modal('hide');
+                            $('#myModal .modal-content').load(newHref);
+                            $('#myModal').modal('show');
+                            return false;
+                        });
+                    }
+                    $('#envoyer').button('reset');
+                    if(transport.code == 'ok' && transport.url_redirect){
+                        window.location.href = transport.url_redirect;
+                    }
+                },'json'
+            );
+            return false;
+        });
+    });
+</script>

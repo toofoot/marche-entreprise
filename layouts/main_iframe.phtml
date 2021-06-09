@@ -1,0 +1,190 @@
+<?php echo $this->doctype() ?>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124516479-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-124516479-1');
+        </script>
+        
+        <script>
+
+            if (window.addEventListener) {
+                window.addEventListener("message", onMessage, false);
+            } else if (window.attachEvent) {
+                window.attachEvent("onmessage", onMessage, false);
+            }
+
+            function onMessage(event) {
+                var data = event.data;
+                if (data.url) {
+                    location.href = "#" + data.url;
+                }
+            }
+        </script>
+        <?php echo $this->headMeta() ?>
+        <?php echo $this->headTitle() ?>
+        <?php echo $this->headLink() ?>
+        <?php echo $this->headStyle() ?>
+        <?php echo $this->headScript() ?>
+    </head>
+    <body>
+        <div id="fb-root"></div>
+        <script>(function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id))
+                    return;
+                js = d.createElement(s);
+                js.id = id;
+                js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.0";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+        <div>
+            <header>
+                <div class="">
+                    <nav class="navbar navbar-default navbar-inverse navbar-static-top" role="navigation" style="margin-bottom:0">
+                        <div class="container-fluid">
+                            <div class="navbar-header hidden-sm">
+                                <button type="button" class="navbar-toggle " data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                                    <span class="visible-xs text-center">Menu</span>
+                                    <span class="icon-bar center-block"></span>
+                                    <span class="icon-bar center-block"></span>
+                                    <span class="icon-bar center-block"></span>
+                                </button>
+                                <a class="navbar-brand" href="<?php echo $this->url(array(), 'accueil', true) ?>"></a>
+                            </div>
+                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_MENUS)): ?>
+                                    <ul class="toOrder nav navbar-nav">
+                                        <?php $numItems = count($this->menus); ?>
+                                        <?php $i = 0 ?>
+                                        <?php foreach ($this->menus as $menu): ?>
+                                            <li id="menu_<?php echo $menu->id_menu ?>" class="elt_of_menu dropdown <?php echo $menu->basename == $this->basename_principal ? "active" : "" ?> <?php echo $i === 0 ? "first" : "" ?> <?php echo ++$i === $numItems ? "last" : "" ?>">
+                                                <a <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN) || !$menu->agenda): ?>class="dropdown-toggle" data-toggle="dropdown"<?php endif ?> href="<?php echo ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN) || !$menu->agenda) ? "#" : $this->url(array("basename_principal" => $menu->basename), "basenames", true) ?>"><?php echo mb_strtoupper($menu->name) ?><?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN) || !$menu->agenda): ?><span class="caret"></span><?php endif ?></a>
+
+                                                <ul class="toSortSousMenu dropdown-menu inverse-dropdown">
+                                                    <?php if ($menu->sous_menus_name): ?>
+                                                        <?php $liste_basename = explode(",", $menu->sous_menus_basename) ?>
+                                                        <?php $liste_name = explode(",", $menu->sous_menus_name) ?>
+                                                        <?php $liste_id = explode(",", $menu->sous_menus_id) ?>
+                                                        <?php $liste_id_creation = explode(",", $menu->id_creation) ?>
+                                                        <?php foreach ($liste_basename as $key => $basename): ?>
+                                                            <?php $id_creation = str_replace($liste_id[$key] . ":", "", $liste_id_creation[$key]) ?>
+                                                            <li class="relative <?php echo $basename == $this->basename_secondaire ? "active" : "" ?>" id="sousmenu-<?php echo $liste_id[$key] ?>">
+                                                                <a href='<?php echo $this->url(array("basename_principal" => $menu->basename, 'basename_secondaire' => $basename), "basenames", true) ?>'><?php echo $liste_name[$key] ?></a>
+                                                                <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN) || $this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN) && $id_creation == $this->user->id_user): ?>
+                                                                    <div class="btn-group btn-group-xs">
+                                                                        <a title="Modifier" class="btn btn-default" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('controller' => 'menu', 'action' => 'add-edit', 'id_sous_menu' => $liste_id[$key], 'basename_principal' => $menu->basename), 'admin', true) ?>'><span class='glyphicon glyphicon-pencil'></span></a>
+                                                                        <a title="Supprimer" class="btn btn-default delete" href='<?php echo $this->url(array('controller' => 'menu', 'action' => 'delete-menu', 'id_sous_menu' => $liste_id[$key]), 'admin', true) ?>'><span class='glyphicon glyphicon-remove'></span></a>
+                                                                    </div>
+                                                                <?php endif ?>
+                                                            </li>
+                                                        <?php endforeach; ?>
+                                                    <?php endif ?>
+                                                    <?php if (!$menu->agenda): ?><li class="divider"></li><?php endif ?>
+                                                    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)): ?><li><a href='<?php echo $this->url(array("basename_principal" => $menu->basename), "basenames", true) ?>'><?php if ($menu->news): ?><span class="glyphicon glyphicon glyphicon-list"></span> Liste <?php echo $menu->name ?><?php else: ?><span class="glyphicon glyphicon-home"></span> <?php echo $menu->name ?><?php endif ?></a></li><?php endif ?>
+                                                    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)): ?><li><a data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('controller' => 'menu', 'action' => 'add-edit-menu', 'id_menu' => $menu->id_menu), 'admin', true) ?>'><span class="glyphicon glyphicon-pencil"></span> Editer Menu</a></li><?php endif ?>
+                                                    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN) && !$menu->news): ?><li><a data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action' => 'add-edit', 'controller' => 'menu', 'basename_principal' => $menu->basename), 'admin', true) ?>'><span class="glyphicon glyphicon-plus"></span> Ajouter un sous menu</a></li><?php endif ?>
+                                                    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)): ?><li><a class="delete" href='<?php echo $this->url(array('action' => 'delete-menu-principal', 'controller' => 'menu', 'id_menu' => $menu->id_menu), 'admin', true) ?>'><span class="glyphicon glyphicon-remove"></span> Supprimer</a></li><?php endif ?>
+                                                </ul>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <ul class="nav navbar-nav">
+                                        <?php $numItems = count($this->menus); ?>
+                                        <?php $i = 0 ?>
+                                        <?php foreach ($this->menus as $menu): ?>
+                                            <li id="menu_<?php echo $menu->id_menu ?>" class="elt_of_menu <?php echo $menu->sous_menus_name ? "dropdown" : "" ?> <?php echo $menu->basename == $this->basename_principal ? "active" : "" ?> <?php echo $i === 0 ? "first" : "" ?> <?php echo ++$i === $numItems ? "last" : "" ?>">
+                                                <a <?php if ($menu->sous_menus_name): ?>class="dropdown-toggle" data-toggle="dropdown"<?php endif ?> href="<?php echo $menu->sous_menus_name ? "#" : $this->url(array("basename_principal" => $menu->basename), "basenames", true) ?>"><?php echo mb_strtoupper($menu->name) ?><?php if ($menu->sous_menus_name): ?><span class="caret"></span><?php endif ?></a>
+                                                <?php if ($menu->sous_menus_name): ?>
+                                                    <?php $liste_basename = explode(",", $menu->sous_menus_basename) ?>
+                                                    <?php $liste_name = explode(",", $menu->sous_menus_name) ?>
+                                                    <?php $liste_id = explode(",", $menu->sous_menus_id) ?>
+                                                    <?php $liste_annonces = explode(",", $menu->sous_menu_annonces) ?>
+                                                    <ul class="dropdown-menu inverse-dropdown">
+                                                        <?php if ($menu->annonces && !$this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)): ?>
+                                                            <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE)): ?>
+                                                                <li class=""><a class="alert-danger" href='<?php echo $this->url(array("action" => "annonces"), "compte", true) ?>'>Gérer mes annonces</a></li>
+                                                            <?php else : ?>
+                                                                <li class=""><a class="alert-danger" href='<?php echo $this->url(array("action" => "add-annonce"), "action", true) ?>'>Déposer une annonce</a></li>
+                                                            <?php endif ?>
+                                                            <li class="divider"></li>
+                                                        <?php endif ?>
+                                                        <?php foreach ($liste_basename as $key => $basename): ?>
+                                                            <?php $sous_menu_annonce = str_replace($liste_id[$key] . ":", "", $liste_annonces[$key]) ?>
+                                                            <?php if (!$sous_menu_annonce): ?>
+                                                                <li class="<?php echo $basename == $this->basename_secondaire ? "active" : "" ?>"><a href='<?php echo $this->url(array("basename_principal" => $menu->basename, 'basename_secondaire' => $basename), "basenames", true) ?>'><?php echo $liste_id[$key] == $this->sousmenuAnnuaire ? "<span class='glyphicon glyphicon-book'></span> " : "" ?><?php if ($menu->annonces && isset($this->tabPastillesAnnonces[$liste_id[$key]])): ?><span class="badge pull-right"><?php echo $this->tabPastillesAnnonces[$liste_id[$key]] ?></span><?php endif ?><?php echo $liste_name[$key] ?></a></li>
+                                                            <?php endif ?>
+                                                        <?php endforeach; ?>
+                                                        <?php if ($menu->annonces): ?>
+                                                            <li class="divider"></li>
+                                                            <li class=""><a class="alert-info" href='<?php echo $this->url(array("basename_principal" => "annonces", 'basename_secondaire' => ""), "basenames", true) ?>'>Voir toutes les annonces</a></li>
+                                                            <?php foreach ($liste_basename as $key => $basename): ?>
+                                                                <?php $sous_menu_annonce = str_replace($liste_id[$key] . ":", "", $liste_annonces[$key]) ?>
+                                                                <?php if ($sous_menu_annonce): ?>
+                                                                    <li class="<?php echo $basename == $this->basename_secondaire ? "active" : "" ?>"><a href='<?php echo $this->url(array("basename_principal" => $menu->basename, 'basename_secondaire' => $basename), "basenames", true) ?>'><?php if ($menu->annonces && isset($this->tabPastillesAnnonces[$liste_id[$key]])): ?><span class="badge pull-right"><?php echo $this->tabPastillesAnnonces[$liste_id[$key]] ?></span><?php endif ?><?php echo $liste_name[$key] ?></a></li>
+                                                                <?php endif ?>
+                                                            <?php endforeach; ?>
+                                                        <?php endif ?>
+                                                    </ul>
+                                                <?php endif ?>
+                                            </li>
+
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif ?>
+                                <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_MENUS)): ?>
+                                    <a class="btn btn-default navbar-btn btn-sm" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action' => 'add-edit-menu', 'controller' => 'menu'), 'admin', true) ?>'><span class="glyphicon glyphicon-plus"></span> ADD MENU</a>
+                                <?php endif ?>
+                                <div class="btn-toolbar account-div" role="toolbar">
+                                    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)): ?>
+                                    <?php elseif ($this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE)): ?>
+                                        <div class="">
+                                            <div><a class="" href='<?php echo $this->url(array(), 'compte', true) ?>'><i class="glyphicon glyphicon-cog"></i> Mon compte</a></div>
+                                            <div><a class="" href='<?php echo $this->url(array('action'=>'invitations'), 'compte', true) ?>'><i class="glyphicon glyphicon-envelope"></i> Mes invitations</a></div>
+                                            <div><a class="" href='<?php echo $this->url(array('action' => 'logout', 'url_redirect' => $this->logout_url_redirect), 'compte', true) ?>'><i class="glyphicon glyphicon-log-out"></i> Deconnexion [<?php echo $this->user->firstname ?> <?php echo $this->user->lastname ?>]</a></div>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="">
+                                            <div><a class="" href='<?php echo $this->url(array("action" => "register"), 'compte', true) ?>'>Créer mon compte</a></div>
+                                            <div><a class="" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action' => 'login', 'url_redirect' => $this->logout_url_redirect), 'compte', true) ?>'>Je me connecte</a></div>
+                                        </div>
+                                    <?php endif ?>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </header>
+            <div id="main">
+                <?php echo $this->layout()->content ?>
+                
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body text-center">
+                                <img src="/images/ajax-loader-bar.gif" alt="loader" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script type="text/javascript">
+<?php if ($this->session->inscription): ?>
+            $('#mySmallModal').modal({
+                remote: '<?php echo $this->url(array("action" => "register-ok"), 'compte', true) ?>'
+            });
+<?php endif ?>
+        </script>
+    </body>
+</html>

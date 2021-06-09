@@ -1,0 +1,126 @@
+<div id="upload" style="text-align:center;height:400px;margin-top:10px">
+	<input class="center-block btn btn-default" type="file" name="pic" id="pic" multiple/>
+	<div id="dropbox">
+		<div class="message">Glissez les images ici</div>
+		<div class="hoverMessage">Déposez ici</div>
+	</div>
+</div>
+<script>
+$(function(){
+	var dropbox = $('#dropbox'),
+	message = $('.message,.hoverMessage', dropbox);
+
+	function initializeUpload(){
+		dropbox.filedrop({
+			// The name of the $_FILES entry:
+			inputFile:'#pic',
+			data:{'id_article':'<?php echo $this->article->id_article?>'},
+			paramname:'pic',
+			dragOver : function(){
+				$('#dropbox').addClass('hover');
+				$('#dropbox .message').hide();
+				$('#dropbox .hoverMessage').show();
+			},
+			dragLeave : function(){
+				$('#dropbox').removeClass('hover');
+				$('#dropbox .message').show();
+				$('#dropbox .hoverMessage').hide();
+			},
+			maxfiles: 50,
+			maxfilesize: 20,
+			url: '/admin/photos/upload/',
+			
+			uploadFinished:function(i,file,response){
+				$.data(file).addClass('done');
+			},
+			afterAll:function(){
+				$('#myLargeModal .modal-content').load("<?php echo $this->url(array('action'=>'edit-picture','controller'=>'articles','id_article'=>$this->article->id_article),'admin',true)?>");
+				//document.location.reload();
+			},
+			
+			error: function(err, file) {
+				switch(err) {
+					case 'BrowserNotSupported':
+						showMessage('Your browser does not support HTML5 file uploads!');
+						break;
+					case 'TooManyFiles':
+						alert('Too many files! Please select 5 at most! (configurable)');
+						break;
+					case 'FileTooLarge':
+						alert(file.name+' is too large! Please upload files up to 20mb (configurable).');
+						break;
+					default:
+						break;
+				}
+			},
+			
+			// Called before each upload is started
+			beforeEach: function(file){
+				if(!file.type.match(/^image\//)){
+					alert('Only images are allowed!');
+					
+					// Returning false will cause the
+					// file to be rejected
+					return false;
+				}
+			},
+			
+			uploadStarted:function(i, file, len){
+				createImage(file);
+			},
+			
+			progressUpdated: function(i, file, progress) {
+				$.data(file).find('.progress').width(progress);
+			}
+			 
+		});
+	}
+
+	var template = '<div class="preview">'+
+						'<span class="imageHolder">'+
+							'<img />'+
+							'<span class="uploaded"></span>'+
+						'</span>'+
+						'<div class="progressHolder">'+
+							'<div class="progress"></div>'+
+						'</div>'+
+					'</div>'; 
+
+
+	function createImage(file){
+
+		var preview = $(template), 
+			image = $('img', preview);
+			
+		var reader = new FileReader();
+		
+		image.width = 100;
+		image.height = 100;
+		
+		reader.onload = function(e){
+			
+			// e.target.result holds the DataURL which
+			// can be used as a source of the image:
+			
+			image.attr('src',e.target.result);
+		};
+		
+		// Reading the file as a DataURL. When finished,
+		// this will trigger the onload function above:
+		reader.readAsDataURL(file);
+		
+		message.hide();
+		preview.appendTo(dropbox);
+		
+		// Associating a preview container
+		// with the file, using jQuery's $.data():
+		
+		$.data(file,preview);
+	}
+
+	function showMessage(msg){
+		message.html(msg);
+	}
+	initializeUpload();
+});
+</script>

@@ -1,0 +1,22 @@
+<?php $url = "pronostiques.btob-adidas.com"; ?>
+<?php //$url = "local.pronoteam-adidas.fr"; ?>
+<?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE)): ?>
+    <?php $hash = Aurel_Encryptor::getInstance()->encrypt(json_encode($this->user->toArray()),3600)->getEncryptedValue() ?>
+    <?php //$hash = base64_encode(json_encode($this->user->toArray())) ?>
+    <iframe id="iframePronostiques" src="//<?= $url ?>/index/connecte-avec-hash/?h=<?= $hash ?>" style="display:block;border:none;width:100%;height:calc(100vh - 73px)"></iframe>
+<?php else: ?>
+    <h1 class="text-center">Vous devez être connecté pour pouvoir pronostiquer</h1>
+    <div class="text-center">
+        <a class="btn btn-primary" href='<?php echo $this->url(array("action" => "register"), 'compte', true) ?>?url_redirect=<?= urlencode('/pronostiques') ?>'>Créer mon compte</a>
+        <a class="btn btn-primary" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action' => 'login', 'url_redirect' => $this->logout_url_redirect), 'compte', true) ?>'>Je me connecte</a>
+    </div>
+<?php endif; ?>
+<script>
+$(function(){
+    if(window.location.hash){
+        var url = window.location.hash.replace('#','');
+        $('#iframePronostiques').prop('src',"//<?= $url ?>" + decodeURIComponent(url));
+    } 
+});
+</script>
+

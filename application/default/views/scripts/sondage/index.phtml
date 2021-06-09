@@ -1,0 +1,100 @@
+
+<?php if ($this->sondage->login_required && !$this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE)): ?>
+    <form id="formFiche" class="form-horizontal" method='post' action='<?php echo $this->url() ?>' role="form">
+        <div class="modal-header">
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <div class="alert alert-danger">
+                        <ul>
+                            <li><strong>Si vous êtes déjà inscrit sur le site, saisissez votre adresse email ci dessous</strong></li>
+                            <li><strong>Si vous n'êtes pas encore inscrit sur le site, saisissez votre adresse email ci dessous, vous compléterez ensuite votre inscription</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $this->formLabel('email_connexion', 'Adresse Email *', array('class' => 'control-label col-sm-3')) ?>
+                <div class="col-sm-9">
+                    <?php echo $this->formText('email_connexion', null, array('class' => 'form-control')) ?>
+                    <span class="message text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <?php echo $this->formSubmit('verif', 'Valider', array('class' => 'btn btn-success', "data-loading-text" => "Recherche...")) ?>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </form>
+<?php elseif ($this->sondage->several_answers): ?>
+    <?php if ($this->tabResponses): ?>
+        <div class="article">
+            <h3 class="text-center">Vos réponses</h3>
+            <table class="table">
+                <tr>
+                    <?php foreach ($this->questions as $question): ?>
+                        <th><?php echo $question->question ?></th>
+                    <?php endforeach ?>
+                    <th></th>
+                </tr>
+                <?php foreach ($this->tabResponses as $sessid => $tab): ?>
+                    <tr>
+                        <?php foreach ($tab as $reponse): ?>
+                            <td><?php foreach ($reponse as $option): ?><?php echo nl2br($option->reponse) ?><br/><?php endforeach ?></td>
+                        <?php endforeach ?>
+                        <?php if (!$this->avant && !$this->apres): ?>
+                            <td class="text-right">
+                                <div class="btn-group btn-group-sm" role="group" >
+                                    <a class="btn btn-primary" href="<?php echo $this->url(array("sessid" => $sessid, 'url_redirect' => urlencode($this->url()))) ?>"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+                                    <?php /* <a class="btn btn-default" data-toggle="modal" data-target="#mySmallModal" href="<?php echo $this->url(array("action"=>"delete","sessid"=>$sessid,'url_redirect'=>urlencode($this->url()))) ?>"><span class="glyphicon glyphicon-remove"></span></a> */ ?>
+                                </div>
+                            </td>
+                        <?php endif; ?>
+                    </tr>
+                <?php endforeach ?>
+            </table>
+        </div>
+    <?php else: ?>
+        <?php echo $this->render('sondage/questionnaire.phtml') ?>
+    <?php endif ?>
+<?php else: ?>
+    <?php echo $this->render('sondage/questionnaire.phtml') ?>
+<?php endif ?>
+<script type="text/javascript">
+    $(function () {
+        $('#formFiche').submit(function (e) {
+            $('#verif').button('loading');
+            $('.form-group').removeClass('has-error');
+            $('.message').html('');
+            $.post(
+                    '<?php echo $this->url(array('action' => 'is-user'), 'action', true) ?>',
+                    $('#formFiche').serialize(),
+                    function (response) {
+                        if (response.user !== undefined) {
+                            if (response.user) {
+                                $('#myModal .modal-content').load('<?php echo $this->url(array('action' => 'login', 'url_redirect' => $this->logout_url_redirect, 'after' => 'sondage', 'url_validation' => urlencode($_SERVER['REQUEST_URI'])), 'compte', true) ?>?emailLogin=' + response.email, function (result) {
+                                    $('#myModal').modal('show');
+                                    $('#myLargeModal').modal('hide');
+                                    $('#verif').button('reset');
+                                });
+                            } else {
+                                $('#myLargeModal .modal-content').load('<?php echo $this->url(array("action" => "register", 'url_redirect' => $this->logout_url_redirect, 'after' => 'sondage', 'url_validation' => urlencode($_SERVER['REQUEST_URI'])), 'compte', true) ?>?emailLogin=' + response.email, function (result) {
+                                    $('#myLargeModal').modal('show');
+                                    $('#verif').button('reset');
+                                });
+                            }
+                        } else {
+                            if (response.errors) {
+                                for (i in response.errors) {
+                                    $('#' + i).parent().parent().addClass('has-error').find('.message').html(response.errors[i]);
+                                }
+                            }
+                            $('#verif').button('reset');
+                        }
+                    }, 'json'
+                    );
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,46 @@
+	<?php $cptRedacteur = 0;?>
+	<div class="panel-group" id="accordion">
+	<?php foreach($this->totalRedacteur as $email => $countRedacteur):?>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#redacteur_<?php echo $cptRedacteur?>">
+					<span class="caret"></span>
+					<?php echo $email?>
+					<span class="pull-right badge"><?php echo $countRedacteur?></span>
+				</a>
+				</h4>
+			</div>
+			<div id="redacteur_<?php echo $cptRedacteur?>" class="panel-collapse collapse">
+				<div class="panel-body">
+					<?php if($this->totalRedacteur[$email] > 0):?>
+					<?php $cptMenu = 0;?>
+					<ul class="nav nav-pills nav-stacked">
+					<?php foreach($this->totalMenu[$email] as $menu_name => $countMenu):?>
+						<li class="thumbnail">
+							<a href='#' onclick='$(".list_sous_menu").not($(this).next()).stop(true,true).slideUp();$(".menu_<?php echo $cptRedacteur?>_<?php echo $cptMenu?>").stop(true,true).slideToggle();return false;'>
+								<span class="caret"></span>
+								<span class="pull-right badge"><?php echo $countMenu?></span>
+								<?php echo $menu_name?>
+							</a>
+							<ul class="list_sous_menu nav nav-pills nav-stacked menu_<?php echo $cptRedacteur?>_<?php echo $cptMenu?>" style="display:none">
+								<?php foreach($this->totalSousMenu[$email][$menu_name] as $sous_menu_name => $countSousMenu):?>
+								<li>
+									<a href='#'>
+										<span class="pull-right badge"><?php echo $countSousMenu?></span>
+										<?php echo $sous_menu_name?>
+									</a>
+								</li>
+								<?php endforeach;?>
+							</ul>
+							<?php $cptMenu++;?>
+						</li>
+					<?php endforeach;?>
+					</ul>
+					<?php endif?>
+				</div>
+			</div>
+		</div>
+		<?php $cptRedacteur++;?>
+	<?php endforeach;?>
+	</div>

@@ -1,0 +1,160 @@
+<form id="formUser" class="form-horizontal" method='post' action='<?php echo $this->url() ?>' role="form" autocomplete='new-password'>
+    <div class="modal-body">
+        <div class="form-group">
+            <h1 class="text-center">Inscription</h1>
+        </div>
+        
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('lastname', 'Nom', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('lastname', $this->user ? $this->user->lastname : null, array('placeholder' => 'Nom', "class" => "form-control")) ?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('firstname', 'Prénom', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('firstname', $this->user ? $this->user->firstname : null, array('placeholder' => 'Prénom', "class" => "form-control")) ?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('societe', 'Société', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('societe', $this->user ? $this->user->societe : null, array('placeholder' => 'Société', "class" => "form-control")) ?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('fonction', 'Fonction', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('fonction', $this->user ? $this->user->fonction : null, array('placeholder' => 'fonction', "class" => "form-control")) ?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('email', 'Votre Email', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <?php echo $this->formText('email', $this->user ? $this->user->email : null, array('placeholder' => 'Email', "class" => "form-control")) ?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('password', 'Votre Mot de passe personnel', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <?php echo $this->formPassword('password', null, array("class" => "form-control", "autocomplete" => "new-password")) ?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('password2', 'Confirmer votre Mot de passe personnel', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <?php echo $this->formPassword('password2', null, array("class" => "form-control", "autocomplete" => "off")) ?>
+                <span class="glyphicon form-control-feedback hidden"></span>
+                <span class="message text-danger"></span>
+            </div>
+        </div>
+        <?php if ($this->adminAnnuaire): ?>
+            <?php echo $this->formHidden('adminannuaire', 1, array()) ?>
+        <?php endif ?>
+        <?php echo $this->formHidden('newsletter', 1) ?>
+        <?php echo $this->formHidden('masque_tel', 1) ?>
+        <?php echo $this->formHidden('regles', 1) ?>
+
+    </div>
+    <div class="modal-footer">
+        <?php echo $this->formSubmit('envoyer', 'Je m\'inscris', array("class" => "btn btn-primary", "data-loading-text" => "Chargement...")) ?>
+    </div>
+</form>
+<script type="text/javascript">
+    function addParam(url, param, value) {
+        var a = document.createElement('a'), regex = /[?&]([^=]+)=([^&]*)/g;
+        var match, str = [];
+        a.href = url;
+        value = value || "";
+        while (match = regex.exec(a.search))
+            if (encodeURIComponent(param) != match[1])
+                str.push(match[1] + "=" + match[2]);
+        str.push(encodeURIComponent(param) + "=" + encodeURIComponent(value));
+        a.search = (a.search.substring(0, 1) == "?" ? "" : "?") + str.join("&");
+        return a.href;
+    }
+
+    $(function () {
+        $('.disabled a').click(function (e) {
+            return false;
+        })
+
+        $('#formUser input[type=text],#formUser input[type=password]').blur(function () {
+            var elt = $(this);
+            elt.parent().parent().removeClass('has-error').removeClass('has-success');
+            elt.parent().find('.glyphicon').addClass('hidden').removeClass('glyphicon-remove').removeClass('glyphicon-ok');
+            elt.parent().find('.message').html('');
+            $.post(
+                    '<?php echo $this->url(array('action' => 'verif-element-register','hash' => $this->user ? $this->user->hash : null), 'compte', true) ?>',
+                    {'input': elt.prop('name'), 'value': elt.val(), 'email': $('#email').val(), 'password': $('#password').val()},
+                    function (transport) {
+                        if (transport.obligatoire) {
+                            if (transport.error == true) {
+                                elt.parent().parent().addClass('has-error').find('.glyphicon').addClass('glyphicon-remove').removeClass('hidden');
+                            } else {
+                                $
+                                elt.parent().parent().addClass('has-success').find('.glyphicon').addClass('glyphicon-ok').removeClass('hidden');
+                            }
+                            if (transport.message) {
+                                elt.parent().find('.message').html(transport.message);
+                                var newHref = addParam($('#formUser .connect').prop('href'), 'emailLogin', $('#email').val());
+                                $('#formUser .connect').click(function () {
+                                    $('#myLargeModal').modal('hide');
+                                    $('#myModal .modal-content').load(newHref);
+                                    $('#myModal').modal('show');
+                                    return false;
+                                });
+                            }
+                        }
+                    }, 'json'
+                    );
+        });
+
+        $('#formUser').submit(function () {
+            $('#envoyer').button('loading');
+            $('.form-group').removeClass('has-error').removeClass('has-success');
+            $('.glyphicon').addClass('hidden').removeClass('glyphicon-remove').removeClass('glyphicon-ok');
+            $('.message').html('');
+            $.post(
+                    '<?php echo $_SERVER["REQUEST_URI"] ?>',
+                    $(this).serialize(),
+                    function (transport) {
+                        if (transport.errors) {
+                            for (i in transport.errors) {
+                                var elt = transport.errors[i];
+                                $('#' + elt).parent().parent().addClass('has-error').find('.glyphicon').removeClass('hidden').addClass('glyphicon-remove');
+                                if (transport.message[elt])
+                                    $('#' + elt).parent().find('.message').html(transport.message[elt]);
+                            }
+                            var newHref = addParam($('#formUser .connect').prop('href'), 'emailLogin', $('#email').val());
+                            $('#formUser .connect').click(function () {
+                                $('#myLargeModal').modal('hide');
+                                $('#myModal .modal-content').load(newHref);
+                                $('#myModal').modal('show');
+                                return false;
+                            });
+                        }
+                        $('#envoyer').button('reset');
+                        if (transport.code == 'ok' && transport.url_redirect) {
+                            window.location.href = transport.url_redirect;
+                        }
+                    }, 'json'
+                    );
+            return false;
+        });
+    });
+</script>

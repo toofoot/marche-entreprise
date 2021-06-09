@@ -1,0 +1,36 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4 class="modal-title" id="myModalLabel"><?php echo $this->sousmenu->id_menu ? "Editer Sous Menu" : "Ajouter Sous Menu"?></h4>
+</div>
+<form method='post' action='<?php echo $this->url()?>' role="form">
+	<div class="modal-body">
+		<div class="form-group">
+			<?php echo $this->formLabel('name','Nom du sous menu')?>
+			<?php echo $this->formText('name',$this->sousmenu->name,array('placeholder'=>'Nom du sous menu',"class"=>"form-control"))?>
+		</div>
+		<?php if($this->menuannonce):?>
+		<div class="checkbox">
+            <label>
+			<?php echo $this->formCheckbox('sous_menu_annonce',null,array("class"=>"","checked"=>$this->sousmenu->sous_menu_annonce))?>
+			Sous Menu Annonces
+            </label>
+		</div>
+		<?php else:?>
+		<div class="checkbox">
+            <label>
+			<?php echo $this->formHidden('sous_menu_annuaire',null)?>
+			Sous Menu Annuaire
+            </label>
+		</div>
+		<?php endif?>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			<?php echo $this->formSubmit('valider','Enregistrer les modifications',array('class'=>'btn btn-primary','data-loading-text'=>"Loading..."))?>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	
+});
+</script>

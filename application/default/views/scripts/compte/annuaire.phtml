@@ -1,0 +1,59 @@
+<?php echo $this->render('compte/tabs.phtml')?>
+<div class="nav-tabs-content">
+    <?php if($this->fiche): ?>
+	<div class="media row article thumbnail" id="fiche-<?php echo $this->fiche->id_annuaire_fiche?>">
+		<div class="actions btn-group-sm">
+			<a class='modifFiche btn btn-default' href='<?php echo $this->url(array('action'=>'edit-fiche','id_annuaire_fiche'=>$this->fiche->id_annuaire_fiche,'basenamesouscategorie'=>$this->fiche->basename_sous_categorie,'basenamecategorie'=>$this->fiche->basename_categorie,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'annuaire')?>'><span class="glyphicon glyphicon-pencil"></span> Mise à jour</a>
+		</div>
+		<div class="col-md-3">
+			<div class="visuel">
+				<?php if($this->fiche->picture):?>
+					<?php if($this->fiche->nbPhotos > 1):?>
+					<div class="cycle-slideshow" data-cycle-speed="200" data-cycle-timeout="1000">
+						<?php foreach($this->fiche->getIdPhotos(10) as $key=>$id_photo):?>
+					    <img class="<?php echo $key == 0 ? " " : "hidden "?>img-responsive" src='/images/upload/fiche_<?php echo $this->fiche->id_annuaire_fiche?>/thumb<?php echo $id_photo?>' alt='image<?php echo $this->fiche->id_annuaire_fiche?>' />
+					    <?php endforeach;?>
+					</div>
+					<div class="nbPhotos">
+						<span class="glyphicon glyphicon-camera"></span> <?php echo $this->fiche->nbPhotos?>
+					</div>
+					<?php else:?>
+					<img class="img-responsive" src='/images/upload/fiche_<?php echo $this->fiche->id_annuaire_fiche?>/thumb<?php echo $this->fiche->picture?>.<?php echo $this->fiche->extension?>' alt='image<?php echo $this->fiche->id_annuaire_fiche?>' />
+					<?php endif?>
+				<?php else: ?>
+					<img class="img-responsive" src='/images/no-photo-fiche.jpg' alt='image<?php echo $this->fiche->id_annuaire_fiche?>' />
+				<?php endif?>
+			</div>
+		</div>
+		<div class="content col-md-9" id="fiche<?php echo $this->fiche->id_annuaire_fiche?>">
+			<?php /*?><div style="height:5px;background-color:<?php echo "#" . $this->fiche->color_code; ?>"></div>*/?>
+			<div><h3 class="underline" style="margin-top:5px"><?php echo mb_strtoupper($this->fiche->nom_etablissement);?></h3></div>
+			<div class="">
+				<div class=""><?php echo $this->fiche->adresse_1;?></div>
+				<div class=""><?php echo $this->fiche->adresse_2;?></div>
+				<div class=""><?php echo $this->fiche->code_postal;?> <?php echo $this->fiche->ville;?></div>
+				<?php if($this->fiche->website):?>
+					<?php $url = $this->fiche->website?>
+					<?php $site = str_replace("http://","",$url)?>
+					<?php $site = str_replace("https://","",$site)?>
+					<div><a href='<?php echo $url?>'><?php echo $site?></a></div>
+				<?php endif?>
+			</div>
+			<div class="alert" style="padding-left:0;padding-right:0;">
+				<div><?php echo $this->fiche->descriptif;?></div>
+			</div>
+			<?php if($this->fiche->contact_nom || $this->fiche->contact_prenom || $this->fiche->tel_1|| $this->fiche->tel_2 || $this->fiche->mail):?>
+			<fieldset class="telechargements">
+				<legend>Contact</legend>
+				<div class=''>
+					<div><strong><?php echo $this->fiche->contact_nom?> <?php echo $this->fiche->contact_prenom?></strong></div>
+					<?php if($this->fiche->tel_1):?><div><span class="glyphicon glyphicon-earphone"></span> Tel : <?php echo $this->fiche->tel_1?></div><?php endif?>
+					<?php if($this->fiche->tel_2):?><div><span class="glyphicon glyphicon-phone"></span> Tel : <?php echo $this->fiche->tel_2?></div><?php endif?>
+					<?php if($this->fiche->mail):?><div><span class="glyphicon glyphicon-envelope"></span> Email : <a class="" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action'=>'contact','id_annuaire_fiche'=>$this->fiche->id_annuaire_fiche,'basenamesouscategorie'=>$this->fiche->basename_sous_categorie,'basenamecategorie'=>$this->fiche->basename_categorie))?>'><?php echo $this->fiche->mail?></a></div><?php endif?>
+				</div>
+			</fieldset>
+			<?php endif?>
+		</div>
+	</div>
+    <?php endif ?>
+</div>

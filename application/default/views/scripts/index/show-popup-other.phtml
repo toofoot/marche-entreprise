@@ -1,0 +1,57 @@
+<form id="formUser" class="form-horizontal" method='post' action='<?php echo $_SERVER['REQUEST_URI']?>' role="form">
+	<div class="modal-header" style="border-bottom: none">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+	</div>
+	<div class="modal-body">
+        <div class="text-center">
+            <img src="/images/encart-site2.jpg" class="img-responsive center-block" />
+        </div>
+        <h4 class="text-center"><strong>RECENSEMENT TRANSPORT BUS SCOLAIRE RENTREE 2015-2016</strong></h4>
+        <div style="font-size:16px;margin:0 ">
+            Si vous avez des enfants scolarisés au collège, au lycée ou dans un établissement d'enseignement supérieur, vous êtes concernés par ce recensement.
+            <br/>
+            Afin de nous assurer de la mise en place des transports scolaires nécessaires pour la rentrée 2015-2016, nous vous sollicitons et vous demandons de bien vouloir remplir ce formulaire.
+            <br/>
+            <br/>
+            <h4 class="text-center text-danger"><strong>REPONSE IMPERATIVE AVANT LE 24 JUIN 2015</strong></h4>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <a class="btn btn-primary btn-block" href="/sondage/recensement-transport-bus-scolaire-rentree-2015-2016/index/">JE REPONDS AU<br/>RECENSEMENT</a>
+                <br/>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-primary btn-block" type="button" data-dismiss="modal">JE NE SUIS PAS CONCERNE<br/>JE REPONDRAI PLUS TARD</button>
+            </div>
+        </div>
+	</div>
+    <?php /*
+    <div class="modal-footer">
+		<button type="button" class="rappel btn btn-default" data-dismiss="modal">Fermer</button>
+	</div>*/ ?>
+</form>
+<script type="text/javascript">
+	function addParam(url, param, value) {
+	   var a = document.createElement('a'), regex = /[?&]([^=]+)=([^&]*)/g;
+	   var match, str = []; a.href = url; value=value||"";
+	   while (match = regex.exec(a.search))
+	       if (encodeURIComponent(param) != match[1]) str.push(match[1] + "=" + match[2]);
+	   str.push(encodeURIComponent(param) + "=" + encodeURIComponent(value));
+	   a.search = (a.search.substring(0,1) == "?" ? "" : "?") + str.join("&");
+	   return a.href;
+	}
+	$(function(){
+		$('.disabled a').click(function (e) {
+			return false;
+		})
+		$(document.body).on('hidden.bs.modal', function () {
+			$.post(
+				'<?php echo $this->url(array('action'=>'rappel-other'),'compte',true)?>',
+				function(transport){
+					
+				}
+			);
+		});
+	});
+</script>

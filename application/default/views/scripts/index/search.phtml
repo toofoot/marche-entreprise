@@ -1,0 +1,32 @@
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <form id="searchForm" class="navbar-form navbar-left" role="search" method="get" action="<?php echo $this->url();?>">
+            <div class="form-group has-feedback">
+                <?php echo $this->formText('q',$this->q,array('class'=>'form-control','placeholder'=>'Recherche','autocomplete'=>'off'));?>
+                <a class="deleteSearch form-control-feedback" aria-hidden="true" href="#" style="pointer-events:auto;color:#999;<?php echo $this->q ? "" : "display:none"; ?>" title="Supprimer la recherche"><span class="glyphicon glyphicon-remove"></span></a>
+                <span class="waitingAutocomplete form-control-feedback" aria-hidden="true" style="display:none"><img src='/images/ajax-loader.gif' /></span>
+            </div>
+            <button type="submit" class="btn btn-default" data-loading-text="Recherche en cours...">Rechercher</button>
+        </form>
+    </div>
+</nav>
+<?php if($this->articles): ?>
+<div class="row">
+    <div id="popupArticles">
+        <div class="articles">
+            <?php echo $this->render('index/articles-in-page.phtml')?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<script type="text/javascript">
+    $(function(){
+        $('#searchForm').submit(function(){
+            if($('#q').val() != ''){
+                $('#searchForm button').button('loading');
+            } else {
+                return false;
+            }
+        });
+    });
+</script>

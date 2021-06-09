@@ -1,0 +1,354 @@
+<div>
+	<div id="picture" style="background:url(/images/upload/<?php echo $this->picture?>);background-position:<?php echo $this->picture_position?>">
+		<div class="textInPicture"><?php echo $this->title?></div>
+		<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)):?>
+		<div class="changeCouv" <?php if($this->changeCovOpen):?>style="display:block"<?php endif?>>
+			<a id="buttonChangeCov" class="buttonv3" href='#'>Changer Couverture <?php echo $this->basename_secondaire === null ? 'RUBRIQUE' : 'SOUS RUBRIQUE'?></a>
+			<ul id="optionsCov" style="<?php if(!$this->changeCovOpen):?>display: none<?php endif ?>">
+				<li id="liUploadCov">
+					<form id="uploadCov" enctype="multipart/form-data" method="post" target="upload_target" action="<?php echo $this->url(array('action'=>'change-cover','controller'=>'menu','basename_principal'=>'contact'),'admin')?>">
+						<input id="inputUploadCov" type="file" name="cov" />
+						<iframe id="upload_target" name="upload_target" src="" style="width:0;height:0;border:0px solid #fff;position:absolute"></iframe>
+					</form>
+					<span>Télécharger photo</span>
+				</li>
+				<li class="toToggle" style="<?php echo $this->modifyPicture ? "" : "display:none"?>"><a href="#repositionner" id="repositionnerCov">Repositionner</a></li>
+				<li class="toToggle" style="<?php echo $this->modifyPicture ? "" : "display:none"?>"><a href="#supprimer" id="supprimerCov">Supprimer la couverture</a></li>
+			</ul>
+		</div>
+		<div class="savePositionCov">
+			<a id="buttonsavePositionCov" class="buttonv3" href='#'>Enregistrer position</a>
+		</div>
+		<?php endif?>
+	</div>
+	<div id="popupArticles">
+		<div id="title"><?php echo $this->title_articles?></div>
+			<div class="article">
+				<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)):?>
+					<div class="align-center">
+						<h1>Administration CONTACT</h1>
+						<form method="post" id="formRemain" class="formText">
+							<div>
+								<strong>Nombre de caractère max pour le message :</strong><br/>
+								<?php echo $this->formHidden('file','remain')?>
+								<?php echo $this->formText('text',$this->config->remain)?>
+								<?php echo $this->formSubmit('submitRemain','Enregistrer')?>
+								<div class="messageformText"></div>
+							</div>
+						</form>
+						<form method="post" id="formemailReception" class="formText">
+							<div>
+								<strong>Email de reception pour le message :</strong><br/>
+								<?php echo $this->formHidden('file','emailReception')?>
+								<?php echo $this->formText('text',$this->config->emailReception)?>
+								<?php echo $this->formSubmit('submitemailReception','Enregistrer')?>
+								<div class="messageformText"></div>
+							</div>
+						</form>
+						<form method="post" id="formtextValidation" class="formText">
+							<div>
+								<strong>Texte après clique sur envoyer :</strong><br/>
+								<?php echo $this->formHidden('file','textValidation')?>
+								<?php echo $this->formTextarea('text',$this->config->textValidation,array('rows'=>5))?>
+								<br/>
+								<?php echo $this->formSubmit('submittextValidation','Enregistrer')?>
+								<div class="messageformText"></div>
+							</div>
+						</form>
+						<form method="post" id="formtextAfterValidation" class="formText">
+							<div>
+								<strong>Texte après validation du message :</strong><br/>
+								<?php echo $this->formHidden('file','textAfterValidation')?>
+								<?php echo $this->formTextarea('text',$this->config->textAfterValidation,array('rows'=>5))?>
+								<br/>
+								<?php echo $this->formSubmit('submittextAfterValidation','Enregistrer')?>
+								<div class="messageformText"></div>
+							</div>
+						</form>
+						<form method="post" id="formtextalreadySent" class="formText">
+							<div>
+								<strong>Texte mail déjà envoyé :</strong><br/>
+								<?php echo $this->formHidden('file','textalreadySent')?>
+								<?php echo $this->formTextarea('text',$this->config->textalreadySent,array('rows'=>5))?>
+								<br/>
+								<?php echo $this->formSubmit('submittextalreadySent','Enregistrer')?>
+								<div class="messageformText"></div>
+							</div>
+						</form>
+					</div>
+				<?php else:?>
+				<form method="post" action="<?php echo $this->url()?>" id='formContact'>
+					<div class='form'>
+						<div>
+							<?php echo $this->formLabel('prenom','Votre Prénom')?>
+							<?php echo $this->formText('prenom',$this->message->prenom,array('class'=>isset($this->message->elementsError['prenom']) ? 'inputerror' : ''))?>
+							<div class="clear"></div>
+						</div>
+						<div>
+							<?php echo $this->formLabel('nom','Votre Nom')?>
+							<?php echo $this->formText('nom',$this->message->nom,array('class'=>isset($this->message->elementsError['nom']) ? 'inputerror' : ''))?>
+							<div class="clear"></div>
+						</div>
+						<div>
+							<?php echo $this->formLabel('adresse','Adresse')?>
+							<?php echo $this->formText('adresse',$this->message->adresse,array('class'=>isset($this->message->elementsError['adresse']) ? 'inputerror' : ''))?>
+							<div class="clear"></div>
+						</div>
+						<div>
+							<?php echo $this->formLabel('email','Votre Email')?>
+							<?php echo $this->formText('email',$this->message->email,array('class'=>isset($this->message->elementsError['email']) ? 'inputerror' : ''))?>
+							<div class="clear"></div>
+						</div>
+						<div>
+							<?php echo $this->formLabel('email2','Confirmation Email')?>
+							<?php echo $this->formText('email2',$this->message->email2,array('class'=>isset($this->message->elementsError['email2']) ? 'inputerror' : ''))?>
+							<div class="clear"></div>
+						</div>
+						<div>
+							<?php echo $this->formLabel('objet','Objet')?>
+							<?php echo $this->formText('objet',$this->message->objet,array('class'=>isset($this->message->elementsError['objet']) ? 'inputerror' : ''))?>
+							<div class="clear"></div>
+						</div>
+						<div class="textarea">
+							<?php echo $this->formLabel('message','Message')?>
+							<?php echo $this->formTextarea('message',$this->message->message,array('rows'=>5,'class'=>isset($this->message->elementsError['message']) ? 'inputerror' : ''))?>
+							<div class="remain"><?php echo $this->config->remain?></div>
+							<div class="clear"></div>
+						</div>
+						<div>
+							<label for="submitForm">&nbsp;</label>
+							<?php echo $this->formSubmit('submitForm','Envoyer')?>
+						</div>
+					</div>
+				</form>
+				<br/>
+				<div class='wait align-center' style="display:none"><img src='/images/uploadProgress.gif' alt='wait' /></div>
+				<div class='messageValidation' style="width:350px"></div>
+				<div class='clear'></div>
+				<?php endif?>
+				
+			</div>
+	</div>
+</div>
+
+	
+<script type='text/javascript'>
+<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)):?>
+function coverUploaded(urlCover){
+	$('#picture').css({
+		'background-image':'url('+urlCover+')',
+		'background-position':'0 0'
+	});
+	$('.toToggle').show();
+}
+function moveBg(e){
+	// Background and Mouse origin
+	var origin = $(this).data('origin');
+	var backgroundPos = origin.bgPosition.split(" ");
+	var backgroundY = Number(backgroundPos[1].replace(/[^0-9-]/g, ''));
+
+	var actualImage = new Image();
+	actualImage.src = $(this).css('background-image').replace(/"/g,"").replace(/url\(|\)$/ig, "");
+	var heightImage = actualImage.height;
+
+	// Mouse move
+	var mouseY = e.pageY;
+	var maxMove = heightImage - $(this).height();
+
+	// Calcul bgPosition
+	var Y = backgroundY + (mouseY - $(this).offset().top) - origin.mouseY;
+	if(Y > 0){
+		Y = 0;
+	}
+	if(Y < -maxMove){
+		Y = -maxMove;
+	}
+	
+	$(this).css('background-position', '0px ' + Y + 'px');
+}
+<?php endif?>
+$(function(){
+	<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)):?>
+	$('.formText').submit(function(){
+		var form = this;
+		$.post(
+				'<?php echo $this->url(array('controller'=>'index','action'=>'edit-file'),'admin',true)?>',
+				$(form).serialize(),
+				function(data){
+					$('.messageformText',form).text('Modification effectuée');
+				},'json'
+		);
+		return false;
+	});
+	
+	var flagRepositionner = false;
+	$('#picture').mousedown(function(e){
+		if(flagRepositionner){
+			// Get background and mouse position on mousedown
+			var origin = {
+				'mouseX' : e.pageX - $(this).offset().left,
+				'mouseY' : e.pageY - $(this).offset().top,
+				'bgPosition' : $(this).css('background-position')
+			};
+			$(this).data('origin',origin);
+			$(this).bind('mousemove', moveBg);
+		}
+	});
+	$(document).mouseup(function(){
+		if(flagRepositionner){
+			$('#picture').unbind('mousemove',moveBg);
+		}
+	});
+	$('#picture').hover(function(){
+		if(!flagRepositionner)
+			$('.changeCouv').show();
+	},function(){
+		if(!$('#optionsCov').is(':visible'))
+			$('.changeCouv').hide();
+	});
+	$('#buttonChangeCov').click(function(){
+		if(!flagRepositionner)
+			$('#optionsCov').slideToggle();
+		return false;
+	});
+	$( "#liUploadCov" ).mousemove(function( event ) {
+		var widthLi = $(this).width();
+		var heightLi = $(this).height();
+		var topInput = event.pageY - $(this).offset().top - 10;
+		var leftInput = event.pageX - $(this).offset().left - 10;
+		if(topInput > -10 && leftInput > -10 && topInput < heightLi && leftInput < widthLi){
+			$("#inputUploadCov").css({
+				top : topInput,
+				left : leftInput
+			});
+		} else {
+			$("#inputUploadCov").css({
+				top : 0,
+				left : 0
+			});
+		}
+	});
+	$("#inputUploadCov").change(function(){
+		
+		$('#uploadCov').submit();
+	});
+	$("#repositionnerCov").click(function(){
+		flagRepositionner = true;
+		$('#optionsCov').slideUp();
+		$('.changeCouv').hide();
+		$('#picture').css({
+			'cursor':'move',
+			'z-index':'1200'
+		});
+		$('.overlay_left').hide();
+		$('.side_left').hide();
+		$('#overlay').css({
+			'opacity':'0.8',
+			'z-index':'1000'
+		});
+		$('.savePositionCov').show();
+		return false;
+	});
+	$("#supprimerCov").click(function(){
+		$.post(
+			'<?php echo $this->url(array('action'=>'delete-cov','controller'=>'menu','basename_principal'=>'contact'),'admin')?>',
+			function(data){
+				$('#picture').css({
+					'background-image':data.background,
+					'background-position':data.background_position
+				});
+				$('#optionsCov').slideUp();
+				$('.toToggle').hide();
+			},'json'
+		);
+		return false;
+	});
+	$('#buttonsavePositionCov').click(function(){
+		flagRepositionner = false;
+		$('.changeCouv').show();
+		$('#picture').css({
+			'cursor':'',
+			'z-index':''
+		});
+		$('.overlay_left').show();
+		$('.side_left').show();
+		$('#overlay').css({
+			'opacity':'0',
+			'z-index':''
+		});
+		$('.savePositionCov').hide();
+		$.post(
+			'<?php echo $this->url(array('action'=>'set-cov-position','controller'=>'menu','basename_principal'=>'contact'),'admin')?>',
+			{'backgroundPosition':$('#picture').css('background-position')}
+		);
+		return false;
+	});
+	$(document).click(function(event){
+		if($(event.target).closest('#optionsCov').length == 0){
+			$('#optionsCov').stop().slideUp('fast');
+		}
+	});
+	
+	<?php else:?>
+
+	$('#submitForm').button();
+	$('#formContact').submit(function(){
+		$('.wait').dialog({
+			modal:true,
+			resizable:false,
+			draggable:false,
+		});
+		$('.wait').parent().find('.ui-dialog-titlebar').remove();
+		$.post(
+			'<?php echo $this->url()?>',
+			$('#formContact').serialize(),
+			function(data){
+				$('.form input,.form textarea').removeClass('inputerror');
+				$('.messageValidation').html('').removeClass('ui-state-error');
+				$('.wait').dialog('close');
+				if(data.returncode == 'ko'){
+					$('.messageValidation').html(data.error).addClass('ui-state-error').removeClass('ui-state-highlight');
+					for(i in data.elementsError){
+						$('#'+i).addClass('inputerror');
+					}
+					$('.messageValidation').dialog({
+						modal:true,
+						resizable:false,
+						draggable:false,
+						width:400,
+						buttons:{'Fermer':function(){
+								$(this).dialog('close');
+							}
+						}
+					});
+					$('.messageValidation').parent().find('.ui-dialog-titlebar').remove();
+				} else {
+					$('.messageValidation').html('<?php echo nl2br($this->config->textValidation)?>').addClass('align-center').addClass('bold');
+					$('.messageValidation').dialog({
+						modal:true,
+						resizable:false,
+						draggable:false,
+						width:400,
+						buttons:{'Fermer':function(){
+								$(this).dialog('close');
+							}
+						}
+					});
+					$('.messageValidation').parent().find('.ui-dialog-titlebar').remove();
+					$('#formContact')[0].reset();
+				}
+			},'json'
+		);
+		return false;
+	});
+	$('textarea').keyup(function() {
+        var tlength = $(this).val().length;
+        $(this).val($(this).val().substring(0,<?php echo $this->config->remain?>));
+        var tlength = $(this).val().length;
+        remain = parseInt(<?php echo $this->config->remain?> - tlength);
+        $('.remain').text(remain);
+    }); 
+
+	<?php endif?>
+});
+</script>

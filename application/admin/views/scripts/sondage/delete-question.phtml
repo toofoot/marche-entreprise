@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel"><?php echo "Supprimer Question"?></h4>
+</div>
+<form id="formUser" class="form-horizontal" method='post' action='<?php echo $_SERVER["REQUEST_URI"] ?>' role="form">
+    <div class="modal-body">
+        <?php echo $this->formHidden('confirm',1)?>
+        <div>Êtes vous sur de vouloir supprimer cette question ? </div>
+        <div><strong>ATTENTION, SUPPRESSION DEFINITIVE</strong></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+        <?php echo $this->formSubmit('valider','Supprimer',array('class'=>'btn btn-primary','data-loading-text'=>"Suppression en cours..."))?>
+    </div>
+</form>
+<script type="text/javascript">
+    $(function(){
+        $('#formUser').submit(function(){
+            $('#valider').button('loading');
+            $.post(
+                '<?php echo $this->url() ?>',
+                $('#formUser').serialize(),
+                function(response){
+                    $('#valider').button('reset');
+                    if(response.id_sondage_question){
+                        $('#question_' + response.id_sondage_question).fadeOut();
+                        $('#mySmallModal').modal('hide');
+                    }
+                },'json'
+            )
+            return false;
+        });
+    });
+</script>

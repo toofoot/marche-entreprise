@@ -1,0 +1,172 @@
+<div class="slideshow">
+    <div class="original swiper-container">
+        <div class="swiper-wrapper">
+            <?php foreach ($this->photos as $key => $photo): ?>
+                <div class="swiper-slide text-center"> 
+                    <div class="wait"><img src='/images/ajax-loader.gif' /></div>
+                    <?php if ($this->article): ?>
+                        <img class="fullPhoto background" alt="photo_<?php echo $photo->id_photo; ?>" <?php if ($key < 2): ?>src="/images/upload/<?php echo $photo->id_article ?>/<?php echo $photo->id_photo ?>.<?php echo $photo->extension ?>"<?php endif ?> data-src="/images/upload/<?php echo $photo->id_article ?>/<?php echo $photo->id_photo ?>.<?php echo $photo->extension ?>" />
+                    <?php elseif ($this->fiche): ?>
+                        <img class="fullPhoto background" alt="photo_<?php echo $photo->id_photo; ?>" <?php if ($key < 2): ?>src="/images/upload/fiche_<?php echo $photo->id_annuaire_fiche ?>/<?php echo $photo->id_photo ?>.<?php echo $photo->extension ?>"<?php endif ?> data-src="/images/upload/fiche_<?php echo $photo->id_annuaire_fiche ?>/<?php echo $photo->id_photo ?>.<?php echo $photo->extension ?>" />
+                    <?php endif ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <div class="thumbnails swiper-container">
+        <div class="swiper-wrapper">
+            <?php foreach ($this->photos as $key => $photo): ?>
+                <div class="swiper-slide text-center">
+                    <?php if ($this->article): ?> 
+                        <a href='#' id="thumb_<?php echo $key ?>" <?php if ($key == 0): ?>class="active"<?php endif ?>><img class="background" alt="photo_<?php echo $photo->id_photo; ?>" src="/images/upload/<?php echo $photo->id_article ?>/minithumb<?php echo $photo->id_photo ?>.<?php echo $photo->extension ?>" /></a>
+                    <?php elseif ($this->fiche): ?>
+                        <a href='#' id="thumb_<?php echo $key ?>" <?php if ($key == 0): ?>class="active"<?php endif ?>><img class="background" alt="photo_<?php echo $photo->id_photo; ?>" src="/images/upload/fiche_<?php echo $photo->id_annuaire_fiche ?>/minithumb<?php echo $photo->id_photo ?>.<?php echo $photo->extension ?>" /></a>
+                    <?php endif ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <div class="commandes outside text-center">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default prev"><span class="glyphicon glyphicon-step-backward"></span></button>
+            <button type="button" class="btn btn-default pause hidden"><span class="glyphicon glyphicon-pause"></span></button>
+            <button type="button" class="btn btn-default start"><span class="glyphicon glyphicon-play"></span></button>
+            <button type="button" class="btn btn-default next"><span class="glyphicon glyphicon-step-forward"></span></button>
+        </div>
+        <div class="btn-group">
+            <div class="btn btn-default bold indexOfPhoto"><span class="indexSlide">1</span> / <?php echo count($this->photos); ?></div>
+        </div>
+        <?php /* ?><div class="btn-group">
+          <button type="button" class="btn btn-default fullscreen"><span class="glyphicon glyphicon-fullscreen"></span></button>
+          </div> */ ?>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $('#myLargeModal').on('shown.bs.modal', function () {
+
+        var rapport = 0.75;
+        var heightWindow = $(window).height() * rapport;
+
+        $('.original,.original .swiper-slide').css({height: heightWindow});
+
+        var options = {
+            mode: 'horizontal',
+            loop: false,
+            updateOnImagesReady: false,
+            visibilityFullFit: true,
+            autoplayDisableOnInteraction: false,
+            autoplayStopOnLast: true,
+            keyboardControl: true,
+            grabCursor: true,
+            onSlideChangeEnd: function (swiper) {
+                $('.thumbnails a').removeClass('active');
+                $('.indexSlide').text(mySwiper.activeIndex + 1);
+                var thisIndex = mySwiper.activeIndex + 1;
+                var elt = $('.original .swiper-wrapper .swiper-slide:nth-child(' + thisIndex + ') img.fullPhoto');
+                var href = elt.attr('data-src');
+                elt.prop('src', href);
+                elt.bind('load', function () {
+                    var size = $(this).height();
+                    var diff = (heightWindow - size) / 2;
+                    $(this).css('margin-top', diff);
+                });
+
+                $('.thumbnails .swiper-wrapper .swiper-slide:nth-child(' + thisIndex + ') a').addClass('active');
+                swiperThumbnail.swipeTo(thisIndex);
+
+                var indexAfter = mySwiper.activeIndex + 2;
+                var eltAfter = $('.original .swiper-wrapper .swiper-slide:nth-child(' + indexAfter + ') img.fullPhoto');
+                var href = eltAfter.attr('data-src');
+                eltAfter.prop('src', href);
+                eltAfter.bind('load', function () {
+                    var size = $(this).height();
+                    var diff = (heightWindow - size) / 2;
+                    $(this).css('margin-top', diff);
+                });
+                if (mySwiper.activeIndex + 1 == <?php echo count($this->photos); ?>) {
+                    $('.pause').addClass("hidden");
+                    $('.start').removeClass("hidden");
+                    mySwiper.stopAutoplay();
+                }
+
+            },
+            onFirstInit: function () {
+                $('.original .swiper-slide:nth-child(1) img.fullPhoto').bind('load', function () {
+                    var size = $(this).height();
+                    var diff = (heightWindow - size) / 2;
+                    $(this).css('margin-top', diff);
+                });
+                $('.original .swiper-slide:nth-child(2) img.fullPhoto').bind('load', function () {
+                    var size = $(this).height();
+                    var diff = (heightWindow - size) / 2;
+                    $(this).css('margin-top', diff);
+                });
+                window.scrollTo(0, 1);
+            }
+        };
+
+        var mySwiper = $('.original').swiper(options);
+        var swiperThumbnail = $('.thumbnails').swiper({
+            freeMode: true,
+            freeModeFluid: true,
+            slidesPerView: 'auto',
+            centeredSlides: true,
+        });
+        $('.thumbnails a').click(function () {
+            var index = $(this).prop('id').replace("thumb_", "");
+            mySwiper.swipeTo(index);
+            $('.pause').addClass("hidden");
+            $('.start').removeClass("hidden");
+            mySwiper.stopAutoplay();
+            return false;
+        });
+        $('.prev').on('click', function (e) {
+            e.preventDefault();
+            mySwiper.swipePrev();
+            $(this).blur();
+        })
+        $('.next').on('click', function (e) {
+            e.preventDefault();
+            mySwiper.swipeNext();
+            $(this).blur();
+        })
+        $('.pause').on('click', function (e) {
+            e.preventDefault();
+            mySwiper.stopAutoplay();
+            $(this).blur().addClass("hidden");
+            $('.start').removeClass("hidden");
+        })
+        $('.start').on('click', function (e) {
+            e.preventDefault();
+            mySwiper.params.autoplay = 1000;
+            mySwiper.startAutoplay()
+            $(this).blur().addClass("hidden");
+            $('.pause').removeClass("hidden");
+        })
+        $('.fullscreen').on('click', function (e) {
+            e.preventDefault();
+            $('.commandes').toggleClass('outside').toggleClass('inside');
+            $(".slideshow").toggleFullScreen();
+            $(this).blur();
+        })
+        $('.original .swiper-slide').click(function (e) {
+            e.preventDefault();
+            mySwiper.swipeNext();
+            $(this).blur();
+        });
+
+        $('.myLargeModal .modal-content').css({
+            'background-color': '',
+            'border': '',
+            'box-shadow': ''
+        });
+        $('.close').click(function () {
+            $('#myLargeDialog').modal('hide');
+        });
+
+    });
+</script>

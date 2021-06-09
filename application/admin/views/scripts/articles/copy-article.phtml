@@ -1,0 +1,35 @@
+<div class="contenuPages" style="margin-top:20px;text-align:center;width:300px;margin-bottom:20px;">
+	<form method='post' action='<?php echo $this->url()?>' enctype="multipart/form-data" id="formPicture">
+		<div>
+			<input class="changeType" type="radio" name="choixType" id="typeCopy" value="copy" />
+			<?php echo $this->formLabel('typeCopy','Copier')?>
+			<input class="changeType" type="radio" name="choixType" id="typeMove" value="move" />
+			<?php echo $this->formLabel('typeMove','Déplacer')?>
+			<br/><br/>
+			<div class="ui-state-highlight ui-corner-all ui-state-disabled" style="padding:5px">
+				<div class='text'>Copier l'article vers</div>
+				<?php echo $this->formSelect('copyTo',null,array('disabled','disabled'),$this->select)?>
+			</div>
+			<br/><br/>
+			<?php echo $this->formSubmit('copier','Copier')?>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('#copier').prop('disabled','disabled').button().addClass('ui-state-disabled');
+		$('#cboxTitle').remove();
+		$('.changeType').click(function(){
+			var val = $(this).val();
+			if(val == 'copy'){
+				$('.text').text("Copier l'article vers");
+				$('#copyTo').prop('disabled',false).parent().removeClass('ui-state-disabled');
+				$('#copier').val('Copier').prop('disabled',false).button('refresh');
+			} else {
+				$('.text').text("Déplacer l'article vers");
+				$('#copyTo').prop('disabled',false).parent().removeClass('ui-state-disabled');
+				$('#copier').val('Déplacer').prop('disabled',false).button('refresh');
+			}
+		});
+	});
+</script>

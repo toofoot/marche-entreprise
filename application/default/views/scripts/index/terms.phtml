@@ -1,0 +1,57 @@
+<div style="padding:20px">
+	<div class='titre'>Conditions d'utilisation et confidentialité</div>
+	<hr/>
+	<div id="contentTerms" <?php echo $this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN) ? 'contenteditable="true"' : ''?>>
+	<?php echo $this->content?>
+	</div>
+</div>
+<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)):?>
+<script type="text/javascript">
+function saveTerms(){
+	var datas = {
+		'content' : CKEDITOR.instances.contentTerms.getData()
+	};
+	$.post(
+        '<?php echo $this->url(array('controller'=>'terms','action'=>'edit'),'admin',true)?>',
+        datas,
+        function(data){
+	    	if(data.returncode == 'ok'){
+		        $('#myToolbarTitle').hide();
+		        $('.overlay').hide();
+		        $('#buttonRegister').hide();
+	    	}
+        },'json'
+	);
+}
+$(function(){
+	CKEDITOR.disableAutoInline = true;
+	CKEDITOR.config.enterMode = CKEDITOR.ENTER_DIV;
+    CKEDITOR.inline( 'contentTerms', {
+		extraPlugins: 'sharedspace,sourcedialog',
+		//removePlugins: 'floatingspace,resize',
+		sharedSpaces: {
+			top: 'myToolbarTitle'
+		},
+	    toolbar: 'Basic',
+	    uiColor: '#9AB8F3'
+	});
+
+	var inside = null;
+	CKEDITOR.instances.contentTerms.on( 'focus', function( e ) {
+    	inside = CKEDITOR.instances.contentTerms.getData();
+        $('#myToolbarTitle').show();
+        $('.overlay').show();
+        $('#buttonRegister').show();
+        $('#buttonRegister a').click(function(){
+	        saveTerms();
+	        return false;
+	    });
+    } );
+    CKEDITOR.instances.contentTerms.on( 'blur', function( e ) {
+        if(inside != CKEDITOR.instances.contentTerms.getData()){
+        	saveTerms();
+        }
+    } );
+});
+</script>
+<?php endif?>

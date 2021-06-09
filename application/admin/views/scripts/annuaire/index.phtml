@@ -1,0 +1,101 @@
+<?php echo $this->render('annuaire/tabs.phtml')?>
+<div class="nav-tabs-content">
+	<div class="text-center">
+        <a class="btn btn-success" href='<?php echo $this->url(array('action'=>'add-fiche'))?>'>Ajouter une fiche</a>
+    </div>
+	<br/>
+	<div class="row">
+		<div class="col-xs-3">
+			<div class="panel panel-default">
+				<div class="panel-heading"><h3 class="panel-title">Par Catégorie</h3></div>
+				<div class="bs-docs-sidebar">
+					<ul class="nav bs-docs-sidenav">
+					<li class="<?php echo $this->tous ? "active" : ""?>">
+						<a class="" href='<?php echo $this->url(array('basename'=>null,'state'=>null))?>'>Toutes catégories</a>
+					</li>
+					<?php foreach($this->annuaire_categories as $annuaire_categorie):?>
+						<li class="deroule">
+							<a href='#'><?php echo $annuaire_categorie['categorie']->name?></a>
+							<ul class="nav" style="<?php echo $annuaire_categorie['categorie']->id_annuaire_categorie == $this->annuaire_categorie_active ? "display:block" : ""; ?>">
+								<?php foreach($annuaire_categorie['sous_categories'] as $basename_sous_categorie => $sous_categorie):?>
+									<li class="<?php echo $this->annuaire_sous_categorie_active == $basename_sous_categorie ? "active" : ""?>">
+										<a href='<?php echo $this->url(array('basename'=>$basename_sous_categorie,'state'=>null))?>'><?php echo $sous_categorie?></a>
+									</li>
+								<?php endforeach;?>
+							</ul>
+						</li>
+					<?php endforeach;?>
+					</ul>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading"><h3 class="panel-title">Par Statut</h3></div>
+				<div class="bs-docs-sidebar">
+					<ul class="nav bs-docs-sidenav">
+                        <li class="statusFiche-<?php echo Aurel_Table_AnnuaireFiche::STATUS_ACTIF ?> <?php echo $this->state_active == 'online' ? "active" : ""?>"><a href='<?php echo $this->url(array('basename'=>null,'state'=>'online'))?>'>Validé <span class="badge pull-right"><?php echo $this->sommes[Aurel_Table_AnnuaireFiche::STATUS_ACTIF]?></span></a></li>
+                        <li class="statusFiche-<?php echo Aurel_Table_AnnuaireFiche::STATUS_INACTIF ?> <?php echo $this->state_active == 'offline' ? "active" : ""?>"><a href='<?php echo $this->url(array('basename'=>null,'state'=>'offline'))?>'>Refusé <span class="badge pull-right"><?php echo $this->sommes[Aurel_Table_AnnuaireFiche::STATUS_INACTIF]?></span></a></li>
+						<li class="statusFiche-<?php echo Aurel_Table_AnnuaireFiche::STATUS_WAITING ?> <?php echo $this->state_active == 'waiting' ? "active" : ""?>"><a href='<?php echo $this->url(array('basename'=>null,'state'=>'waiting'))?>'>En attente de validation <span class="badge pull-right"><?php echo $this->sommes[Aurel_Table_AnnuaireFiche::STATUS_WAITING]?></span></a></li>
+						<li class="statusFiche-<?php echo Aurel_Table_AnnuaireFiche::STATUS_WAITING_PROPRIETAIRE ?> <?php echo $this->state_active == 'waiting_proprio' ? "active" : ""?>"><a href='<?php echo $this->url(array('basename'=>null,'state'=>'waiting_proprio'))?>'>En attente de propriétaire <span class="badge pull-right"><?php echo $this->sommes[Aurel_Table_AnnuaireFiche::STATUS_WAITING_PROPRIETAIRE]?></span></a></li>
+						<li class="divider" style="margin: 9px 0px; background-color:#e5e5e5; height: 1px; overflow: hidden;"></li>
+						<li class="statusFiche-<?php echo Aurel_Table_AnnuaireFiche::STATUS_CORBEILLE ?> <?php echo $this->state_active == 'corbeille' ? "active" : ""?>"><a href='<?php echo $this->url(array('basename'=>null,'state'=>'corbeille'))?>'>Fiches Supprimés <span class="badge pull-right"><?php echo $this->sommes[Aurel_Table_AnnuaireFiche::STATUS_CORBEILLE]?></span></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-9">
+			<div class="clearfix">
+				<?php echo $this->render('annuaire/fiches-annuaire.phtml')?>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.bs-docs-sidenav>li.deroule>a').click(function(){
+			var li = $(this).parent();
+			$('.nav .nav').not(li.find('.nav')).slideUp();
+			$('.nav',li).slideDown();
+            $(this).blur();
+			return false;
+		});
+
+		$(".checkboxSwitch").bootstrapSwitch();
+		$(".checkboxSwitch").on('switchChange.bootstrapSwitch', function(event, state) {
+			  var id_annuaire_fiche = $(this).val();
+			  $.post(
+				"<?php echo $this->url(array('action'=>'toggle-fiche','controller'=>'annuaire'),'admin',true)?>",
+				{"id_annuaire_fiche":id_annuaire_fiche,"state":state},
+				function(response){
+					if(response.returncode == 'ok'){
+						$('#fiche-' + id_annuaire_fiche).removeClass('waiting').removeClass('inactive').removeClass('valide');
+						$('#fiche-' + id_annuaire_fiche).addClass(response.classCss);
+                        if(response.sommes){
+                            for (i in response.sommes){
+                                $('.statusFiche-' + i + ' span').text(response.sommes[i]);
+                            }
+                        }
+					}
+				},'json'
+			  );	
+		});
+		$('.activeFiche').click(function(){
+			$(this).parent().parent().parent().find('.checkboxSwitch').bootstrapSwitch('state', true, true);
+			$.post(
+				$(this).prop('href'),
+				function(response){
+					if(response.returncode == 'ok'){
+						$('#fiche-' + response.id_annuaire_fiche).removeClass('waiting').removeClass('inactive').removeClass('valide');
+						$('#fiche-' + response.id_annuaire_fiche).addClass(response.classCss);
+						$('#fiche-' + response.id_annuaire_fiche + ' .activeFiche').remove();
+						$('#fiche-' + response.id_annuaire_fiche + ' .actions').removeClass('open');
+					}
+				},'json'
+			);
+			return false;
+		});
+		$('.supFiche').click(function(){
+			return confirm("Etes vous sur de vouloir supprimer cet article ?");
+		});
+		$('.cycle-slideshow img').removeClass('hidden');
+	});
+</script>

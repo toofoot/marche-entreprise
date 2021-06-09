@@ -1,0 +1,26 @@
+<form id="formUser" class="form-horizontal" method='post' action='<?php echo $_SERVER['REQUEST_URI']?>' role="form">
+	<div class="modal-body">
+        <button type="button" class="close <?php if($this->popup):?>rappel<?php endif?>" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <div class="jumbotron text-center" style="margin-bottom: 0;background-color:#fff">
+            <div class="">
+                <img src="/images/layout/header_ssbar.png" class="img-responsive center-block" />
+            </div>
+            <h2><?php echo $this->config->title_popup_inscription ?></h2>
+            <p><?php echo nl2br($this->config->text_popup_inscription) ?></p>
+            <p>
+                <a class="btn btn-primary btn-lg" href="<?php echo $this->url(array('action'=>'register'),'compte',true); ?>">Je m'inscris</a>
+            </p>
+            <p>
+                <button type="button" class="rappel btn btn-default" data-dismiss="modal">Je suis déjà inscrit</button>
+                <button type="button" class="rappel btn btn-default" data-dismiss="modal">Me le rappeler plus tard</button>
+            </p>
+        </div>
+	</div>
+</form>
+<script type="text/javascript">
+	$(function(){
+		$('.disabled a').click(function (e) {
+			return false;
+		});
+	});
+</script>

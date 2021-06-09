@@ -1,0 +1,119 @@
+<div>
+	<ol class="breadcrumb">
+	  <li><a href="<?php echo $this->url(array(),'accueil',true) ?>">Accueil</a></li>
+	  <li><?php if(!$this->sousmenu):?><a href="<?php echo $this->url(array('basename_principal'=>$this->menu->basename),'basenames',true) ?>"><?php endif?><?php echo $this->menu->name?><?php if(!$this->sousmenu):?></a><?php endif?></li>
+	  <?php if($this->sousmenu && $this->menu):?>
+	  <li><a href="<?php echo $this->url(array('basename_principal'=>$this->menu->basename,'basename_secondaire'=>$this->sousmenu->basename),'basenames',true) ?>"><?php echo $this->sousmenu->name?></a></li>
+	  <?php endif?>
+	</ol>
+	<div id="popupArticles">
+		<div class="articles">
+			<?php echo $this->render('index/annonces-in-page.phtml')?>
+		</div>
+		<?php if($this->hasOlder):?>
+		<div class="text-center">
+			<a href='<?php echo $this->urlLink;?>' data-loading-text="Chargement..." class='downloadOlder btn btn-success btn-sm'><?php echo $this->textLink?></a>
+		</div>
+		<?php endif?>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES)):?>
+		$.fn.modal.Constructor.prototype.enforceFocus = function () {
+		    modal_this = this
+		    $(document).on('focusin.modal', function (e) {
+		        if (modal_this.$element[0] !== e.target && !modal_this.$element.has(e.target).length
+		        // add whatever conditions you need here:
+		        &&
+		        !$(e.target.parentNode).hasClass('cke_dialog_ui_input_select') && !$(e.target.parentNode).hasClass('cke_dialog_ui_input_text')) {
+		            modal_this.$element.focus()
+		        }
+		    })
+		};
+		
+		$(".checkboxSwitch").bootstrapSwitch();
+		$(".checkboxSwitch").on('switchChange.bootstrapSwitch', function(event, state) {
+			  var id_article = $(this).val();
+			  $.post(
+				"<?php echo $this->url(array('action'=>'toggle-article','controller'=>'articles'),'admin',true)?>",
+				{"id_article":id_article,"state":state}
+			  );	
+		});
+		$('.supArticle').click(function(){
+			return confirm("Etes vous sur de vouloir supprimer cet article ?");
+		});
+		<?php endif?>
+		$('.cycle-slideshow').cycle('pause');
+
+		$('.hover').hover(function(){
+			$(this).find('.cycle-slideshow').cycle('resume').cycle('goto', 1);
+		},function(){
+			$(this).find('.cycle-slideshow').cycle('pause').cycle('goto', 0);
+		});
+		$('.cycle-slideshow img').removeClass('hidden');
+
+		<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES)):?>
+		$(".articles").sortable({
+			items: "div.article",
+			handle: ".orderArticle",
+			start: function(event, ui) {
+				//$('.actualitesinfo').removeClass('lastcolonnes').removeClass('colonnes');
+				//$('.actualitesinfo hr.hidden-xs').removeClass('hidden');
+			},
+			update: function(event, ui) {
+				order = $(this).sortable("toArray").toString();
+				$.post(
+					'<?php echo $this->url(array('action' => 'sort-articles-rubrique','controller'=>'articles'),'admin',true)?>',
+					'order='+order,
+					function(data, textStatus, XMLHttpRequest){
+					
+					}
+				);
+			}
+		});
+		<?php endif?>
+
+		$('.downloadOlder').click(function(){
+			var btn = $(this)
+		    btn.button('loading');
+			$.get(
+				$(this).prop('href'),
+				function(response){
+					if(response.ids){
+						for(i in response.ids){
+							$('#article-' + response.ids[i]).remove();
+						}
+					}
+					if(response.html){
+						$('.articles').append(response.html);
+					}
+					if(response.urlLink){
+						$('.downloadOlder').prop('href',response.urlLink);
+					}
+					if(response.textLink){
+						$('.downloadOlder').html(response.textLink);
+					}
+					if(!response.hasOlder){
+						$('.downloadOlder').parent().hide();
+					}
+					<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES)):?>
+						$(".checkboxSwitch").bootstrapSwitch();
+						$(".checkboxSwitch").on('switchChange.bootstrapSwitch', function(event, state) {
+							  var id_article = $(this).val();
+							  $.post(
+								"<?php echo $this->url(array('action'=>'toggle-article','controller'=>'articles'),'admin',true)?>",
+								{"id_article":id_article,"state":state}
+							  );
+						});
+						$('.supArticle').click(function(){
+							return confirm("Etes vous sur de vouloir supprimer cet article ?");
+						});
+					<?php endif?>
+					btn.button('reset');
+				},'json'
+			);
+			return false;
+		});
+	});
+</script>

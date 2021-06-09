@@ -1,0 +1,58 @@
+<div class="">
+    <form id="frmConfig" class="form-horizontal" role="form" method="post" action="<?php echo $this->url(); ?>" enctype="multipart/form-data">
+        <div class="form-group">
+            <?php echo $this->formLabel("connexion_access_code", "Activer protection par code opération", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-2">
+                <div class="checkbox">
+                <?php echo $this->formCheckbox("connexion_access_code", null, array("checked" => $this->config->connexion_access_code)) ?>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <?php echo $this->formSubmit("sub", "Enregistrer", array("class" => "btn btn-primary", 'data-loading-text' => "Loading...")) ?>
+        </div>
+    </form>
+</div>
+
+<a class="btn btn-primary" data-toggle="modal" data-target="#myModal" href="<?= $this->url(['action'=>'add-edit-access-code']); ?>">Ajouter</a>
+<table class="table">
+    <thead>
+        <th>Code</th>
+        <th>Délai de connexion en H</th>
+        <th>Date début de validité</th>
+        <th>Date fin de validité</th>
+        <th></th>
+    </thead>
+    <tbody>
+    <?php foreach($this->accesss as $access): ?>
+    <tr>
+        <td><?= $access->code ?></td>
+        <td><?= $access->delai ?></td>
+        <td><?= $access->getDate('date_start')->get(Aurel_date::DATE_MEDIUM) ?></td>
+        <td><?= $access->getDate('date_end')->get(Aurel_date::DATE_MEDIUM) ?></td>
+        <td>
+            <a class="btn btn-primary" data-toggle="modal" data-target="#myModal" href="<?= $this->url(['action'=>'add-edit-access-code', 'id_access_code' => $access->id]); ?>">Modifier</a>
+            <a class="btn btn-danger" data-toggle="modal" data-target="#myModal" href="<?= $this->url(['action'=>'delete-access-code', 'id_access_code' => $access->id]); ?>">Supprimer</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+<?php if ($this->session->message): ?>
+            var html = '<div class="modal-header">' +
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+                    //'<h4 class="modal-title" id="myModalLabel">Commentaire</h4>'.
+                    '&nbsp;</div>';
+            html += "<div class='modal-body'>Données enregistrées</div>";
+            html += '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button></div>';
+            $('#mySmallModal .modal-content').html(html);
+            $('#mySmallModal').modal('show');
+            $('#sub').button('reset');
+<?php endif ?>
+        $('#frmConfig').submit(function () {
+            $('#sub').button('loading');
+        });
+    });
+</script>

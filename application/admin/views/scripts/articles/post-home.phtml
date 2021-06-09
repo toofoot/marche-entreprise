@@ -1,0 +1,33 @@
+<div class="modal-header">
+	<button type="button" class="close clos" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title" id="myModalLabel">Mettre à la Une</h4>
+</div>
+<form method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
+	<div class="modal-body">
+		<?php if($this->article->annonce):?>
+			<?php if($this->article->hide_home):?>
+			Ceci mettra cette annonce à la une sur la page d'accueil.<br/>
+			<?php else:?>
+			Ceci enlevera cette annonce de la une sur la page d'accueil.<br/>
+			<?php endif?>
+			Etes vous sur ?
+		<?php else:?>
+			Ceci mettra cet article à la une sur la page d'accueil.<br/>
+			Etes vous sur ?
+		<?php endif?>
+		
+		<?php echo $this->formHidden('post-home',1)?>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default clos" data-dismiss="modal">Fermer</button>
+		<?php echo $this->formSubmit('fermer','Oui',array('class'=>'btn btn-primary','data-loading-text'=>"Veuillez patienter..."))?>
+	</div>
+</form>
+<script type="text/javascript">
+	$(function(){
+		$('#fermer').click(function(){
+			$(this).button('loading');
+			$('.clos').hide();
+		});
+	});
+</script>

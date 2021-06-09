@@ -1,0 +1,86 @@
+<div class="row">
+	<div class="text-center">
+		<div id="reportrange2" class="btn btn-default" style="">
+			<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+			<span></span> <b class="caret"></b>
+		</div>
+		<form method="get" id="dates">
+		<?php echo $this->formHidden('start_date',$this->start_date->get('dd/MM/YYYY'))?>
+		<?php echo $this->formHidden('end_date',$this->end_date->get('dd/MM/YYYY'))?>
+		</form>
+	</div>
+</div>
+<div class="col-xs-6 reporting-content">
+	<?php echo $this->render('articles/reporting-content.phtml')?>
+</div>
+<script type="text/javascript">
+	function preload(arrayOfImages) {
+	    $(arrayOfImages).each(function(){
+	        $('<img/>')[0].src = this;
+	        // Alternatively you could use:
+	        // (new Image()).src = this;
+	    });
+	}
+	$(document).ready(function() {
+		moment.lang(navigator.language);
+		preload([
+			'/images/uploadProgress.gif'
+		]);
+		var optionSet1 = {
+			startDate: "<?php echo $this->start_date->get('dd/MM/YYYY')?>",
+			endDate: "<?php echo $this->end_date->get('dd/MM/YYYY')?>",
+			minDate: '28/05/2014',
+			maxDate: moment(),
+			//dateLimit: { days: 60 },
+			showDropdowns: true,
+			showWeekNumbers: false,
+			timePicker: false,
+			timePickerIncrement: 1,
+			timePicker12Hour: true,
+			ranges: {
+				'Aujourd\'hui': [moment(), moment()],
+				'Hier': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+				'7 derniers jours': [moment().subtract(6, 'days'), moment()],
+				'30 derniers jours': [moment().subtract(29, 'days'), moment()],
+				'Ce mois ci': [moment().startOf('month'), moment().endOf('month')],
+				'Le mois dernier': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+				'Depuis le début': ['05/28/2014', moment()]
+			},
+			opens: 'left',
+			buttonClasses: ['btn btn-default'],
+			applyClass: 'btn-sm btn-primary',
+			cancelClass: 'btn-sm',
+			format: 'DD/MM/YYYY',
+			separator: ' au ',
+			locale: {
+				applyLabel: 'Appliquer',
+				cancelLabel: 'Annuler',
+				fromLabel: 'Du',
+				toLabel: 'Au',
+				customRangeLabel: 'Personnalisé',
+				daysOfWeek: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve','Sa'],
+				monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+				firstDay: 1
+			}
+		};
+		$('#reportrange2 span').html("<?php echo $this->start_date->get(Aurel_Date::DATE_MEDIUM)?>" + ' - ' + "<?php echo $this->end_date->get(Aurel_Date::DATE_MEDIUM)?>");
+		
+		$('#reportrange2').daterangepicker(optionSet1, function(start, end, label) {
+			console.log(start);
+			$('#start_date').val(start.format('DD/MM/YYYY'));
+			$('#end_date').val(end.format('DD/MM/YYYY'));
+			$('#reportrange2 span').html(start.format('ll') + ' - ' + end.format('ll'));
+
+			$('#mySmallModal .modal-content').html('<div class="text-center"><h4>Chargement ...</h4><br/><img src="/images/uploadProgress.gif" /></div>');
+			$('#mySmallModal').modal('show');
+			$.post(
+				'<?php echo $this->url()?>',
+				$('#dates').serialize(),
+				function(data){
+					$('.reporting-content').html(data);
+					$('#mySmallModal').modal('hide');
+				}
+			);
+		});
+	});
+</script>

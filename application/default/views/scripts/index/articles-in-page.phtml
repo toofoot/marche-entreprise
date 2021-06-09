@@ -1,0 +1,79 @@
+<?php foreach ($this->articles as $article): ?>
+    <?php if ($article->id_article): ?>
+        <div class="media row article articleTronque" id="article-<?php echo $article->id_article ?>">
+            <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES)): ?>
+                <div class="orderArticle"><a href='#'><span class="glyphicon glyphicon-resize-vertical"></span></a></div>
+            <?php endif ?>
+            <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES) || ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR) && $article->id_user_creation == $this->user->id_user)): ?>
+                <div class="actions btn-group-sm">
+                    <input type="checkbox" value="<?php echo $article->id_article ?>" class="checkboxSwitch" <?php echo $article->status == Aurel_Table_Article::STATUS_ACTIF ? "checked='checked'" : "" ?> />
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        Actions <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <?php /* if(!$article->hide_home):?><li><a class='mettreenUne' data-toggle="modal" data-target="#mySmallModal" href='<?php echo $this->url(array('action'=>'post-home','controller'=>'articles','id_article'=>$article->id_article),'admin',true)?>?url_redirect=<?php echo urlencode($_SERVER["REQUEST_URI"])?>'><span class="glyphicon glyphicon-star"></span> Mettre à la une</a></li><?php endif */ ?>
+                        <li><a class='modifArticle' href='<?php echo $this->url(array('action' => 'edit-article', 'controller' => 'articles', 'id_article' => $article->id_article, 'url_retour' => urlencode($_SERVER["REQUEST_URI"])), 'admin', true) ?>?url_redirect=<?php echo urlencode($_SERVER["REQUEST_URI"]) ?>'><span class="glyphicon glyphicon-pencil"></span> Modifier article</a></li>
+                        <li><a class='modifPhotos' data-toggle="modal" data-target="#myLargeModal" href='<?php echo $this->url(array('action' => 'edit-picture', 'controller' => 'articles', 'id_article' => $article->id_article), 'admin', true) ?>'><span class="glyphicon glyphicon-picture"></span> Gestion photo ou video</a></li>
+                        <li><a class="addFile" data-toggle="modal" data-target="#myLargeModal" href='<?php echo $this->url(array('action' => 'add-file', 'controller' => 'articles', 'id_article' => $article->id_article), 'admin', true) ?>'><span class="glyphicon glyphicon-paperclip"></span> Gestion fichiers</a></li>
+                        <li class="divider"></li>
+                        <?php if ($article->inscription_fct): ?>
+                            <li><a href='<?php echo $this->url(array('action' => 'synthese-inscription', 'id_article' => $article->id_article), 'action', true) ?>'><span class="glyphicon glyphicon-list-alt"></span> Synthèse Inscriptions</a></li>
+                            <li><a href="<?php echo $this->url(array('controller' => 'articles', 'action' => 'envoi-mail-inscrits', 'id_article' => $article->id_article, 'url_retour' => urlencode($_SERVER["REQUEST_URI"])), 'admin', true) ?>"><span class="glyphicon glyphicon-envelope"></span> Envoyer un email aux inscrits</a></li>
+                            <li class="divider"></li>
+                        <?php endif ?>
+                        <li><a class='supArticle' href='<?php echo $this->url(array('action' => 'delete-article', 'controller' => 'articles', 'id_article' => $article->id_article), 'admin', true) ?>?comHash=<?php echo md5($article->id_article) ?>' title="Supprimer article"><span class="glyphicon glyphicon-remove"></span> Supprimer</a></li>
+                    </ul>
+                </div>
+            <?php endif ?>
+            <a class="hover" href='<?php echo $this->url(array('basename_article' => $article->basename), 'basename_article', true); ?>'>
+                <?php if ($article->link_event && $article->start_date): ?>
+                    <div class="date_cartouche">
+                        <span class="day_of_month"><?php echo $article->getDate('start_date')->get(Aurel_Date::DAY) ?></span>
+                        <span class="month_name"><?php echo mb_strtoupper($article->getDate('start_date')->get(Aurel_Date::MONTH_NAME_SHORT)) ?></span>
+                    </div>
+                <?php endif ?>
+                <div class="col-md-3">
+                    <div class="visuel">
+                        <?php if ($article->picture): ?>
+                            <?php if ($article->nbPhotos > 1): ?>
+                                <div class="cycle-slideshow" data-cycle-speed="200" data-cycle-timeout="1000">
+                                    <?php foreach ($article->getIdPhotos(10) as $key => $id_photo): ?>
+                                        <img class="<?php echo $key == 0 ? " " : "hidden " ?>img-responsive background" src='/images/upload/<?php echo $article->id_article ?>/thumb<?php echo $id_photo ?>' alt='image<?php echo $article->id_article ?>' />
+                                    <?php endforeach; ?>
+                                </div>
+                                <div class="nbPhotos">
+                                    <span class="glyphicon glyphicon-camera"></span> <?php echo $article->nbPhotos ?>
+                                </div>
+                            <?php else: ?>
+                                <img class="img-responsive background" src='/images/upload/<?php echo $article->id_article ?>/thumb<?php echo $article->picture ?>.<?php echo $article->extension ?>' alt='image<?php echo $article->id_article ?>' />
+                            <?php endif ?>
+                        <?php elseif ($article->youtube): ?>
+                            <div class="popupVideo">
+                                <img class="img-responsive background" src='//img.youtube.com/vi/<?php echo $article->youtube ?>/0.jpg' alt='image<?php echo $article->id_article ?>' />
+                                <span class="iconePlay"></span>
+                            </div>
+                        <?php else: ?>
+                            <img class="img-responsive background" src='/images/no-photo<?php echo $article->annonce ? "-annonce" : "" ?>.jpg' alt='image<?php echo $article->id_article ?>' />
+                        <?php endif ?>
+                    </div>
+                </div>
+                <div class="content col-md-9" id="article<?php echo $article->id_article ?>">
+                    <div class="hidden-xs"><h3 class="underline"><?php echo mb_strtoupper($article->title); ?></h3></div>
+                    <div class="hidden-xs contentTronque"><?php echo strip_tags($article->content, "<br>"); ?></div>
+                    <h3 class="visible-xs titre_deuxligne"><?php echo mb_strtoupper($this->cesure($article->title)) ?></h3>
+                    <div class="visible-xs content_deuxligne"><?php echo $this->cesure(strip_tags($article->content), 55); ?></div>
+                    <div>
+                        <button class="btn btn-primary btn-sm">READ</button>
+                        <?php if ($article->names): ?>
+                            <?php $files = explode(",", $article->names) ?>
+                            <div class="btn btn-success btn-sm"><span class="glyphicon glyphicon-paperclip"></span> <?php echo count($files) ?> fichier<?php echo count($files) == 1 ? "" : "s" ?> joint<?php echo count($files) == 1 ? "" : "s" ?></div>
+                        <?php endif ?>
+                        <?php if ($article->id_sondage): ?>
+                            <div class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-list-alt"></span> Sondage</div>
+                        <?php endif ?>
+                    </div>					
+                </div>
+            </a>
+        </div>
+    <?php endif ?>
+<?php endforeach; ?>

@@ -1,0 +1,76 @@
+<div class="modal-header">
+	<?php if($this->ajax):?>
+		<button type="button" class="close <?php if($this->popup):?>rappel<?php endif?>" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<?php else:?>
+		<a class="btn btn-primary" href="<?php echo $this->url_retour ?>"><span class="glyphicon glyphicon-chevron-left"></span> Retour</a>
+		<br/><br/>
+	<?php endif?>
+	<h4 class="modal-title" id="myModalLabel">Envoi email à l'annonceur</h4>
+</div>
+<form id="frmEnvoi" role="form" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
+<div class="modal-body">
+	<?php echo $this->formLabel("message","Votre message",array("class"=>"label-control"))?>
+	<?php echo $this->formTextarea("message",null,array("class"=>"form-control"))?>
+	<br/>
+	<div class="messageError alert ">&nbsp;</div>
+	<div class="text-right"><?php echo $this->formButton('envoyer','Envoyer',array("class"=>"btn btn-primary","data-loading-text"=>"Envoi en cours..."))?> <img class="hidden imgWait" src='/images/wait.gif' alt='gif' /></div>
+</div>
+</form>
+<script type="text/javascript">
+	function afficheComm(texte){
+		var html = '<div class="modal-header">' +
+		'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+		'<h4 class="modal-title" id="myModalLabel">Commentaire</h4></div>';
+		html += "<div class='modal-body'>" + texte + "</div>";
+		html += '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button></div>';
+		$('#myModal .modal-content').html(html);
+		$('#myModal').modal('show');
+	}
+	$(function(){
+		$('.comm').tooltip();
+		$('#all').click(function(){
+			var checked = $(this).prop('checked');
+			$("input[type=checkbox]:not(#all)").prop('checked',checked);
+		});
+		$('#envoyer').click(function(){
+			$(this).button('loading');
+			$('.messageError').html('');
+			var continu = true;
+			if($("#message").val() == ""){
+				continu = false;
+				$('.messageError').append("Veuillez saisir un texte<br/>").addClass('alert-danger');
+			}
+
+			if(continu == false){
+				$(this).button('reset');
+			} else {
+				$('.imgWait').removeClass('hidden');
+				$.post(
+					'<?php echo $_SERVER["REQUEST_URI"]?>',
+					$('#frmEnvoi').serialize(),
+					function(response){
+						if(response.modal)
+							$('#myModal .modal-content').html(response.modal);
+						$('#myModal').modal("show");
+						$('#envoyer').button('reset');
+						$('.imgWait').addClass('hidden');
+					},'json'
+				);
+			}
+		});
+
+		$("input[type=checkbox]:not(#all)").click(function(){
+			var checkedAll = true;
+			$("input[type=checkbox]:not(#all)").each(function(){
+				if(!$(this).prop('checked'))
+					checkedAll = false;
+			});
+			$('#all').prop('checked',checkedAll);
+		});
+
+		<?php if($this->valideParticipation == '1'):?>
+			$('#mySmallModal .modal-content').html('<div class="modal-body"><div class="text-center">Votre message a été envoyé</div></div><div class="modal-footer"><a class="btn btn-primary" href="<?php echo $this->url_retour ?>">Fermer</a></div>');
+			$('#mySmallModal').modal('show');
+		<?php endif?>
+	});
+</script>

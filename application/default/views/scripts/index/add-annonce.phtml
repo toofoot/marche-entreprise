@@ -1,0 +1,211 @@
+<div class="page-header">
+	<h3>Déposer une annonce</h3>
+</div>
+<div>
+	<form id="frmaddannonce" method="post" class="form-horizontal" role="form">
+		<div class="form-group <?php echo isset($this->errors["categorie"]) ? 'has-error' : ''?>">
+			<?php echo $this->formLabel('categorie','Catégorie',array('class'=>'control-label col-sm-3'))?>
+			<div class="col-sm-9">
+				<?php echo $this->formSelect('categorie',$this->annonce->id_sous_menu,array('class'=>'form-control'),$this->tabCategories)?>
+				<span class="message text-danger"><?php echo isset($this->errors['categorie']) ? $this->errors['categorie'] : ''?></span>
+			</div>
+		</div>
+		<div class="form-group <?php echo isset($this->errors["title"]) ? 'has-error' : ''?>">
+			<?php echo $this->formLabel('title','Titre annonce',array('class'=>'control-label col-sm-3'))?>
+			<div class="col-sm-9">
+				<?php echo $this->formText('title',$this->annonce->title,array('class'=>'form-control'))?>
+				<span class="message text-danger"><?php echo isset($this->errors["title"]) ? $this->errors["title"] : ''?></span>
+			</div>
+		</div>
+		<div class="form-group <?php echo isset($this->errors["content"]) ? 'has-error' : ''?>">
+			<?php echo $this->formLabel('content','Texte annonce',array('class'=>'control-label col-sm-3'))?>
+			<div class="col-sm-9">
+				<?php echo $this->formTextarea('content',$this->annonce->content,array('class'=>'form-control','style'=>'resize: none; ','rows'=>'5'))?>
+				<span class="message text-danger"><?php echo isset($this->errors["content"]) ? $this->errors["content"] : ''?></span>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel('prix','Prix €',array('class'=>'control-label col-sm-3'))?>
+			<div class="col-sm-9">
+				<?php echo $this->formText('prix',$this->annonce->prix,array('class'=>'form-control'))?>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-3"></div>
+			<?php for($i = 1; $i <= 3 ; $i++):?>
+			<div class="col-sm-3">
+				<div class="thumbnail blockUploadPhoto">
+					<div class="wait hidden"><img src='/images/wait.gif' alt='wait' /></div>
+					<div class="header text-center">Photo <?php echo $i?></div>
+					<div class="img">
+						<?php if(isset($this->tabPhotos[$i])):?>
+							<img src='/images/upload/<?php echo $this->annonce->id_article?>/smallthumb<?php echo $this->tabPhotos[$i]->id_photo . '.' . $this->tabPhotos[$i]->extension?>' alt='Photo_<?php echo $i?>' />
+						<?php elseif(isset($this->file[$i]) && $this->file[$i] != ''):?>
+							<img src='/images/upload/tmp/smallthumb<?php echo $this->file[$i]?>' alt='Photo_<?php echo $i?>' />
+						<?php endif?>
+					</div>
+					<div class="buttonUpload text-center <?php echo isset($this->tabPhotos[$i]) || (isset($this->file[$i]) && $this->file[$i] != '') ? 'hidden' : ''?>">
+						<?php echo $this->formButton("buttonfile$i","Choisir le fichier",array('class'=>'btn btn-success btn-xs'))?>
+					</div>
+					<div class="buttonRemove text-center <?php echo isset($this->tabPhotos[$i]) || (isset($this->file[$i]) && $this->file[$i] != '') ? '' : 'hidden'?>">
+						<?php echo $this->formButton("buttonSup$i","Supprimer",array('class'=>'supFile btn btn-danger btn-xs'))?>
+					</div>
+					<input type="file" class="inputFilePhoto <?php echo isset($this->tabPhotos[$i]) || (isset($this->file[$i]) && $this->file[$i] != '') ? 'hidden' : ''?>" name="photo_<?php echo $i?>" />
+					<?php $fileName = isset($this->tabPhotos[$i]) ? $this->tabPhotos[$i]->id_photo : null?>
+					<?php $fileName = isset($this->file[$i]) && $this->file[$i] != '' ? $this->file[$i] : $fileName?>
+					<?php echo $this->formHidden("file[{$i}]",$fileName,array('class'=>'fileHidden'))?>
+				</div>
+			</div>
+			<?php endfor;?>
+		</div>
+		<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE)):?>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9"><strong><?php echo $this->user->firstname?> <?php echo $this->user->lastname?></strong> est connecté avec <strong><?php echo $this->user->email?></strong></div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel('tel','Téléphone',array('class'=>'control-label col-sm-3'))?>
+			<div class="col-sm-9">
+				<?php echo $this->formText('tel',$this->user->tel,array('class'=>'form-control'))?>
+			</div>
+		</div>
+		<div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <div class="checkbox">
+                    <label>
+                        <?php echo $this->formCheckbox('masque_tel',null,array('checked'=>$this->masque_tel))?> Masquer le numéro de téléphone dans cette annonce
+                    </label>
+                </div>
+            </div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<?php echo $this->formSubmit('envoyer','Valider mon annonce',array('class'=>'btn btn-success'))?>
+			</div>
+		</div>
+		<?php else:?>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<div class="alert alert-danger">
+					<ul>
+						<li><strong>Si vous êtes déjà inscrit sur le site, saisissez votre adresse email ci dessous</strong></li>
+						<li><strong>Si vous n'êtes pas encore inscrit sur le site, saisissez votre adresse email ci dessous, vous compléterez ensuite votre inscription</strong></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel('email_connexion','Adresse Email',array('class'=>'control-label col-sm-3'))?>
+			<div class="col-sm-9">
+				<?php echo $this->formText('email_connexion',null,array('class'=>'form-control'))?>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<?php echo $this->formButton('verif','Valider',array('class'=>'btn btn-success'))?>
+			</div>
+		</div>
+		<?php endif?>
+	</form>
+</div>
+<script type="text/javascript">
+	$(function(){
+		<?php if($this->validAuto == '1'):?>
+			if($('#envoyer').length > 0){
+				$('#mySmallModal .modal-body').html('<div class="text-center">Validation de votre annonce en cours<br/><img src="/images/wait.gif" alt="wait" /></div>');
+				$('#mySmallModal').modal('show');
+				$('#frmaddannonce').submit();
+			}
+		<?php endif?>
+		$('.inputFilePhoto').change(function(){
+			var inputFile = $(this);
+			var parent = $(this).parent();
+			var blockImg = $(this).parent().find('.img');
+			var blockHidden = $(this).parent().find('.fileHidden');
+			
+			var img, reader, formData = false;
+			var file = this.files[0];
+			if (window.FormData) {
+			    formdata = new FormData();
+			}
+
+			if (!!file.type.match(/image.*/)) {
+				$('.wait',parent).removeClass('hidden');
+	            if ( window.FileReader ) {
+	                reader = new FileReader();
+	                reader.onloadend = function (e) {
+	                
+	                };
+	                reader.readAsDataURL(file);
+	            }
+	            if (formdata) {
+	                formdata.append("images", file);
+	            }
+	            
+	        } else {
+		        alert("Veuillez selectionner une image");
+	        }
+
+			if (formdata) {
+		        $.ajax({
+		            url: "<?php echo $this->url(array('action'=>'upload-tmp'),'action',true)?>",
+		            type: "POST",
+		            data: formdata,
+		            processData: false,
+		            contentType: false,
+		            dataType : 'json',
+		            success: function (res) {
+		            	blockImg.html($('<img>').prop('src',res.src));
+		            	blockHidden.val(res.name);
+		            	inputFile.addClass('hidden');
+		            	$('.buttonUpload',parent).addClass('hidden');
+		            	$('.buttonRemove',parent).removeClass('hidden');
+		    			$('.wait',parent).addClass('hidden');
+		            }
+		        });
+		    } 
+		});
+
+		$('#verif').click(function(){
+			$('.form-group').removeClass('has-error');
+			$('.message').html('');
+			$.post(
+				'<?php echo $this->url(array('action'=>'is-user'))?>',
+				$('#frmaddannonce').serialize(),
+				function(response){
+					if(response.user !== undefined){
+						if(response.user){
+							$('#myModal .modal-content').load('<?php echo $this->url(array('action'=>'login','url_redirect'=>$this->logout_url_redirect,'after'=>'valid-annonce'),'compte',true)?>?emailLogin='+response.email,function(result){
+							    $('#myModal').modal('show');
+							});
+						} else {
+							$('#myLargeModal .modal-content').load('<?php echo $this->url(array("action"=>"register",'url_redirect'=>$this->logout_url_redirect,'after'=>'valid-annonce'),'compte',true)?>?emailLogin='+response.email,function(result){
+							    $('#myLargeModal').modal('show');
+							});
+						}
+					} else {
+						if(response.errors){
+							for(i in response.errors){
+								$('#'+i).parent().parent().addClass('has-error').find('.message').html(response.errors[i]);
+							}
+						}
+					}
+				},'json'
+			);
+		});
+
+		$('.supFile').click(function(){
+			var parent = $(this).parent().parent();
+			var inputFile = $('input[type=file]',parent);
+			
+			var blockImg = $('.img',parent);
+			var blockHidden = $('.fileHidden',parent);
+
+			blockImg.html('');
+			blockHidden.val('');
+			inputFile.removeClass('hidden');
+			$('.buttonUpload',parent).removeClass('hidden');
+        	$('.buttonRemove',parent).addClass('hidden');
+		});
+	});
+</script>

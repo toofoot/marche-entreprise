@@ -1,0 +1,45 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title" id="myModalLabel"><?php echo $this->annuaire_categorie->id_annuaire_categorie ? "Modification Categorie" : "Ajout Categorie"; ?></h4>
+</div>
+<form id="formCategorie" class="form-horizontal" method='post' action='<?php echo $this->url()?>' role="form">
+<div class="modal-body">
+	<div class="form-group has-feedback">
+		<?php echo $this->formLabel('name','Nom categorie',array('class'=>'col-xs-4 control-label'))?>
+		<div class="col-xs-8">
+			<?php echo $this->formText('name',$this->annuaire_categorie->name,array('placeholder'=>'Nom categorie',"class"=>"form-control"))?>
+			<span class="glyphicon form-control-feedback hidden"></span>
+			<span class="message text-danger"></span>
+		</div>
+	</div>
+	<div class="form-group has-feedback">
+		<?php echo $this->formLabel('color_code','Couleur',array('class'=>'col-xs-4 control-label'))?>
+		<div class="col-xs-8">
+			<?php echo $this->formText('color_code',$this->annuaire_categorie->color_code,array('placeholder'=>'Couleur',"class"=>"pick-a-color form-control"))?>
+			<span class="glyphicon form-control-feedback hidden"></span>
+			<span class="message text-danger"></span>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<?php echo $this->formSubmit('ajouter',$this->annuaire_categorie->id_annuaire_categorie ? 'Modifier' : 'Ajouter',array('class'=>'btn btn-primary','data-loading-text'=>"Chargement...","aria-hidden"=>"hidden"))?>
+</div>
+</form>
+<script type="text/javascript">
+	$(function(){
+		$(".pick-a-color").pickAColor();
+		
+		$('#formCategorie').submit(function(){
+			$('#name').parent().parent().removeClass('has-error').removeClass('has-success');
+			$('#name').parent().find('.glyphicon').addClass('hidden').removeClass('glyphicon-remove').removeClass('glyphicon-ok');
+			$('#name').parent().find('.message').html('');
+			if($('#name').val() != ""){
+				$('#ajouter').button('loading');
+			} else {
+				$('#name').parent().parent().addClass('has-error').find('.glyphicon').addClass('glyphicon-remove').removeClass('hidden');
+				$('#name').parent().find(".message").html("Nom categorie obligatoire");
+				return false;
+			}
+		});
+	});
+</script>

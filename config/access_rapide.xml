@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+  <menu>
+    <menu_10>0</menu_10>
+    <menu_11>0</menu_11>
+    <menu_14>0</menu_14>
+    <menu_15>0</menu_15>
+  </menu>
+  <sous_menu>
+    <sous_menu_150>0</sous_menu_150>
+    <sous_menu_145>0</sous_menu_145>
+    <sous_menu_146>0</sous_menu_146>
+    <sous_menu_147>0</sous_menu_147>
+    <sous_menu_148>0</sous_menu_148>
+    <sous_menu_149>0</sous_menu_149>
+    <sous_menu_151>0</sous_menu_151>
+    <sous_menu_152>0</sous_menu_152>
+  </sous_menu>
+</zend-config>

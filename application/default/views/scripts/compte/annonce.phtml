@@ -1,0 +1,83 @@
+<?php echo $this->render('compte/tabs.phtml')?>
+<div class="nav-tabs-content">
+	<form id="formUser" class="form-horizontal" method='post' action='<?php echo $this->url()?>' role="form">
+			<div class="modal-body">
+				<div class="form-group">
+                    <?php echo $this->formLabel('tel','Téléphone',array('class'=>'col-xs-4 control-label'))?>
+                    <div class="col-xs-8">
+                        <?php echo $this->formText('tel',$this->user->tel,array('placeholder'=>'Téléphone',"class"=>"form-control","autocomplete"=>"off"))?>
+                    </div>
+			    </div>
+                <div class="form-group">
+                    <div class="col-xs-offset-4 col-xs-8">
+                        <div class="checkbox">
+                            <label>
+                            <?php echo $this->formCheckbox('masque_tel',null,array('checked'=>$this->user->masque_tel))?> "Masquer le numéro de téléphone dans mes annonces
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-xs-offset-4 col-xs-8">
+                        <div class="checkbox">
+                            <label>
+                            <?php echo $this->formCheckbox('regles',null,array('checked'=>$this->user->regles))?> Je m'engage à prendre connaissance et à accepter les règles générales et particulières de diffusion des annonces (consultable à la rubriques ANNONCES)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+			<br/><br/>
+			<div class="form-group text-center">
+			<?php echo $this->formSubmit('valider','Enregistrer les modifications',array('class'=>'btn btn-primary','data-loading-text'=>"Loading..."))?>
+			</div>
+		</div>
+	</form>
+</div>
+<div id="modalConfirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm">
+	    <div class="modal-content">
+	    	<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="modalConfirmationLabel">Confirmation</h4>
+			</div>
+			<div class="modal-body">
+				Vos modifications ont été enregistrées.
+			</div>
+			<div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		$('.disabled a').click(function (e) {
+			return false;
+		})
+		$('.test').click(function(){
+			$(this).button('loading');
+			return false;
+		});
+
+		$('#formUser').submit(function(){
+			$('.message').html('');
+			$.post(
+				'<?php echo $this->url()?>',
+				$(this).serialize(),
+				function(transport){
+					if(transport.errors){
+						for(i in transport.errors){
+							var elt = transport.errors[i];
+							$('#'+elt).parent().parent().addClass('has-error').find('.glyphicon').removeClass('hidden').addClass('glyphicon-remove');
+							if(transport.message[elt])
+								$('#'+elt).parent().find('.message').html(transport.message[elt]);
+						}
+					}
+					if(transport.code == 'ok'){
+						$('#modalConfirmation').modal('show');
+					}
+				},'json'
+			);
+			return false;
+		});
+	});
+</script>

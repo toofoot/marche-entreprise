@@ -1,0 +1,80 @@
+<ul class="myTab2 nav nav-tabs" role="tablist">
+	<li class="active"><a role="tab" data-toggle="tab" href='#futur'>Inscriptions en cours</a></li>
+	<li class=""><a role="tab" data-toggle="tab" href='#historique'>Historique Inscriptions</a></li>
+</ul>
+<div class="tab-content nav-tabs-content">
+	<div class="tab-pane active fade in" id="futur">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Evenement</th>
+					<th>Date événement</th>
+					<th>Total Initial</th>
+					<th>Total Inscrits</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach($this->tabSortie as $id_article => $article):?>
+				<tr>
+					<td><a href='<?php echo $this->url(array('basename_article'=>$article['basename']),'basename_article',true)?>'><?php echo $article['title']?></a></td>
+					<td><?php echo $article['start_date']->get(Aurel_Date::DATE_SHORT)?></td>
+					<td><?php echo $article['inscription_quantite_limite']?></td>
+					<td><?php echo $article['total']?></td>
+					<td>
+						<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES) || $this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR) && $article['id_user_creation'] == $this->user->id_user):?>
+						<a title="Envoyer un email aux inscrits" class="tool btn btn-primary btn-sm" href="<?php echo $this->url(array('controller'=>'articles','action'=>'envoi-mail-inscrits','id_article'=>$id_article,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'admin',true)?>"><span class="glyphicon glyphicon-envelope"></span></a>
+						<?php endif?>
+						<a title="Voir les inscrits" class="tool btn btn-primary btn-sm" href="<?php echo $this->url(array('action'=>'synthese-inscription','id_article'=>$id_article,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'action',true)?>"><span class="glyphicon glyphicon-user"></span></a>
+						<a title="Télécharger fichier CSV" class='tool btn btn-primary btn-sm' href='<?php echo $this->url(array('controller'=>'articles','action'=>'download-synthese','id_article'=>$id_article),'admin',true)?>'><span class="glyphicon glyphicon-list-alt"></span></a>
+					</td>
+				</tr>
+				<?php endforeach;?>
+			</tbody>
+		</table>
+	</div>
+	<div class="tab-pane fade" id="historique">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Evenement</th>
+					<th>Date événement</th>
+					<th>Total Initial</th>
+					<th>Total Inscrits</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach($this->tabSortieHistorique as $id_article => $article):?>
+				<tr>
+					<td><a href='<?php echo $this->url(array('basename_article'=>$article['basename']),'basename_article',true)?>'><?php echo $article['title']?></a></td>
+					<td><?php echo $article['start_date']->get(Aurel_Date::DATE_SHORT)?></td>
+					<td><?php echo $article['inscription_quantite_limite']?></td>
+					<td><?php echo $article['total']?></td>
+					<td>
+						<?php if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES) || $this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR) && $article['id_user_creation'] == $this->user->id_user):?>
+						<a title="Envoyer un email aux inscrits" class="tool btn btn-primary btn-sm" href="<?php echo $this->url(array('controller'=>'articles','action'=>'envoi-mail-inscrits','id_article'=>$id_article,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'admin',true)?>"><span class="glyphicon glyphicon-envelope"></span></a>
+						<?php endif?>
+						<a title="Voir les inscrits" class="tool btn btn-primary btn-sm" href="<?php echo $this->url(array('action'=>'synthese-inscription','id_article'=>$id_article,'url_retour'=>urlencode($_SERVER["REQUEST_URI"])),'action',true)?>"><span class="glyphicon glyphicon-user"></span></a>
+						<a title="Télécharger fichier CSV" class='tool btn btn-primary btn-sm' href='<?php echo $this->url(array('controller'=>'articles','action'=>'download-synthese','id_article'=>$id_article),'admin',true)?>'><span class="glyphicon glyphicon-list-alt"></span></a>
+					</td>
+				</tr>
+				<?php endforeach;?>
+			</tbody>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.tool').tooltip();
+
+		var hash = window.location.hash;
+		if(hash){
+			$('.myTab2 a[href="'+hash+'"]').tab('show');
+		}
+		$('.myTab2 a').click(function(){
+			var hashLink = $(this).prop('href').replace("http://<?php echo $_SERVER['HTTP_HOST']?><?php echo $_SERVER['REQUEST_URI']?>","");
+			window.location.hash = hashLink;
+		});
+	});
+</script>

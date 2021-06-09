@@ -1,0 +1,69 @@
+<div class='ui-state-active ui-corner-all align-center'>
+	<p>
+		Cliquez sur les photos pour les selectionner et les supprimer
+		<br/>
+		Ordonner les photos, la première défini la photo visible sur la page des articles
+	</p>
+</div>
+<br/>
+	<div style="height:50px" class="align-center">
+		<input id="sup" class="btn btn-danger" type="button" value="Supprimer les photos selectionnés" name="valider" style="display:none;padding:10px;font-size:15px" />
+	</div>
+	<div class="listImages row">
+	<?php foreach($this->photos as $photo):?>
+		<div id="<?php echo $photo->id_photo ?>" class="col-md-3 checkable">
+			<div class="thumbnail">
+				<label for="image_<?php echo $photo->id_photo ?>" style="display:block">
+				<img class="img-responsive center-block" src='/images/upload/<?php echo $photo->id_article?>/thumb<?php echo $photo->id_photo?>.<?php echo $photo->extension?>' />
+				</label>
+				<input id="image_<?php echo $photo->id_photo ?>" type="checkbox" value="<?php echo $photo->id_photo ?>" name="sup[]" />
+			</div>
+		</div>
+	<?php endforeach?>
+	</div>
+<script>
+$(function(){
+	$(".listImages").sortable({
+		items: "div.checkable",
+		update: function(event, ui) {
+			order = $(this).sortable("toArray").toString();
+			$.post(
+				'<?php echo $this->url(array('action' => 'sort','controller'=>'photos','id_article'=>$this->article->id_article),'admin',true)?>',
+				'order='+order,
+				function(data, textStatus, XMLHttpRequest){
+					//$('#result').html(data);
+				}
+			);
+		}
+	});
+
+	$('.checkable input[type=checkbox]').click(function(){
+		if($(this).prop('checked'))
+			$(this).parent().css({'background-color':'#FCA52A'});
+		else
+			$(this).parent().css({'background-color':''});
+		var afficheSup = false;
+		if($('.checkable input[type=checkbox]:checked').length == 1){
+			afficheSup = true;
+		}
+		if($('.checkable input[type=checkbox]:checked').length > 1){
+			afficheSup = true;
+		}
+		if(afficheSup)
+			$('#sup').show();
+		else
+			$('#sup').hide();
+	});
+	$('#sup').click(function(){
+		$.post(
+			'<?php echo $this->url(array('action'=>'delete-Photo','controller'=>'photos','id_article'=>$this->article->id_article),'admin',true)?>',
+			$('#formPicture').serialize(),
+			function(data){
+				if(data.returncode == 'ok'){
+					$('#myLargeModal .modal-content').load("<?php echo $this->url(array('action'=>'edit-picture','controller'=>'articles','id_article'=>$this->article->id_article),'admin',true)?>");
+				}
+			},'json'
+		);
+	});
+});
+</script>

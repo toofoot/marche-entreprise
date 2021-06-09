@@ -1,0 +1,21 @@
+<div class="list-group">
+    <span class="list-group-item list-group-item-info">
+        <h4 class="list-group-item-heading">Menu ADMINISTRATEUR</h4>
+        <p class="list-group-item-text">Bienvenue <?php echo $this->user->firstname ?></p>
+    </span>
+    <?php /* if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR)):?><a class="list-group-item" href='<?php echo $this->url(array('action'=>'reporting-redacteurs','controller'=>'articles'),'admin',true)?>'>REPORTING REDACTEURS</a><?php endif */ ?>
+    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR)) : ?><a class="list-group-item" href='<?php echo $this->url(array('action' => 'reservations', 'controller' => 'articles'), 'admin', true) ?>'>Les INSCRIPTIONS</a><?php endif ?>
+    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR)) : ?><a class="list-group-item" href='<?php echo $this->url(array('action' => 'invitations', 'controller' => 'index'), 'admin', true) ?>'>Les INVITATIONS</a><?php endif ?>
+    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR)) : ?><a class="list-group-item" href='<?php echo $this->url(array('action' => 'index', 'controller' => 'sondage'), 'admin', true) ?>'>Les SONDAGES</a><?php endif ?>
+    <?php /* if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ANNUAIRE)):?><a class="list-group-item" href='<?php echo $this->url(array('action'=>'index','controller'=>'annuaire'),'admin',true)?>'>Administration ANNUAIRE</a><?php endif */ ?>
+    <?php /* if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_NEWSLETTER)):?><a class="list-group-item" href='<?php echo $this->url(array('action'=>'newsletter','controller'=>'articles'),'admin',true)?>'>Gérer les NEWSLETTER</a><?php endif */ ?>
+    <?php /* if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ANNONCES)):?><a class="list-group-item" href='<?php echo $this->url(array('action'=>'annonces','controller'=>'articles'),'admin',true)?>'>Gérer les ANNONCES <?php if(isset($this->annonces_waiting)):?><span class="badge"><?php echo $this->annonces_waiting->count()?></span><?php endif?></a><?php endif */ ?>
+    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_MEMBRES)) : ?><a class="list-group-item" href='<?php echo $this->url(array('action' => 'index', 'controller' => 'users'), 'admin', true) ?>'>Gérer les UTILISATEURS <?php if (isset($this->users_pastille)) : ?><span class="badge"><?php echo $this->users_pastille ?></span><?php endif ?></a><?php endif ?>
+    <?php /* if($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ACCESSRAPIDE)):?><a class="list-group-item" href='<?php echo $this->url(array('action'=>'set-access-rapide','controller'=>'menu'),'admin',true)?>'>Gérer les ACCES RAPIDE</a><?php endif */ ?>
+    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_FOOTER)) : ?><a class="list-group-item" href='<?php echo $this->url(array('action' => 'edit-footer', 'controller' => 'index'), 'admin', true) ?>'>Gérer le FOOTER</a><?php endif ?>
+    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES)) : ?><a class="list-group-item" href='<?php echo $this->url(array('action' => 'trash', 'controller' => 'articles'), 'admin', true) ?>'>Corbeille Articles<?php if (isset($this->articles_corbeilles)) : ?><span class="badge"><?php echo $this->articles_corbeilles->count() ?></span><?php endif ?></a><?php endif ?>
+    <?php if ($this->user->directeur) : ?><a class="list-group-item list-group-item-info" href='<?php echo $this->url(array('action' => 'config', 'controller' => 'index'), 'admin', true) ?>'>Configuration</a><?php endif ?>
+    <?php if ($this->user->directeur) : ?><a class="list-group-item list-group-item-info" href='<?php echo $this->url(array('action' => 'config-access', 'controller' => 'index'), 'admin', true) ?>'>Configuration Accès</a><?php endif ?>
+    <?php if ($this->user->directeur) : ?><a class="list-group-item list-group-item-info" href='<?php echo $this->url(array('action' => 'config-invitations', 'controller' => 'index'), 'admin', true) ?>'>Configuration Invitations</a><?php endif ?>
+    <a class="list-group-item list-group-item-warning" href='<?php echo $this->url(array('action' => 'logout', 'url_redirect' => $this->logout_url_redirect), 'admin', true) ?>'>Deconnexion</a>
+</div>

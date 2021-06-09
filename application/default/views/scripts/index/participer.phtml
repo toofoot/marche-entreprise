@@ -1,0 +1,256 @@
+<form id="frmParticipe" method="post" role="form" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h4 class="modal-title" id="myModalLabel">Inscription événement</h4>
+	</div>
+	<?php if($this->article->inscription_quantite_limite === null || $this->solde > 0):?>
+	<div class="modal-body">
+		<div class="form-horizontal">
+			<?php echo $this->formHidden("id_article",$this->article->id_article)?>
+			<?php if($this->article->inscription_quantite_limite !== null):?>
+			<div class="form-group text-success">
+				<?php echo $this->formLabel("solde_initial","Total places disponibles",array('class'=>'control-label col-xs-4'))?>
+				<div class="col-xs-8">
+					<p class="form-control-static"><?php echo $this->article->inscription_quantite_limite?> places</p>
+				</div>
+			</div>
+			<div class="form-group text-danger">
+				<?php echo $this->formLabel("solde","Places restantes",array('class'=>'control-label col-xs-4'))?>
+				<div class="col-xs-8">
+					<p class="form-control-static"><span class="sum"><?php echo $this->solde?></span> places</p>
+				</div>
+			</div>
+			<?php endif?>
+			<div>
+				<div>
+					<div id="quantite"></div>
+				</div>
+				<?php foreach($this->inscriptions as $inscription):?>
+					<?php if($this->article->inscription_nominative):?><div class="alert alert-info" style="padding:10px;margin-bottom:5px"><?php endif?>
+						<div class="row" style="padding:2px">
+							<?php echo $this->formLabel("quantite-{$inscription->id_inscription}",$inscription->name,array('class'=>'control-label col-xs-4'))?>
+							<div class="col-xs-8">
+								<div class="input-group col-xs-5">
+									<span class="input-group-btn"><button type="button" class="btn btn-info btn-sm moins"><span class="glyphicon glyphicon-minus"></span></button></span>
+									<?php echo $this->formText("quantite[{$inscription->id_inscription}]",$this->tabQuantites[$inscription->id_inscription],array('class'=>'form-control input-sm sums text-center'))?>
+									<span class="input-group-btn"><button type="button" class="btn btn-info btn-sm plus"><span class="glyphicon glyphicon-plus"></span></button></span>
+								</div>
+							</div>
+						</div>
+						<?php if($this->article->inscription_nominative):?>
+						<div class="nominatif_<?php echo $inscription->id_inscription?>">
+							<?php if($this->tabQuantites[$inscription->id_inscription] > 0):?>
+								<?php for($i = 1 ; $i <= $this->tabQuantites[$inscription->id_inscription] ; $i++):?>
+								<div class="row" style="padding:2px">
+									<div id="names_<?php echo $inscription->id_inscription?>"></div>
+									<?php echo $this->formLabel("firstname-{$inscription->id_inscription}-{$i}"," ",array('class'=>'control-label col-xs-4'))?>
+									<div class="col-xs-4">
+										<?php echo $this->formText("firstname[{$inscription->id_inscription}][$i]",$this->tabFirstname[$inscription->id_inscription][$i - 1],array('class'=>'form-control input-sm','placeholder'=>'Prénom'))?>
+									</div>
+									<div class="col-xs-4">
+										<?php echo $this->formText("lastname[{$inscription->id_inscription}][$i]",$this->tabLastname[$inscription->id_inscription][$i - 1],array('class'=>'form-control input-sm','placeholder'=>'Nom'))?>
+									</div>
+								</div>
+								<?php endfor?>
+							<?php endif?>
+							<span class="message text-danger"></span>
+						</div>
+						<?php endif?>
+					<?php if($this->article->inscription_nominative):?></div><?php endif?>
+				<?php endforeach;?>
+			</div>
+			<div class="form-group">
+				<?php echo $this->formLabel("comment","Commentaire",array('class'=>'control-label col-xs-4'))?>
+				<div class="col-xs-8">
+					<?php echo $this->formTextarea("comment",$this->comment,array('class'=>'form-control input-sm','rows'=>'5'))?>
+				</div>
+			</div>
+			<?php if(!$this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE)):?>
+			<div class="form-group">
+				<div class="alert alert-danger">
+					<ul>
+						<li><strong>Si vous êtes déjà inscrit sur le site, saisissez votre adresse email ci dessous</strong></li>
+						<li><strong>Si vous n'êtes pas encore inscrit sur le site, saisissez votre adresse email ci dessous, vous compléterez ensuite votre inscription</strong></li>
+					</ul>
+				</div>
+			</div>
+			<div class="form-group">
+				<?php echo $this->formLabel('email_connexion','Adresse Email',array('class'=>'control-label col-xs-4'))?>
+				<div class="col-xs-8">
+					<?php echo $this->formText('email_connexion',null,array('class'=>'form-control input-sm'))?>
+					<span class="message text-danger"></span>
+				</div>
+			</div>
+			<?php endif?>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+		<?php if($this->hasParticipate):?>
+			<a class="cancel btn btn-danger" href="<?php echo $this->url(array('action'=>'cancel-inscription'))?>">Annuler mon inscription</a>
+		<?php endif?>
+		<?php echo $this->formButton('envoyer','Valider mon inscription',array("class"=>"btn btn-primary","data-loading-text"=>"Chargement..."))?>
+	</div>
+	<?php else:?>
+	<div class="modal-body">
+		<h2 class="text-center">Il n'y a plus de places disponibles</h2>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+	</div>
+	<?php endif?>
+</form>
+
+<script type="text/javascript">
+	function calcul(){
+		var sum = 0;
+		$('.sums').each(function(){
+			sum += Number($(this).val());
+		});
+		var dispo = <?php echo $this->solde?> - sum;
+		$('.sum').text(dispo);
+
+		return dispo;
+	}
+	function changeValue(elt){
+		var id_inscription = elt.prop('id').replace('quantite-','');
+		var quantite = elt.val();
+		var $html = '';
+		for ( var i = 1 ; i <= quantite ; i++){
+			firstnameValue = $('#firstname-'+id_inscription+'-'+i).length > 0 ? $('#firstname-'+id_inscription+'-'+i).val() : '';
+			lastnameValue = $('#lastname-'+id_inscription+'-'+i).length > 0 ? $('#lastname-'+id_inscription+'-'+i).val() : '';
+			$html += '<div class="row" style="padding:2px">';
+			$html += '<div id="names_'+id_inscription+'"></div>';
+			$html += '	<label for="firstname-'+id_inscription+'-'+i+'" class="control-label col-xs-4"> </label>';
+			$html += '	<div class="col-xs-4">';
+			$html += '		<input type="text" name="firstname['+id_inscription+']['+i+']" id="firstname-'+id_inscription+'-'+i+'" value="'+firstnameValue+'" class="form-control input-sm" placeholder="Prénom">';
+			$html += '	</div>';
+			$html += '	<div class="col-xs-4">';
+			$html += '		<input type="text" name="lastname['+id_inscription+']['+i+']" id="lastname-'+id_inscription+'-'+i+'" value="'+lastnameValue+'" class="form-control input-sm" placeholder="Nom">';
+			$html += '	</div>';
+			$html += '</div>';
+		}
+		$html += '<span class="message text-danger"></span>';
+		$('.nominatif_' + id_inscription).html($html);
+	}
+	$(function(){
+		$('.cancel').click(function(){
+			return confirm("Êtes vous sur de vouloir annuler cette inscription ?");
+		});
+		$('.moins').click(function(){
+			var input = $(this).parent().next();
+			<?php if($this->article->inscription_quantite_limite !== null):?>
+				var oldvalue = Number(input.val());
+				var newvalue = oldvalue > 0 ? oldvalue - 1 : 0;
+				input.val(newvalue);
+				calcul();
+			<?php else:?>
+				var oldvalue = Number(input.val());
+				var newvalue = oldvalue > 0 ? oldvalue - 1 : 0;
+				input.val(newvalue);
+			<?php endif?>
+			<?php if($this->article->inscription_nominative):?>
+				changeValue(input);
+			<?php endif?>
+			$(this).blur();
+		});
+		$('.plus').click(function(){
+			var input = $(this).parent().prev();
+			<?php if($this->article->inscription_quantite_limite !== null):?>
+				var dispo = calcul();
+				var oldvalue = Number(input.val());
+				var newvalue = oldvalue + 1;
+				if(dispo > 0)
+					input.val(newvalue);
+				calcul();
+			<?php else:?>
+				var oldvalue = Number(input.val());
+				var newvalue = oldvalue + 1;
+				input.val(newvalue);
+			<?php endif?>
+			<?php if($this->article->inscription_nominative):?>
+				changeValue(input);
+			<?php endif?>
+			$(this).blur();
+		});
+		<?php if($this->article->inscription_quantite_limite !== null):?>
+			calcul();
+		<?php endif?>
+		
+		<?php if(!$this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE)):?>
+		$('#envoyer').click(function(){
+			$('#envoyer').button('loading');
+			$('.has-error').removeClass('has-error');
+			$('.message').html('');
+			var continu = true;
+			<?php if($this->article->inscription_quantite_limite !== null):?>
+				if(Number($('.sum').text()) < 0){
+					$('#quantite').parent().find('.message').html('Vous pouvez au maximum prendre <?php echo $this->solde?> places');
+					continu = false;
+				}
+			<?php endif?>
+			if(continu){
+				$.post(
+					'<?php echo $this->url(array('action'=>'is-user'))?>',
+					$('#frmParticipe').serialize(),
+					function(response){
+						$('#envoyer').button('reset');
+						if(response.user !== undefined){
+							if(response.user){
+								$('#myModal .modal-content').load('<?php echo $this->url(array('action'=>'login','url_redirect'=>$this->logout_url_redirect,'after'=>'valid-participation'),'compte',true)?>?emailLogin='+response.email,function(result){
+								    $('#myModal').modal('show');
+								});
+							} else {
+								$('#myLargeModal .modal-content').load('<?php echo $this->url(array("action"=>"register",'url_redirect'=>$this->logout_url_redirect,'after'=>'valid-participation'),'compte',true)?>?emailLogin='+response.email,function(result){
+								    $('#myLargeModal').modal('show');
+								});
+							}
+						} else {
+							if(response.errors){
+								for(i in response.errors){
+									$('#'+i).parent().parent().addClass('has-error').find('.message').html(response.errors[i]);
+								}
+							}
+						}
+					},'json'
+				);
+			} else {
+				$('#envoyer').button('reset');
+			}
+		});
+		<?php else:?>
+		$('#envoyer').click(function(){
+			$('#envoyer').button('loading');
+			$('.has-error').removeClass('has-error');
+			$('.message').html('');
+			var continu = true;
+			<?php if($this->article->inscription_quantite_limite !== null):?>
+				if(Number($('.sum').text()) < 0){
+					$('#quantite').parent().find('.message').html('Vous pouvez au maximum prendre <?php echo $this->solde?> places');
+					continu = false;
+				}
+			<?php endif?>
+			if(continu){
+				$.post(
+					'<?php echo $_SERVER["REQUEST_URI"] . '?debug=1'?>',
+					$('#frmParticipe').serialize(),
+					function(response){
+						$('#envoyer').button('reset');
+						if(response.errors){
+							for(i in response.errors){
+								$('#'+i).parent().parent().addClass('has-error').find('.message').html(response.errors[i]);
+							}
+							$("#myModal").animate({ scrollTop: "0" });
+						}
+						if(response.url_redirect){
+							document.location.href = response.url_redirect;
+						}
+					},'json'
+				);
+			}else {
+				$('#envoyer').button('reset');
+			}
+		});
+		<?php endif?>
+	});
+</script>

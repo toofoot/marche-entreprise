@@ -1,0 +1,34 @@
+<?php foreach($this->passe as $key=>$passe):?>
+	<div class="col-md-4 col-sm-6 row OneElt">
+		<a title="<?php echo mb_strtoupper($passe->title)?>" href="<?php echo $this->url(array('basename_article'=>$passe->basename),'basename_article',true)?>" class="">
+		<div class="month color2 col-xs-5 text-center">
+		  	<div class="ellipsis"><?php echo $passe->menu_name ? mb_strtoupper($passe->menu_name) : mb_strtoupper($passe->sous_menu_name)?></div>
+			<span class="date"><?php echo $passe->getDate('start_date')->get(Aurel_Date::DAY) ?> <?php echo mb_strtoupper($passe->getDate('start_date')->get(Aurel_Date::MONTH_NAME_SHORT)) ?></span>
+			<div class="text"><?php echo $passe->title ?></div>
+		</div>
+		<div class="text col-xs-7">
+			<div class="ellipsis underline"><?php echo $passe->title?></div>
+			<div>
+				<?php if($passe->end_date != $passe->start_date):?>
+					Du <?php echo $passe->getDate("start_date")->get(Aurel_Date::DAY)?> <?php echo $passe->getDate("start_date")->get(Aurel_Date::MONTH_NAME)?> 
+					<?php if($passe->with_hours):?>
+						à <?php echo $passe->getHour("start_hour")?>
+					<?php endif?>
+					au <?php echo $passe->getDate("end_date")->get(Aurel_Date::DAY)?> <?php echo $passe->getDate("end_date")->get(Aurel_Date::MONTH_NAME)?> <?php echo $passe->getDate("end_date")->get(Aurel_Date::YEAR)?> 
+					<?php if($passe->with_hours):?>
+						à <?php echo $passe->getHour("end_hour")?>
+					<?php endif?>
+				<?php else:?>
+					Le <?php echo $passe->getDate("start_date")->get(Aurel_Date::DAY)?> <?php echo $passe->getDate("start_date")->get(Aurel_Date::MONTH_NAME)?> <?php echo $passe->getDate("start_date")->get(Aurel_Date::YEAR)?> 
+					<?php if($passe->with_hours):?>
+						<?php echo $passe->start_hour != $passe->end_hour ? "de" : "à" ?> <?php echo $passe->getHour("start_hour")?>
+						<?php if($passe->start_hour != $passe->end_hour):?>
+							à <?php echo $passe->getHour("end_hour")?>
+						<?php endif?>
+					<?php endif?>
+				<?php endif?>
+			</div>
+		</div>
+		</a>
+	</div>
+<?php endforeach;?>

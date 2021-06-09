@@ -1,0 +1,7 @@
+<ul class="myTab nav nav-tabs">
+	<?php foreach($this->navigation as $menu):?>
+        <?php if($menu->isVisible()):?>
+		<li class="<?php echo $menu->isActive() ? "active" : ""?>"><a href='<?php echo $menu->getHref()?>'><?php echo $menu->label?></a></li>
+        <?php endif ?>
+	<?php endforeach?>
+</ul>

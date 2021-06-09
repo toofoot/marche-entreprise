@@ -1,0 +1,47 @@
+<?php foreach($this->articles as $key => $article):?>
+<div id="article-<?php echo $article->id_article ?>" class="col-md-3 col-sm-3 actualitesinfo">
+  	<div class="">
+		<a class="hover" title="<?php echo mb_strtoupper($article->title)?>" href="<?php echo $this->url(array('basename_article'=>$article->basename),'basename_article',true)?>" class="">
+			<div class="visuel">
+			<?php if($article->picture):?>
+				<?php if($article->nbPhotos > 1):?>
+				<div class="cycle-slideshow" data-cycle-speed="200" data-cycle-timeout="1000">
+					<?php foreach($article->getIdPhotos(10) as $key2=>$id_photo):?>
+				    <img class="<?php echo $key2 == 0 ? " " : "hidden "?>img-responsive" src='/images/upload/<?php echo $article->id_article?>/thumb<?php echo $id_photo?>' alt='image<?php echo $article->id_article?>' />
+				    <?php endforeach;?>
+				</div>
+				<div class="nbPhotos">
+					<span class="glyphicon glyphicon-camera"></span> <?php echo $article->nbPhotos?>
+				</div>
+				<?php else:?>
+				<img class="img-responsive" src='/images/upload/<?php echo $article->id_article?>/thumb<?php echo $article->picture?>.<?php echo $article->extension?>' alt='image<?php echo $article->id_article?>' />
+				<?php endif?>
+			<?php elseif($article->youtube):?>
+				<div class="popupVideo">
+					<img class="img-responsive" src='//img.youtube.com/vi/<?php echo $article->youtube?>/0.jpg' alt='image<?php echo $article->id_article?>' />
+					<span class="iconePlay"></span>
+				</div>
+			<?php else: ?>
+				<img class="img-responsive" src='/images/no-photo<?php echo $article->annonce ? "-annonce" : ""?>.jpg' alt='image<?php echo $article->id_article?>' />
+			<?php endif?>
+			<div class="rubrique">
+				<?php echo $article->sous_menu_name ? mb_strtoupper($article->sous_menu_name) : mb_strtoupper($article->sous_menu_name) ?>
+			</div>
+			<?php if($article->link_event && $article->start_date):?>
+			<div class="date_cartouche">
+				<span class="day_of_month"><?php echo $article->getDate('start_date')->get(Aurel_Date::DAY)?></span>
+				<span class="month_name"><?php echo mb_strtoupper($article->getDate('start_date')->get(Aurel_Date::MONTH_NAME_SHORT))?></span>
+			</div>
+			<?php endif?>
+			</div>
+		    <div class="caption">
+		    	<h3 class="titre_deuxligne"><?php echo mb_strtoupper($this->cesure($article->title))?></h3>
+		    	<div class="content_deuxligne"><?php echo $this->cesure(strip_tags($article->content),55); ?></div>
+		    	
+		    	<hr class="hidden-xs" />
+				<hr class="visible-xs" />
+			</div>
+		</a>
+	</div>
+</div>
+<?php endforeach;?>

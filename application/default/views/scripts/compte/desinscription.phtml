@@ -1,0 +1,13 @@
+<div>
+	<form method="post">
+		<div class="text-center">
+			<h4>Souhaitez-vous réellement désinscrire l'adresse email suivante de la newsletter?</h4>
+			<div><?php echo $this->userToUnsubscribe->email?></div>
+			<?php echo $this->formHidden('email',$this->userToUnsubscribe->email)?>
+			<div class="form-group">
+				<button class="btn btn-primary" type="submit">Oui, désinscrire</button>
+				<a class="btn btn-default" href="/">Non, Annuler</a>
+			</div>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,198 @@
+<div class="modal-body">
+    <a class="btn btn-primary" href="<?php echo $this->url(array('action'=>'index','id_sondage'=>null,'controller'=>'sondage'),'admin',true) ?>">Retour</a>
+    <form class="form-horizontal" method="post">
+        <div class="form-group">
+            <?php echo $this->formLabel("name","Nom du sondage",array("class"=>"control-label col-xs-3"));?>
+            <div class="col-xs-9">
+                <?php echo $this->formText("name",$this->sondage->name,array("class"=>"form-control")); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("description","Description",array("class"=>"control-label col-xs-3"));?>
+            <div class="col-xs-9">
+                <?php echo $this->formTextarea("description",$this->sondage->description,array("class"=>"form-control","rows"=>3)); ?>
+            </div>
+        </div>
+        <div class="form-group form-inline">
+            <?php echo $this->formLabel("start_date","Dates",array("class"=>"control-label col-xs-3"));?>
+            <div class="col-xs-9">
+                Du
+                <?php echo $this->formText('start_date',$this->sondage->getDate('start_date')->get('dd/MM/YYYY'),array("class"=>"form-control","placeholder"=>"Date Début"))?>
+                au
+                <?php echo $this->formText('end_date',$this->sondage->getDate('end_date')->get('dd/MM/YYYY'),array("class"=>"form-control","placeholder"=>"Date Fin"))?>
+            </div>
+        </div>
+        <div class="col-sm-offset-3 alert alert-info">
+            <div class="form-group">
+                <div class="col-sm-9">
+                    <div class="checkbox">
+                        <label>
+                            <?php echo $this->formCheckbox("login_required",null,array('checked'=>$this->sondage->login_required)); ?> Connexion requise
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="div_login_required" <?php if(!$this->sondage->login_required):?>style="display:none"<?php endif?>>
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <div class="checkbox">
+                            <label>
+                                <?php echo $this->formCheckbox("several_answers",null,array('checked'=>$this->sondage->several_answers)); ?> Possibilité de répondre plusieurs fois au formulaire
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="div_several_answers form-group" <?php if(!$this->sondage->several_answers):?>style="display:none"<?php endif?>>
+                    <div class="col-xs-9">
+                        <?php echo $this->formLabel("link_new_answer","Nom du lien pour remplir le formulaire une nouvelle fois",array("class"=>"control-label"));?>
+                        <?php echo $this->formText("link_new_answer",$this->sondage->link_new_answer,array("class"=>"form-control")); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <?php if($this->questions): ?>
+        <div class="form-group">
+            <div class="questions col-xs-offset-3 col-xs-9">
+            <?php foreach($this->questions as $question): ?>
+                <?php echo $this->partial("sondage/show-question.phtml",array("question"=>$question)) ?>
+            <?php endforeach ?>
+            </div>
+        </div>
+        <hr class="clearfix" />
+        <div class="form-group">
+            <div class="col-xs-offset-3 col-xs-9">
+                <a class="btn btn-default" data-toggle="modal" data-target="#myLargeModal" href="<?php echo $this->url(array("action"=>"edit-question")); ?>">Ajouter question</a>
+            </div>
+        </div>
+        <hr/>
+        <?php endif ?>
+        <div class="form-group">
+            <div class="col-xs-3">
+                <?php /*<a class="btn btn-danger btn-block" href=""><span class="glyphicon glyphicon-trash"></span> Supprimer</a>*/ ?>
+            </div>
+            <div class="col-xs-9">
+                <?php if($this->sondage->id_sondage):?>
+                    <?php echo $this->formButton("ok","Valider le sondage",array("type"=>"submit","class"=>"btn btn-primary btn-block"));?>
+                <?php else: ?>
+                    <?php echo $this->formButton("ok","Enregistrer pour pouvoir ajouter des questions",array("type"=>"submit","class"=>"btn btn-primary btn-block"));?>
+                <?php endif ?>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $(".questions").sortable({
+            items: ".block-questions",
+            update: function(event, ui) {
+                 order = $(this).sortable("toArray").toString();
+                 $.post(
+                     '<?php echo $this->url(array('action' => 'sort','id_sondage'=>$this->sondage->id_sondage))?>',
+                     'order='+order,
+                     function(data, textStatus, XMLHttpRequest){
+                     //$('#result').html(data);
+                     }
+                 );
+             }
+        });
+        $( "#start_date" ).datepicker({
+            changeMonth: true,
+            numberOfMonths: 1,
+            onSelect: function( selectedDate ) {
+                var selectedDateISO = selectedDate.replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+                var end_dateISO = $( "#end_date" ).val().replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+
+                if(selectedDateISO > end_dateISO)
+                    $( "#end_date" ).val( selectedDate );
+
+                $( "#inscription_date_limite" ).datepicker( "option", "maxDate", selectedDate ).val(selectedDate);
+            }
+        });
+        $( "#end_date" ).datepicker({
+            changeMonth: true,
+            numberOfMonths: 1,
+            onSelect: function( selectedDate ) {
+                var selectedDateISO = selectedDate.replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+                var start_dateISO = $( "#start_date" ).val().replace(/^(\d{2})\/(\d{2})\/(\d{4}).*$/, '$3-$2-$1');
+
+                if(selectedDateISO < start_dateISO)
+                    $( "#start_date" ).val( selectedDate );
+            }
+        });
+        $('#login_required').click(function(){
+            var checked = $(this).prop('checked');
+            if(checked){
+                $('.div_login_required').show();
+            } else {
+                $('.div_login_required').hide();
+            }
+        });
+        $('#several_answers').click(function(){
+            var checked = $(this).prop('checked');
+            if(checked){
+                $('.div_several_answers').show();
+            } else {
+                $('.div_several_answers').hide();
+            }
+        });
+
+        $( document ).on( "click", '.block-questions input', function() {
+            $(this).blur();
+            return false;
+        });
+        $( document ).on( "click", '.line .close', function() {
+            var parentElt = $(this).parent().parent();
+            if(parentElt.prop('id') == "option-other"){
+                parentElt.addClass('hidden');
+                $('#option-other .form-control').prop('disabled','disabled');
+                $('.add-other-link').removeClass('hidden');
+            } else {
+                parentElt.remove();
+            }
+
+            var i = 1;
+            $('.options .form-control').each(function(){
+                $(this).prop({
+                    "placeholder": "Option n°" + i
+                });
+                i++;
+            });
+
+            if($('.options .line').length > 1) {
+                $('.options .line .close').removeClass('hidden');
+            } else {
+                $('.options .line .close').addClass('hidden');
+            }
+        });
+        $( document ).on( "keyup", '.options .form-control', function(e) {
+            if( e.which == 13 ){
+                addLine();
+                return false;
+            }
+        });
+        $( document ).on( "keydown", '.options .form-control', function(e) {
+            if( e.which == 8 && $(this).val() == ''){
+                var nbOptions = $('.options .line').length;
+                if(nbOptions > 1) {
+                    var parentElt = $(this).parent().parent();
+                    parentElt.remove();
+                    $('.options .line:last .form-control').focus();
+
+
+                    if($('.options .line').length > 1) {
+                        $('.options .line .close').removeClass('hidden');
+                    } else {
+                        $('.options .line .close').addClass('hidden');
+                    }
+                    return false;
+                }
+            }
+        });
+
+        $(document).on('click','.options .cases',function(){
+            $(this).blur();
+            return false;
+        });
+    });
+</script>

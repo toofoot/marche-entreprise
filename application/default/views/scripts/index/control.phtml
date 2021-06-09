@@ -1,0 +1,5 @@
+<?php if ($this->pageCount > 1 && isset($this->next)): ?>
+	<a class="btn btn-success btn-sm download-others" data-loading-text="Chargement..." href='<?php echo $this->url(array('action'=>'articles-in-accueil','page'=>$this->next),'action',true)?>'>VOIR PLUS</a>
+<?php else:?>
+	&nbsp;
+<?php endif?>

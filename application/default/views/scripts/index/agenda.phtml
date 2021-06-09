@@ -1,0 +1,127 @@
+<br/><br/>
+
+<div class="row">
+	<div class="col-xs-2">
+		<img class="img-responsive hidden-xs" src='/images/agenda.png' alt='Agenda' />
+	</div>
+	<div class="col-xs-10 row">
+		<h4><img class="img-responsive" src='/images/layout/avenir.png' alt='A venir' /></h4>
+	  	
+		<div class="row">
+		<?php foreach($this->avenir as $key=>$avenir):?>
+			<div class="col-md-4 col-sm-6 row OneElt">
+				<a title="<?php echo mb_strtoupper($avenir->title)?>" href="<?php echo $this->url(array('basename_article'=>$avenir->basename),'basename_article',true)?>" class="">
+				<div class="month color1 col-xs-5 text-center">
+					<div class="ellipsis"><?php echo $avenir->menu_name ? mb_strtoupper($avenir->menu_name) : mb_strtoupper($avenir->sous_menu_name)?></div>
+					<span class="date"><?php echo $avenir->getDate('start_date')->get(Aurel_Date::DAY) ?> <?php echo mb_strtoupper($avenir->getDate('start_date')->get(Aurel_Date::MONTH_NAME_SHORT)) ?></span>
+					<div class="text"><?php echo $avenir->title ?></div>
+				</div>
+				<div class="text col-xs-7">
+					<div class="ellipsis underline"><?php echo $avenir->title?></div>
+					<div>
+						<?php if($avenir->end_date != $avenir->start_date):?>
+							Du <?php echo $avenir->getDate("start_date")->get(Aurel_Date::DAY)?> <?php echo $avenir->getDate("start_date")->get(Aurel_Date::MONTH_NAME)?> 
+							<?php if($avenir->with_hours):?>
+								à <?php echo $avenir->getHour("start_hour")?>
+							<?php endif?>
+							au <?php echo $avenir->getDate("end_date")->get(Aurel_Date::DAY)?> <?php echo $avenir->getDate("end_date")->get(Aurel_Date::MONTH_NAME)?> <?php echo $avenir->getDate("end_date")->get(Aurel_Date::YEAR)?> 
+							<?php if($avenir->with_hours):?>
+								à <?php echo $avenir->getHour("end_hour")?>
+							<?php endif?>
+						<?php else:?>
+							Le <?php echo $avenir->getDate("start_date")->get(Aurel_Date::DAY)?> <?php echo $avenir->getDate("start_date")->get(Aurel_Date::MONTH_NAME)?> <?php echo $avenir->getDate("start_date")->get(Aurel_Date::YEAR)?> 
+							<?php if($avenir->with_hours):?>
+								<?php echo $avenir->start_hour != $avenir->end_hour ? "de" : "à" ?> <?php echo $avenir->getHour("start_hour")?>
+								<?php if($avenir->start_hour != $avenir->end_hour):?>
+									à <?php echo $avenir->getHour("end_hour")?>
+								<?php endif?>
+							<?php endif?>
+						<?php endif?>
+					</div>
+				</div>
+				</a>
+			</div>
+		<?php endforeach;?>
+		</div>
+		<h4><img class="img-responsive" src='/images/layout/onteulieu.png' alt='A venir' /></h4>
+		<div class="row onteulieu">
+			<?php echo $this->render('index/ont-eu-lieu.phtml')?>
+		</div>
+		<?php if($this->hasOlder):?>
+		<div class="text-center">
+			<a href='<?php echo $this->urlLink;?>' data-loading-text="Chargement..." class='downloadOlder btn btn-success btn-sm'><?php echo $this->textLink?></a>
+		</div>
+		<?php endif?>
+	</div>
+</div>
+<script type="text/javascript">
+	function scroll(){
+		$(".month,.text").off('mouseenter mouseleave');
+		var scroller = null;
+		$('.month,.text').hover(function(){
+			var thisOne = $(this);
+			var widthMonth = $(this).width();
+			var elt = $("<span class='scrollMonth' style='font-weight:bold'></span>").html($(this).find('.ellipsis').html());
+			thisOne.find('.ellipsis').css("text-overflow","initial");
+			$('.scrollMonths').append(elt);
+			var width = $('.scrollMonths .scrollMonth').width();
+			$('.scrollMonths .scrollMonth').remove();
+
+			var timing = (width + widthMonth + widthMonth) / 300;
+			console.log(timing);
+
+			if(width > widthMonth){
+				var scroll = width + widthMonth;
+				var i = 0;
+				scroller = setInterval(function(){
+					var textIndent = Number(thisOne.find('.ellipsis').css("margin-left").replace("px",""));
+					
+					if(textIndent > -scroll){
+						thisOne.find('.ellipsis').css({"margin-left":-i});
+						i += timing;
+					} else {
+						thisOne.find('.ellipsis').css({"margin-left":widthMonth});
+						i = -widthMonth;
+					}
+				},5);
+			}
+		},function(){
+			$('.scrollMonths .scrollMonth').remove();
+			clearTimeout(scroller);
+			var thisOne = $(this);
+			thisOne.find('.ellipsis').css({"margin-left":0,"text-overflow":"ellipsis"});
+		});
+	}
+	$(function(){
+		scroll();
+		$('.downloadOlder').click(function(){
+			var btn = $(this)
+		    btn.button('loading');
+			$.get(
+				$(this).prop('href'),
+				function(response){
+					if(response.ids){
+						for(i in response.ids){
+							$('#article-' + response.ids[i]).remove();
+						}
+					}
+					if(response.html){
+						$('.onteulieu').append(response.html);
+					}
+					if(response.urlLink){
+						$('.downloadOlder').prop('href',response.urlLink);
+					}
+					if(response.textLink){
+						$('.downloadOlder').html(response.textLink);
+					}
+					if(!response.hasOlder){
+						$('.downloadOlder').parent().hide();
+					}
+					scroll();
+					btn.button('reset');
+				},'json'
+			);
+			return false;
+		});
+	});
+</script>

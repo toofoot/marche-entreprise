@@ -1,0 +1,63 @@
+<a href="<?php echo $this->url(array('action'=>'newsletter','id_newsletter'=>null)) ?>" class="btn btn-primary">Retour</a>
+<div class="row">
+    <?php if(count($this->logs) > 0): ?>
+        <div class="col-xs-8">
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Email</th>
+                    <th>Message</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach($this->logs as $log): ?>
+                    <tr>
+                        <td><?php echo $log['date'] ?></td>
+                        <td><?php echo $log['email'] ?></td>
+                        <td><?php echo $log['error'] ?></td>
+                    </tr>
+                <?php endforeach ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-4 text-center">
+            <form class="send" method="post" action="<?php echo $this->url() ?>">
+                <input type="hidden" name="send" value="1" />
+                <button type="submit" class="btn btn-primary">Renvoyer la newsletter aux Manquants</button>
+            </form>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-success text-center">Pas d'erreur d'envoi sur cette newsletter</div>
+    <?php endif ?>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('.send').submit(function(e){
+            $('#myModal .modal-content').html("<div class='text-center'>Envoi en cours<br/><img src='/images/uploadProgress.gif' /></div>");
+            $('#myModal').modal("show");
+            $('.send button').button('loading');
+            var href = $(this).prop('href');
+            $.post(
+                href,
+                $(this).serialize(),
+                function(response){
+                    if(response.modal) {
+                        $('#myModal .modal-content').html(response.modal);
+                        $('.closeModal').click(function(){
+                           $(this).button('loading');
+                        });
+                    }
+                    if(response.id_newsletter){
+
+                    }
+                    $('#myModal').modal("show");
+                    $('.send button').button('reset');
+                },'json'
+            );
+
+            e.preventDefault();
+            return false;
+        });
+    })
+</script>

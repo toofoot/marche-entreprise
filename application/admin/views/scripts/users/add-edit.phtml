@@ -1,0 +1,272 @@
+<div class="modal-header">
+	<a class='btn btn-primary' href='<?php echo $this->url(array('action'=>'index','controller'=>'users'),'admin',true)?>'><span class="glyphicon glyphicon-chevron-left"></span> Retour</a>
+	<h4 class="modal-title text-center" id="myModalLabel"><?php echo $this->userToModify->id_user ? "Editer Utilisateur" : "Ajouter Utilisateur"?></h4>
+</div>
+<form id="formUser" class="form-horizontal" method='post' action='<?php echo $this->url()?>' role="form">
+	<div class="modal-body">
+		<div class="form-group">
+			<?php echo $this->formLabel('name','Identifiant',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">
+				<?php echo $this->formText('name',$this->userToModify->name,array('placeholder'=>'Identifiant',"class"=>"form-control"))?>
+			</div>
+		</div>
+		<div class="form-group has-feedback">
+			<?php echo $this->formLabel('email','Email *',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">
+				<?php echo $this->formText('email',$this->userToModify->email,array('placeholder'=>'Email',"class"=>"form-control"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel('lastname','Nom',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">
+				<?php echo $this->formText('lastname',$this->userToModify->lastname,array('placeholder'=>'Nom',"class"=>"form-control"))?>
+			</div>
+		</div>
+		<div class="form-group">	
+			<?php echo $this->formLabel('firstname','Prénom',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">
+				<?php echo $this->formText('firstname',$this->userToModify->firstname,array('placeholder'=>'Prénom',"class"=>"form-control"))?>
+			</div>
+		</div>
+		<div class="form-group">	
+			<?php echo $this->formLabel('societe','Société',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">
+				<?php echo $this->formText('societe',$this->userToModify->societe,array('placeholder'=>'Société',"class"=>"form-control"))?>
+			</div>
+		</div>
+		<div class="form-group">	
+			<?php echo $this->formLabel('fonction','Fonction',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">
+				<?php echo $this->formText('fonction',$this->userToModify->fonction,array('placeholder'=>'Fonction',"class"=>"form-control"))?>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel('type','Droits',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">
+				<div class="explication alert alert-info" style="height:70px">
+					Passer votre souris sur chaque droit pour en avoir la description
+				</div>
+				<div class="clearfix">
+				<?php if($this->me->directeur):?>
+					<?php $array = array("checked"=>$this->userToModify->directeur,"class"=>"popo","title"=>"Ce statut donne l’intégralité des droits d’administration")?>
+					<?php if($this->me == $this->userToModify):?>
+						<?php $array['disabled'] = true?>
+					<?php endif?>
+				<div class='col-xs-12'>
+					<div>
+						<?php echo $this->formCheckbox("directeur",null,$array)?>
+						<?php echo $this->formLabel('directeur','DIRECTEUR DE PUBLICATION',array("class"=>"popo","title"=>"Ce statut donne l’intégralité des droits d’administration"))?>
+					</div>
+				</div>
+				<?php endif?>
+				<?php foreach($this->selectType as $id => $name):?>
+					<?php $array = array("class"=>"right popo","checked"=>isset($this->coche[$id]),"title"=>$this->selectDescription[$id])?>
+					<?php if($this->userToModify->directeur):?>
+						<?php $array['disabled'] = true?>
+					<?php endif?>
+					<div class='col-xs-6'>
+						<div>
+							<?php echo $this->formCheckbox("rights[$id]",null,$array)?>
+							<?php echo $this->formLabel("rights-$id",$name,array("class"=>"popo","title"=>$this->selectDescription[$id]))?>
+						</div>
+					</div>
+				<?php endforeach;?>
+				</div>
+				
+			</div>
+		</div>
+		<div class="panel form-group droits_redacteur <?php echo isset($this->coche[Aurel_Acl::RESSOURCE_ADMIN_ARTICLES]) || !isset($this->coche[Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR]) ? "hidden" : ""?>">
+			<?php echo $this->formLabel('type','Perimètre des rubriques/sous rubriques rédacteur',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">
+				<div class="" style="padding:7px 10px">
+					<?php echo $this->formCheckbox("all",null)?> 
+					<?php echo $this->formLabel("all","Toutes les rubriques et sous rubriques")?>
+				</div>
+				<ul class="clearfix small row">
+					<?php foreach($this->menus as $menu):?>
+					<?php if(!$menu->annonces && !$menu->agenda):?>
+						<?php $lblMenu = "menu_".$menu->id_menu; ?>
+						<li class="col-xs-6">
+							<?php echo $this->formCheckbox("menus_redacteur[".$menu->id_menu."]",null,array("class"=>"checkall","checked"=>isset($this->userToModify->menus_redacteur[$menu->id_menu]) && $this->userToModify->menus_redacteur[$menu->id_menu] == "1"))?> 
+							<?php echo $this->formLabel("menus_redacteur-".$menu->id_menu,$menu->name)?>
+							
+							<?php if($menu->sous_menus_name): ?>
+								<ul>
+								<?php $liste_basename = explode(",",$menu->sous_menus_basename)?>
+								<?php $liste_name = explode(",",$menu->sous_menus_name)?>
+								<?php $liste_id = explode(",",$menu->sous_menus_id)?>
+								<?php foreach($liste_basename as $key=>$basename):?>
+									<?php $lblSousMenu = "sous_menu_".$liste_id[$key]; ?>
+									<li id="sousmenu-<?php echo $liste_id[$key]?>">
+										<?php echo $this->formCheckbox("menus_redacteur[".$menu->id_menu."][".$liste_id[$key]."]",null,array("class"=>"checkone menus_redacteur-".$menu->id_menu,"checked"=>isset($this->userToModify->menus_redacteur[$menu->id_menu][$liste_id[$key]]) && $this->userToModify->menus_redacteur[$menu->id_menu][$liste_id[$key]]))?> 
+										<?php echo $this->formLabel("menus_redacteur-".$menu->id_menu."-".$liste_id[$key],$liste_name[$key])?>
+									</li>
+								<?php endforeach;?>
+								</ul>
+							<?php endif?>
+						</li>
+					<?php endif?>
+					<?php endforeach;?>
+				</ul>
+			</div>
+		</div>
+		<div class="form-group">
+			<?php echo $this->formLabel('status','Statut compte',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">	
+				<?php echo $this->formSelect('status',$this->userToModify->status,array("class"=>"form-control"),$this->selectStatus)?>
+			</div>
+		</div>
+		<?php if($this->userToModify->id_user):?>
+		<hr/>
+		<span class="help-block text-center">Si vous souhaitez changer le mot de passe de l’utilisateur, tapez en un nouveau deux fois de suite ci-dessous. Sinon, laissez les champs vides.</span>
+		<div class="form-group has-feedback">
+			<?php echo $this->formLabel('password','Nouveau Mot de passe',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">	
+				<?php echo $this->formPassword('password',null,array("class"=>"form-control","autocomplete"=>"off"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">
+			<?php echo $this->formLabel('password2','Répétez le Nouveau Mot de passe',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">	
+				<?php echo $this->formPassword('password2',null,array("class"=>"form-control","autocomplete"=>"off"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+			</div>
+		</div>
+		<?php else:?>
+			<div class="form-group has-feedback">
+				<?php echo $this->formLabel('password','Mot de passe *',array('class'=>'col-xs-4 control-label'))?>
+				<div class="col-xs-8">	
+					<?php echo $this->formPassword('password',null,array("class"=>"form-control","autocomplete"=>"off"))?>
+					<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				</div>
+			</div>
+			<div class="form-group has-feedback">
+				<?php echo $this->formLabel('password2','Répétez le Mot de passe *',array('class'=>'col-xs-4 control-label'))?>
+				<div class="col-xs-8">	
+					<?php echo $this->formPassword('password2',null,array("class"=>"form-control","autocomplete"=>"off"))?>
+					<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				</div>
+			</div>
+		<?php endif?>
+		<div>
+			* Elements obligatoires
+		</div>
+		<div class="modal-footer">
+			
+			<?php if($this->userToModify->id_user):?>
+				<?php echo $this->formSubmit('valider','Enregistrer les modifications',array('class'=>'btn btn-primary','data-loading-text'=>"Loading..."))?>
+			<?php else:?>
+				<?php echo $this->formSubmit('valider','Ajouter nouvel utilisateur',array('class'=>'btn btn-primary','data-loading-text'=>"Loading..."))?>
+			<?php endif?>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#rights-<?php echo Aurel_Acl::RESSOURCE_ADMIN_ARTICLES?>").click(function(){
+		var checked = $(this).prop('checked');
+		$("#rights-<?php echo Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR?>").prop('checked',checked).prop('disabled',checked);
+
+		if(checked)
+			$(".droits_redacteur").addClass('hidden');
+	});
+	$("#rights-<?php echo Aurel_Acl::RESSOURCE_ADMIN_ARTICLES?>").each(function(){
+		var checked = $(this).prop('checked');
+		$("#rights-<?php echo Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR?>").prop('disabled',checked);
+	});
+	
+	$("#rights-<?php echo Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR?>").click(function(){
+		var checked = $(this).prop('checked');
+		if(checked)
+			$(".droits_redacteur").removeClass('hidden');
+		else
+			$(".droits_redacteur").addClass('hidden');
+	});
+	
+	$("#directeur").click(function(){
+		var checked = $(this).prop('checked');
+		if(checked){
+			$('.right').prop('checked',true);
+			$('.right').prop('disabled',true);
+		} else {
+			$('.right').prop('disabled',false);
+		}
+	});
+	$(".checkall").click(function(){
+		var checked = $(this).prop('checked');
+		var id = $(this).prop('id');
+		$('.'+id).prop('checked',checked);
+	});
+	
+	$(".checkone").click(function(){
+		var idall = $(this).prop('class').replace("checkone ","");
+
+		var checked = true;
+		$('.'+idall).each(function(){
+			if(!$(this).prop('checked'))
+				checked = false;
+		});
+
+		$('#'+idall).prop('checked',checked);
+	});
+	$(".checkone").each(function(){
+		var idall = $(this).prop('class').replace("checkone ","");
+
+		var checked = true;
+		$('.'+idall).each(function(){
+			if(!$(this).prop('checked'))
+				checked = false;
+		});
+
+		$('#'+idall).prop('checked',checked);
+	});
+
+	$('#all').click(function(){
+		var checked = $(this).prop('checked');
+		$(".droits_redacteur input[type=checkbox]:not(#all)").prop('checked',checked);
+	});
+	
+	var checkedAll = true;
+	$(".droits_redacteur input[type=checkbox]:not(#all)").each(function(){
+		if(!$(this).prop('checked'))
+			checkedAll = false;
+	});
+	$('#all').prop('checked',checkedAll);
+	
+	$(".droits_redacteur input[type=checkbox]:not(#all)").click(function(){
+		var checkedAll = true;
+		$(".droits_redacteur input[type=checkbox]:not(#all)").each(function(){
+			if(!$(this).prop('checked'))
+				checkedAll = false;
+		});
+		$('#all').prop('checked',checkedAll);
+	});
+	
+	$('#formUser').submit(function(){
+		$('.has-error').removeClass('has-error');
+		$('.form-control-feedback').addClass('hidden');
+		$.post(
+			'<?php echo $this->url()?>',
+			$(this).serialize(),
+			function(transport){
+				if(transport.errors){
+					for(i in transport.errors){
+						var elt = transport.errors[i];
+						$('#'+elt).parent().parent().addClass('has-error').find('.glyphicon').removeClass('hidden');
+					}
+				}
+				if(transport.code == 'ok'){
+					location.href = '<?php echo $this->url(array('action'=>'index','controller'=>'users'),'admin',true)?>';
+				}
+			},'json'
+		);
+		return false;
+	});
+	$('.popo').hover(function(){
+		var $html = $(this).prop('title');
+		$('.explication').html($html);
+	});
+});
+</script>

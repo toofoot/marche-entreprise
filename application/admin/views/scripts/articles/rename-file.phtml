@@ -1,0 +1,25 @@
+<form method="post" enctype="multipart/form-data" id="formFile" action="<?php echo $this->url()?>">
+	<div class="form-group">
+		<label for="nameFile">Nom du fichier</label>
+		<input class="form-control" id="nameFile" type="text" name="nameFile" placeholder="Nom du fichier" value="<?php echo $this->file->name?>"/>
+	</div>
+	<div class="form-group">
+		<input id="envoie" type="submit" name="envoie" value="Renommer le fichier" class="btn btn-default" />
+	</div>
+	<div class='messageFile'>&nbsp;</div>
+</form>
+<script type="text/javascript">
+	$(function(){
+		$('#formFile').submit(function(){
+			$('#formFile input').removeClass('inputerror');
+			$('#messageFile').val(' ');
+			var continu = true;
+			if($('#name').val() == ''){
+				continu = false;
+				$('#name').addClass('inputerror');
+			}
+
+			return continu;
+		});
+	});
+</script>

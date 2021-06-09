@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel"><?php echo "Supprimer vos réponses"?></h4>
+</div>
+<form id="formUser" class="form-horizontal" method='post' action='<?php echo $_SERVER["REQUEST_URI"] ?>' role="form">
+    <div class="modal-body">
+        <?php echo $this->formHidden('confirm',1)?>
+        <div>Êtes vous sur de vouloir supprimer ceci ? </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+        <?php echo $this->formSubmit('valider','Supprimer',array('class'=>'btn btn-primary','data-loading-text'=>"Loading..."))?>
+    </div>
+</form>
+<script type="text/javascript">
+    $(function(){
+
+    });
+</script>

@@ -1,0 +1,54 @@
+<ul class="myTab nav nav-tabs">
+    <li class="<?= $this->state == Aurel_Table_Invitation::TYPE_SENT ? 'active' : '' ?>"><a href='<?= $this->url() ?>?state=<?= Aurel_Table_Invitation::TYPE_SENT ?>'>Invitations envoyées</a></li>
+    <li class="<?= $this->state == Aurel_Table_Invitation::TYPE_RESENT ? 'active' : '' ?>"><a href='<?= $this->url() ?>?state=<?= Aurel_Table_Invitation::TYPE_RESENT ?>'>Invitations relancées</a></li>
+    <li class="<?= $this->state == Aurel_Table_Invitation::TYPE_VALIDATED ? 'active' : '' ?>"><a href='<?= $this->url() ?>?state=<?= Aurel_Table_Invitation::TYPE_VALIDATED ?>'>Invitations validées</a></li>
+</ul>
+<div class="nav-tabs-content">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Etat</th>
+                <th>Date action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($this->invitations as $invitation): ?>
+            <tr class="<?= $invitation->state == Aurel_Table_Invitation::TYPE_VALIDATED ? "bg-success" : "" ?>">
+                    <td><?= $invitation->email ?></td>
+                    <td><?= $invitation->getState() ?> 
+                        
+                    </td>
+                    <td><?php if ($invitation->date_inscription): ?>
+                            <?= $invitation->getDate('date_inscription') ?>
+                        <?php elseif ($invitation->date_resent): ?>
+                            <?= $invitation->getDate('date_resent') ?>
+                        <?php elseif ($invitation->date_sent): ?>
+                            <?= $invitation->getDate('date_sent') ?>
+                        <?php endif; ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<script>
+    $(function () {
+        $('.relance').click(function () {
+            $(this).button('loading');
+        });
+<?php if ($this->ready): ?>
+            setInterval(function () {
+
+                $.get(
+                        '<?= $this->url(['action' => 'check-ready']) ?>',
+                        function (response) {
+                            if (response.refresh) {
+                                location.reload();
+                            }
+                        }, 'json'
+                        );
+            }, 5000);
+<?php endif; ?>
+
+    });
+</script>

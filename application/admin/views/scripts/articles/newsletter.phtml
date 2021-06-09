@@ -1,0 +1,112 @@
+<div>
+	<div class="text-center">
+	  	<a class="btn btn-primary" href="<?php echo $this->url(array('action'=>'add-newsletter'))?>"><span class="glyphicon glyphicon-plus"></span> Envoyer nouvelle Newsletter</a>
+	</div>
+	<div class="panel-group" id="accordion">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#waitings">
+			          Newsletters en attente d'envoi
+			        </a>
+				</h4>
+    		</div>
+		    <div id="waitings" class="panel-collapse collapse in">
+		      <div class="panel-body">
+		      	<table class="table table-hover table-condensed article">
+					<thead>
+						<tr>
+							<th class="col-xs-1">ID</th>
+							<th class="col-xs-6">Sujet</th>
+							<th class="col-xs-2">Date Envoi</th>
+							<th class="col-xs-1">Nb envoi</th>
+							<th class="col-xs-2"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach($this->waitings as $newsletter):?>
+							<tr id="newsletter_<?php echo $newsletter->id_newsletter?>">
+								<td><?php echo $newsletter->id_newsletter?></td>
+								<td><?php echo $newsletter->subject?></td>
+								<td><?php echo $newsletter->getDate('date_envoi')->get(Aurel_Date::DATETIME_MEDIUM)?></td>
+								<td><?php echo $newsletter->nb_envoi?></td>
+								<td class="text-right">
+									<a data-toggle="tooltip" title="Valider et envoyer aux membres inscrits" class="send voir btn btn-success btn-sm" href='<?php echo $this->url(array('id_newsletter'=>$newsletter->id_newsletter,'action'=>'send-newsletter'))?>'><span class="glyphicon glyphicon-ok"></span></a>
+									<a data-toggle="tooltip" title="Modifier" class="voir btn btn-primary btn-sm" href='<?php echo $this->url(array('id_newsletter'=>$newsletter->id_newsletter,'action'=>'add-newsletter'))?>'><span class="glyphicon glyphicon-pencil"></span></a>
+									<a data-toggle="tooltip" title="Voir" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('id_newsletter'=>$newsletter->id_newsletter),'newsletter',true)?>' target='_blank'><span class="glyphicon glyphicon-eye-open"></span></a>
+									<a data-toggle="modal" data-target="#mySmallModal" title="Supprimer" class="deleteNewsletter voir btn btn-danger btn-sm" href='<?php echo $this->url(array('id_newsletter'=>$newsletter->id_newsletter,'action'=>'delete-newsletter'))?>'><span class="glyphicon glyphicon-remove"></span></a>
+
+								</td>
+							</tr>
+						<?php endforeach;?>
+					</tbody>
+				</table>
+		      </div>
+		    </div>
+  		</div>
+  		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#archived">
+			          Newsletters archivés
+			        </a>
+				</h4>
+    		</div>
+		    <div id="archived" class="panel-collapse collapse in">
+		      <div class="panel-body">
+		      	<table id="archived_newsletter" class="table table-hover table-condensed article">
+					<thead>
+						<tr>
+							<th class="col-xs-1">ID</th>
+							<th class="col-xs-6">Sujet</th>
+							<th class="col-xs-2">Date Envoi</th>
+							<th class="col-xs-1">Nb envoi</th>
+							<th class="col-xs-2"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach($this->newsletters as $newsletter):?>
+							<tr id="newsletter_<?php echo $newsletter->id_newsletter?>">
+								<td><?php echo $newsletter->id_newsletter?></td>
+								<td><?php echo $newsletter->subject?></td>
+								<td><?php echo $newsletter->getDate('date_envoi')->get(Aurel_Date::DATETIME_MEDIUM)?></td>
+								<td><?php echo $newsletter->nb_envoi?></td>
+								<td class="text-right">
+                                    <a data-toggle="tooltip" title="Voir les logs d'envoi" class="voir btn btn-warning btn-sm" href='<?php echo $this->url(array('id_newsletter'=>$newsletter->id_newsletter,'action'=>'get-manquants'))?>'><span class="glyphicon glyphicon-list-alt"></span></a>
+                                    <a data-toggle="tooltip" title="Voir" class="voir btn btn-default btn-sm" href='<?php echo $this->url(array('id_newsletter'=>$newsletter->id_newsletter),'newsletter',true)?>' target='_blank'><span class="glyphicon glyphicon-eye-open"></span></a>
+                                </td>
+							</tr>
+						<?php endforeach;?>
+					</tbody>
+				</table>
+		      </div>
+		    </div>
+  		</div>
+	</div>
+
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('.voir').tooltip();
+		$('.send').click(function(){
+			$('#myModal .modal-content').html("<div class='text-center'>Envoi en cours<br/><img src='/images/uploadProgress.gif' /></div>");
+			$('#myModal').modal("show");
+			var href = $(this).prop('href');
+			$.post(
+				href,
+				function(response){
+					if(response.modal)
+						$('#myModal .modal-content').html(response.modal);
+					if(response.id_newsletter){
+						var htmlToArchive = $('#newsletter_' + response.id_newsletter).html();
+						$('#newsletter_' + response.id_newsletter).remove();
+						$('#archived_newsletter tbody').prepend($('<tr></tr>').prop('id','newsletter_' + response.id_newsletter).html(htmlToArchive));
+						$('#newsletter_' + response.id_newsletter + ' .send').remove();
+					}
+					$('#myModal').modal("show");
+				},'json'
+			);
+			return false;
+		});
+	});
+</script>

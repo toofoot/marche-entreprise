@@ -1,0 +1,50 @@
+<div class="toSort">
+	<?php foreach($this->files as $file):?>
+		<div id="file-<?php echo $file->id_file?>" class="file-<?php echo $file->id_file?> row file" style="width:300px">
+			<div class="col-md-8">
+			<img src='/images/icons/16/<?php echo $file->extension?>.gif' alt='icon' style="vertical-align: middle" />
+			<?php echo $file->name?>.<?php echo $file->extension?>
+			</div>
+			<div class="col-md-4">
+				<div class="btn-group actions">
+					<a class="colorbox btn btn-default btn-xs" href='<?php echo $this->url(array('action'=>'rename-file','controller'=>'articles','id_article'=>$this->article->id_article,'id_file'=>$file->id_file),'admin',true)?>' style="float:left" title="Renommer fichier"><span class="glyphicon glyphicon-pencil"></span></a>
+					<a class="supFile btn btn-default btn-xs" href='<?php echo $this->url(array('action'=>'delete-file','controller'=>'articles','id_article'=>$this->article->id_article,'id_file'=>$file->id_file),'admin',true)?>?comHash=<?php echo md5($file->id_file)?>' style="float:left" title="Supprimer fichier"><span class="glyphicon glyphicon-remove"></span></a>
+				</div>
+			</div>
+		</div>
+	<?php endforeach;?>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$(".toSort").sortable({
+			items: "div.file",
+			update: function(event, ui) {
+				order = $(this).sortable("toArray").toString();
+				$.post(
+					'<?php echo $this->url(array('action' => 'sort-files','controller'=>'articles'),'admin',true)?>',
+					'order='+order,
+					function(data, textStatus, XMLHttpRequest){
+						//$('#result').html(data);
+					}
+				);
+			}
+		});
+
+
+		$('.colorbox').colorbox();
+
+		$('.supFile').click(function(){
+			if(confirm("Etes vous sur de vouloir supprimer ce fichier ?")){
+				$.post(
+					$(this).prop('href'),
+					function(response){
+						if(response.returncode == 'ok' && response.id_file){
+							$('.file-' + response.id_file).remove();
+						}
+					},'json'
+				);
+			}
+			return false;
+		});
+	});
+</script>

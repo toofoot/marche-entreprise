@@ -1,0 +1,26 @@
+<?php $url = "marche-entreprises-voucher.btob-adidas.com"; ?>
+<?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_MEMBRE)): ?>
+    <?php $hash = Aurel_Encryptor::getInstance()->encrypt(json_encode($this->userToConnect->toArray()), 3600)->getEncryptedValue() ?>
+
+    <?php //$this->headMeta()->appendHttpEquiv('refresh', '5; URL=http://boutique.btob-adidas.com/login?hash=' . $hash) ?>
+<iframe id="iframeBilletterie" src="https://<?= $url ?>/login?hash=<?= $hash ?>" style="display:block;border:none;width:100%;height:calc(100vh - 85px)"></iframe>
+<?php /*<div class="text-center">
+    <h3>Vous allez être automatiquement redirigé vers la boutique</h3><br>...<br>...<br>
+Si rien ne se passe après 5 secondes, cliquez ici :
+<a href="http://boutique.btob-adidas.com/login?hash=<?= $hash ?>">accéder à la boutique</a>
+</div>*/ ?>
+<?php else: ?>
+    <h1 class="text-center">Vous devez être connecté pour pouvoir accéder à la boutique</h1>
+    <div class="text-center">
+        <a class="btn btn-primary" href='<?php echo $this->url(array("action" => "register"), 'compte', true) ?>?url_redirect=<?= urlencode('/vouchers') ?>'>Je crée mon compte</a>
+        <a class="btn btn-primary" data-toggle="modal" data-target="#myModal" href='<?php echo $this->url(array('action' => 'login', 'url_redirect' => urlencode('/vouchers')), 'compte', true) ?>'>Je me connecte</a>
+    </div>
+<?php endif; ?>
+<script>
+$(function(){
+    if(window.location.hash){
+        var url = window.location.hash.replace('#','');
+        $('#iframeBilletterie').prop('src',"https://<?= $url ?>" + decodeURIComponent(url));
+    }
+});
+</script>

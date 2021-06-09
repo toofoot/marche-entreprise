@@ -1,0 +1,62 @@
+<div class="">
+    <form id="frmConfig" class="form-horizontal" role="form" method="post" action="<?php echo $this->url(); ?>" enctype="multipart/form-data">
+        <div class="form-group">
+            <?php echo $this->formLabel("minArticlesInPage", "Nombre Articles minimum par page", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-2">
+                <?php echo $this->formText("minArticlesInPage", $this->config->minArticlesInPage, array("class" => "form-control")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("delaiArticlesPage", "Délais archivage articles (en jours)", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-2">
+                <?php echo $this->formText("delaiArticlesPage", $this->config->delaiArticlesPage, array("class" => "form-control")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("daysArchiveAnnonce", "Délais archivage annonces (en jours)", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-2">
+                <?php echo $this->formText("daysArchiveAnnonce", $this->config->daysArchiveAnnonce, array("class" => "form-control")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("imgDefaultArticle", "Image par défaut pour les articles", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-3">
+                <img src="/images/no-photo.jpg?<?php echo uniqid() ?>" alt="No photo" class="img-responsive" />
+                <?php echo $this->formFile("imgDefaultArticle") ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("title_popup_inscription", "Titre popup inscription", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-8">
+                <?php echo $this->formText("title_popup_inscription", $this->config->title_popup_inscription, array("class" => "form-control")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <?php echo $this->formLabel("text_popup_inscription", "Texte popup inscription", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-8">
+                <?php echo $this->formTextarea("text_popup_inscription", $this->config->text_popup_inscription, array("class" => "form-control", "rows" => "3")) ?>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <?php echo $this->formSubmit("sub", "Enregistrer", array("class" => "btn btn-primary", 'data-loading-text' => "Loading...")) ?>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+<?php if ($this->session->message): ?>
+            var html = '<div class="modal-header">' +
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+                    //'<h4 class="modal-title" id="myModalLabel">Commentaire</h4>'.
+                    '&nbsp;</div>';
+            html += "<div class='modal-body'>Données enregistrées</div>";
+            html += '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button></div>';
+            $('#mySmallModal .modal-content').html(html);
+            $('#mySmallModal').modal('show');
+            $('#sub').button('reset');
+<?php endif ?>
+        $('#frmConfig').submit(function () {
+            $('#sub').button('loading');
+        });
+    });
+</script>

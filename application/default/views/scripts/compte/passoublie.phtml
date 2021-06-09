@@ -1,0 +1,68 @@
+<?php if($this->FormPassOublie):?>
+<form id="frmConnexion" class="form-horizontal" role="form" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
+	<div>
+		<h2 class="text-center">Mot de passe oublié</h2>
+		<?php if($this->message):?>
+			<div class="alert alert-danger text-center"><?php echo $this->message?></div>
+		<?php endif?>
+		<div class="form-group">
+			<?php echo $this->formLabel('email','Email',array("class"=>"col-sm-4 control-label"))?>
+			<div class="col-sm-8">
+				<?php echo $this->formText('email',null,array("class"=>"form-control","placeholder"=>"Email"))?>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-4 col-sm-8">
+			<?php echo $this->formSubmit('envoyer','Recherche',array("class"=>"btn btn-default","data-loading-text"=>"Recherche en cours..."))?>
+			</div>
+		</div>
+	</div>
+</form>
+<?php elseif($this->FormReinitPass):?>
+<form id="frmConnexion" class="form-horizontal" role="form" method="post" action="<?php echo $_SERVER["REQUEST_URI"]?>">
+	<div>
+		<h2 class="text-center">Redéfinir votre mot de passe</h2>
+		<?php if($this->message):?>
+			<div class="alert alert-danger text-center"><?php echo $this->message?></div>
+		<?php endif?>
+		<div class="form-group has-feedback">
+			<?php echo $this->formLabel('password','Nouveau Mot de passe',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">	
+				<?php echo $this->formPassword('password',null,array("class"=>"form-control","autocomplete"=>"off"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group has-feedback">
+			<?php echo $this->formLabel('password2','Répétez le Nouveau Mot de passe',array('class'=>'col-xs-4 control-label'))?>
+			<div class="col-xs-8">	
+				<?php echo $this->formPassword('password2',null,array("class"=>"form-control","autocomplete"=>"off"))?>
+				<span class="glyphicon glyphicon-remove form-control-feedback hidden"></span>
+				<span class="message text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-4 col-sm-8">
+			<?php echo $this->formSubmit('envoyer','Modifier mot de passe',array("class"=>"btn btn-default","data-loading-text"=>"Chargement..."))?>
+			</div>
+		</div>
+	</div>
+</form>
+<?php else:?>
+	<?php if($this->message):?>
+		<div class="alert alert-success text-center">
+			<div><?php echo $this->message?></div>
+			<?php if($this->connectButton):?>
+			<div>Vous pouvez maintenant vous connecter</div>
+			<div><a href="/compte/login/" data-target="#myModal" data-toggle="modal" class="btn btn-info btn-sm">CONNEXION</a></div>
+			<?php endif?>
+		</div>
+	<?php endif?>
+<?php endif?>
+<script type="text/javascript">
+	$(function(){
+		$('#frmConnexion').submit(function(){
+			$('#envoyer').button('loading');
+		});
+	});
+</script>

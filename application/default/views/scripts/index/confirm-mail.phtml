@@ -1,0 +1,21 @@
+<div>
+	<div id="picture" style="background:url(/images/upload/<?php echo $this->picture?>);background-position:<?php echo $this->picture_position?>">
+		<div class="textInPicture"><?php echo $this->title?></div>
+	</div>
+	<div id="popupArticles">
+		<div id="title"><?php echo $this->title_articles?></div>
+		<div class="article">
+			<div class="align-center bold">
+				<?php if($this->sent):?>
+					<?php echo nl2br($this->config->textAfterValidation)?>
+				<?php elseif($this->already):?>
+					<?php echo nl2br($this->config->textalreadySent)?>
+					
+				<?php else:?>
+					Erreur d'envoi de l'email
+				<?php endif?>
+			</div>
+		</div>
+		
+	</div>
+</div>
