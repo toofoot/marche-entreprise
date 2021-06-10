@@ -273,7 +273,7 @@ class CompteController extends Aurel_Controller_Abstract
         setcookie(
             'Auth',
             '',
-            time() - 2600,
+            time() - 3600,
             '/',
             $cookie_domain,
             $this->isSecure(),
@@ -282,8 +282,8 @@ class CompteController extends Aurel_Controller_Abstract
 
         setcookie(
             'popup',
-            1,
-            time() + 30 * 3600 * 24,
+            '',
+            time() - 3600,
             '/',
             $cookie_domain,
             $this->isSecure(),
@@ -291,7 +291,7 @@ class CompteController extends Aurel_Controller_Abstract
         );
         setcookie(
             'access_code_ok',
-            1,
+            '',
             time() - 3600,
             '/',
             $cookie_domain,
@@ -301,12 +301,12 @@ class CompteController extends Aurel_Controller_Abstract
 
         session_destroy();
 
-        /* if ($this->hasParam('url_redirect'))
+        if ($this->hasParam('url_redirect'))
             $url_redirect = urldecode($this->getParam('url_redirect'));
         else
             $url_redirect = $this->view->url(array(), 'default', true);
 
-        $this->redirect($url_redirect); */
+        $this->redirect($url_redirect);
     }
 
     public function newsletterAction()
