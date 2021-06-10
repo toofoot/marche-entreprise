@@ -6,7 +6,8 @@
  * @author
  * @version 
  */
-class IndexController extends Aurel_Controller_Abstract {
+class IndexController extends Aurel_Controller_Abstract
+{
 
     protected $_basenamePrincipal = null;
     protected $_basenameSecondaire = null;
@@ -19,26 +20,29 @@ class IndexController extends Aurel_Controller_Abstract {
      *
      * @return void
      */
-    public function preDispatch() {
+    public function preDispatch()
+    {
         parent::preDispatch();
     }
 
-    public function home1Action() {
+    public function home1Action()
+    {
         $oArticle = new Aurel_Table_Article();
 
         $articles = $oArticle->getAllNews(5, null, 2);
 
         $this->view->headScript()
-                ->appendFile('/javascript/lightslider/js/lightslider.js');
+            ->appendFile('/javascript/lightslider/js/lightslider.js');
 
         // Styles CSS
         $this->view->headLink()
-                ->appendStylesheet('/javascript/lightslider/css/lightslider.css');
+            ->appendStylesheet('/javascript/lightslider/css/lightslider.css');
 
         $this->view->articles = $articles;
     }
 
-    public function contactAnnonceurAction() {
+    public function contactAnnonceurAction()
+    {
         $oArticle = new Aurel_Table_Article();
         $oSousMenu = new Aurel_Table_SousMenu();
         $oUser = new Aurel_Table_User();
@@ -91,10 +95,10 @@ class IndexController extends Aurel_Controller_Abstract {
 
                         $subject = "Carbon12011 Licensing, demande de contact. Votre annonce référence #NUM_ANNONCE#";
                         $html = "Catégorie annonce : #CATEGORIE_ANNONCE#\n" .
-                                "Titre annonce : #TITRE_ANNONCE#\n" .
-                                "Référence annonce : #NUM_ANNONCE#\n" .
-                                "Email demandeur : #EMAIL_DEMANDEUR#\n" .
-                                "Message : #MESSAGE_DEMANDEUR#\n";
+                            "Titre annonce : #TITRE_ANNONCE#\n" .
+                            "Référence annonce : #NUM_ANNONCE#\n" .
+                            "Email demandeur : #EMAIL_DEMANDEUR#\n" .
+                            "Message : #MESSAGE_DEMANDEUR#\n";
 
                         foreach ($replace as $key => $value) {
                             $subject = str_replace("#$key#", $value, $subject);
@@ -112,7 +116,6 @@ class IndexController extends Aurel_Controller_Abstract {
                             $mail->send();
                             $return["sent"] = true;
                         } catch (Exception $e) {
-                            
                         }
                     }
                 }
@@ -122,7 +125,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function deleteAnnonceAction() {
+    public function deleteAnnonceAction()
+    {
         $this->_disableLayout();
 
         $oArticle = new Aurel_Table_Article();
@@ -143,7 +147,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function renewAnnonceAction() {
+    public function renewAnnonceAction()
+    {
         $this->_disableLayout();
 
         $oArticle = new Aurel_Table_Article();
@@ -206,7 +211,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function addAnnonceAction() {
+    public function addAnnonceAction()
+    {
         $this->view->validAuto = $this->getParam('valid');
         $sessionAnnonce = new Zend_Session_Namespace('annonce');
         $oMenu = new Aurel_Table_Menu();
@@ -317,7 +323,6 @@ class IndexController extends Aurel_Controller_Abstract {
                     $oPhoto = new Aurel_Table_Photo();
                     foreach ($formData['file'] as $key => $file) {
                         if ($file != '' && isset($tabPhotos) && isset($tabPhotos[$key]) && $file == $tabPhotos[$key]->id_photo) {
-                            
                         } elseif ($file != '') {
                             if (isset($tabPhotos) && isset($tabPhotos[$key]) && $file != $tabPhotos[$key]->id_photo)
                                 $tabPhotos[$key]->delete();
@@ -372,10 +377,10 @@ class IndexController extends Aurel_Controller_Abstract {
 
                     $subject = "Nouvelle annonce en attente de validation (Annonce n° {$article->id_article})";
                     $body = "Une nouvelle annonce a été mise en ligne par {$this->_getUser()->firstname} {$this->_getUser()->lastname}\n" .
-                            "Rubrique : {$rubrique}\n" .
-                            "Titre : {$article->title}\n" .
-                            "Texte de l'annonce : {$article->content}\n" .
-                            "Prix : {$article->prix}\n";
+                        "Rubrique : {$rubrique}\n" .
+                        "Titre : {$article->title}\n" .
+                        "Texte de l'annonce : {$article->content}\n" .
+                        "Prix : {$article->prix}\n";
                     if ($photos->count() > 0) {
                         $body .= "<div style='text-align:center'>Photos :\n";
                         foreach ($photos as $photo) {
@@ -388,8 +393,8 @@ class IndexController extends Aurel_Controller_Abstract {
 
                     $mail = new Aurel_Mailer("utf-8");
                     $mail->setBodyHtmlWithDesign($body, $subject)
-                            ->setSubject($subject)
-                            ->setFrom("no-reply@lepetitcharsien.com", "Carbon12011 Licensing");
+                        ->setSubject($subject)
+                        ->setFrom("no-reply@lepetitcharsien.com", "Carbon12011 Licensing");
 
                     foreach ($usersAdminAnnonce as $user) {
                         $mail->addTo($user->email, $user->firstname . " " . $user->lastname);
@@ -397,7 +402,6 @@ class IndexController extends Aurel_Controller_Abstract {
                     try {
                         $mail->send();
                     } catch (Exception $e) {
-                        
                     }
 
                     $this->redirect($this->view->url(array('basename_article' => $article->basename), 'basename_annonce', true));
@@ -410,7 +414,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function isUserAction() {
+    public function isUserAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -489,7 +494,8 @@ class IndexController extends Aurel_Controller_Abstract {
         echo json_encode($return);
     }
 
-    public function rssAction() {
+    public function rssAction()
+    {
         $this->_disableView();
         $this->_disableLayout();
 
@@ -529,7 +535,8 @@ class IndexController extends Aurel_Controller_Abstract {
         fclose($fh);
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
         $title = $this->view->headTitle('Accueil', "PREPEND");
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
             $http = "https://";
@@ -539,14 +546,14 @@ class IndexController extends Aurel_Controller_Abstract {
         $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
         $this->view->headMeta()
-                ->appendProperty('og:title', strip_tags($title->toString()))
-                ->appendProperty('og:type', 'website')
-                ->appendProperty('og:image', '')
-                ->appendProperty('og:url', $url)
-                ->appendProperty('og:description', '')
-                ->appendProperty('og:video', '')
-                ->appendProperty('og:locale', 'fr_FR')
-                ->appendProperty('og:site_name', 'La joie au 21');
+            ->appendProperty('og:title', strip_tags($title->toString()))
+            ->appendProperty('og:type', 'website')
+            ->appendProperty('og:image', '')
+            ->appendProperty('og:url', $url)
+            ->appendProperty('og:description', '')
+            ->appendProperty('og:video', '')
+            ->appendProperty('og:locale', 'fr_FR')
+            ->appendProperty('og:site_name', 'La joie au 21');
 
         $oArticle = new Aurel_Table_Article();
         $articles = $oArticle->getAll(2, null, true);
@@ -562,8 +569,10 @@ class IndexController extends Aurel_Controller_Abstract {
         $this->view->articles2 = $paginator2;
 
         $file = "access_rapide.xml";
-        $configMenu = new Zend_Config_Xml(CONFIG_PATH . "/$file", null, array('skipExtends' => true,
-            'allowModifications' => true));
+        $configMenu = new Zend_Config_Xml(CONFIG_PATH . "/$file", null, array(
+            'skipExtends' => true,
+            'allowModifications' => true
+        ));
 
         $access_rapide = array();
         foreach ($this->view->menus as $menu) {
@@ -590,7 +599,8 @@ class IndexController extends Aurel_Controller_Abstract {
         $this->view->access_rapide = $access_rapide;
     }
 
-    public function articlesInAccueilAction() {
+    public function articlesInAccueilAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -611,7 +621,8 @@ class IndexController extends Aurel_Controller_Abstract {
         echo json_encode($return);
     }
 
-    public function accueilannoncesAction() {
+    public function accueilannoncesAction()
+    {
         $this->_basenamePrincipal = $this->getParam('basename_principal', null);
         $this->_basenameSecondaire = $this->getParam('basename_secondaire', null) !== '' ? $this->getParam('basename_secondaire', null) : null;
 
@@ -641,18 +652,18 @@ class IndexController extends Aurel_Controller_Abstract {
         $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
         $this->view->headMeta()
-                ->appendProperty('og:title', strip_tags($title->toString()))
-                ->appendProperty('og:type', 'article')
-                ->appendProperty('og:image', '')
-                ->appendProperty('og:url', $url)
-                ->appendProperty('og:description', '')
-                ->appendProperty('og:video', '')
-                ->appendProperty('og:locale', 'fr_FR')
-                ->appendProperty('og:site_name', 'La joie au 21')
-        ;
+            ->appendProperty('og:title', strip_tags($title->toString()))
+            ->appendProperty('og:type', 'article')
+            ->appendProperty('og:image', '')
+            ->appendProperty('og:url', $url)
+            ->appendProperty('og:description', '')
+            ->appendProperty('og:video', '')
+            ->appendProperty('og:locale', 'fr_FR')
+            ->appendProperty('og:site_name', 'La joie au 21');
     }
 
-    public function annoncesInAccueilAction() {
+    public function annoncesInAccueilAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -673,7 +684,8 @@ class IndexController extends Aurel_Controller_Abstract {
         echo json_encode($return);
     }
 
-    public function annoncesAction() {
+    public function annoncesAction()
+    {
         $this->_basenamePrincipal = $this->getParam('basename_principal', null);
         $this->_basenameSecondaire = $this->getParam('basename_secondaire', null) !== '' ? $this->getParam('basename_secondaire', null) : null;
 
@@ -709,15 +721,14 @@ class IndexController extends Aurel_Controller_Abstract {
         $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
         $this->view->headMeta()
-                ->appendProperty('og:title', strip_tags($title->toString()))
-                ->appendProperty('og:type', 'article')
-                ->appendProperty('og:image', '')
-                ->appendProperty('og:url', $url)
-                ->appendProperty('og:description', '')
-                ->appendProperty('og:video', '')
-                ->appendProperty('og:locale', 'fr_FR')
-                ->appendProperty('og:site_name', 'La joie au 21')
-        ;
+            ->appendProperty('og:title', strip_tags($title->toString()))
+            ->appendProperty('og:type', 'article')
+            ->appendProperty('og:image', '')
+            ->appendProperty('og:url', $url)
+            ->appendProperty('og:description', '')
+            ->appendProperty('og:video', '')
+            ->appendProperty('og:locale', 'fr_FR')
+            ->appendProperty('og:site_name', 'La joie au 21');
 
         $newTabArticles = array();
         $compteur = 0;
@@ -752,7 +763,8 @@ class IndexController extends Aurel_Controller_Abstract {
      *
      * @return void
      */
-    public function pageAction() {
+    public function pageAction()
+    {
         $this->_basenamePrincipal = $this->getParam('basename_principal', null);
         $this->_basenameSecondaire = $this->getParam('basename_secondaire', null) !== '' ? $this->getParam('basename_secondaire', null) : null;
 
@@ -816,15 +828,14 @@ class IndexController extends Aurel_Controller_Abstract {
             $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
             $this->view->headMeta()
-                    ->appendProperty('og:title', strip_tags($title->toString()))
-                    ->appendProperty('og:type', 'article')
-                    ->appendProperty('og:image', '')
-                    ->appendProperty('og:url', $url)
-                    ->appendProperty('og:description', '')
-                    ->appendProperty('og:video', '')
-                    ->appendProperty('og:locale', 'fr_FR')
-                    ->appendProperty('og:site_name', 'La joie au 21')
-            ;
+                ->appendProperty('og:title', strip_tags($title->toString()))
+                ->appendProperty('og:type', 'article')
+                ->appendProperty('og:image', '')
+                ->appendProperty('og:url', $url)
+                ->appendProperty('og:description', '')
+                ->appendProperty('og:video', '')
+                ->appendProperty('og:locale', 'fr_FR')
+                ->appendProperty('og:site_name', 'La joie au 21');
 
             $newTabArticles = array();
             $compteur = 0;
@@ -885,7 +896,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function agendaAction() {
+    public function agendaAction()
+    {
         $this->view->headTitle("Agenda", "PREPEND");
         $oArticle = new Aurel_Table_Article();
         $avenir = $oArticle->getAvenir();
@@ -952,7 +964,8 @@ class IndexController extends Aurel_Controller_Abstract {
     /**
      * 
      */
-    public function boutiqueAction() {
+    public function boutiqueAction()
+    {
         if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE) && $this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"])) {
             $this->_helper->layout->setLayout('access_code');
         } else {
@@ -963,7 +976,8 @@ class IndexController extends Aurel_Controller_Abstract {
     /**
      * 
      */
-    public function pronostiquesAction() {
+    public function pronostiquesAction()
+    {
         if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE) && $this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"])) {
             $this->_helper->layout->setLayout('access_code');
         } else {
@@ -971,7 +985,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function pageIndivAction() {
+    public function pageIndivAction()
+    {
         $sessionAnnonce = new Zend_Session_Namespace('annonce');
         $this->view->valideParticipation = $sessionAnnonce->valideParticipation;
 
@@ -991,12 +1006,12 @@ class IndexController extends Aurel_Controller_Abstract {
             $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
             $this->view->headMeta()
-                    ->appendProperty('og:title', strip_tags($title->toString()))
-                    ->appendProperty('og:type', 'article')
-                    ->appendProperty('og:url', $url)
-                    ->appendProperty('og:description', substr(strip_tags($article->content), 0, 300))
-                    ->appendProperty('og:locale', 'fr_FR')
-                    ->appendProperty('og:site_name', 'La joie au 21');
+                ->appendProperty('og:title', strip_tags($title->toString()))
+                ->appendProperty('og:type', 'article')
+                ->appendProperty('og:url', $url)
+                ->appendProperty('og:description', substr(strip_tags($article->content), 0, 300))
+                ->appendProperty('og:locale', 'fr_FR')
+                ->appendProperty('og:site_name', 'La joie au 21');
 
             $urlImage = "";
             $urlVideo = "";
@@ -1079,7 +1094,8 @@ class IndexController extends Aurel_Controller_Abstract {
         $this->view->ajax = $this->_isAjax();
     }
 
-    public function diaporamaAction() {
+    public function diaporamaAction()
+    {
         //$this->_disableLayout();
         $this->view->headMeta()->appendName('robots', 'noindex,nofollow');
 
@@ -1102,7 +1118,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function videoAction() {
+    public function videoAction()
+    {
         //$this->_disableLayout();
 
         $this->view->headMeta()->appendName('robots', 'noindex,nofollow');
@@ -1113,7 +1130,8 @@ class IndexController extends Aurel_Controller_Abstract {
         $this->view->article = $article;
     }
 
-    public function newsletterAction() {
+    public function newsletterAction()
+    {
         $this->_disableView();
         if (!$this->hasParam('id_newsletter'))
             throw new Zend_Exception();
@@ -1141,11 +1159,13 @@ class IndexController extends Aurel_Controller_Abstract {
      *
      * @return void
      */
-    public function termsAction() {
+    public function termsAction()
+    {
         $this->view->content = file_get_contents(CONFIG_PATH . '/terms.txt');
     }
 
-    public function nopopupAction() {
+    public function nopopupAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -1154,7 +1174,8 @@ class IndexController extends Aurel_Controller_Abstract {
         $sessionPopup->noPopup = true;
     }
 
-    public function contactAction() {
+    public function contactAction()
+    {
         $message = new Zend_Session_Namespace('message');
         $this->view->message = $message;
         $this->view->title = 'Contact';
@@ -1216,8 +1237,7 @@ class IndexController extends Aurel_Controller_Abstract {
                 $return['returncode'] = 'ko';
                 $return['error'] = $messageSortie;
                 $return['elementsError'] = $elementsError;
-            }
-            elseif ($formData['email'] != $formData['email2']) {
+            } elseif ($formData['email'] != $formData['email2']) {
                 $return['returncode'] = 'ko';
                 $return['error'] = 'Les 2 adresses email ne sont pas identiques';
                 $return['elementsError'] = array('email', 'email2');
@@ -1251,9 +1271,9 @@ class IndexController extends Aurel_Controller_Abstract {
 
                 $mail = new Zend_Mail('utf-8');
                 $mail->addTo($new->email)
-                        ->setFrom($this->_config->emailReception)
-                        ->setSubject('[CHARS HORIZON 2020] CONFIRMATION DE VOTRE MESSAGE')
-                        ->setBodyHtml(nl2br($body));
+                    ->setFrom($this->_config->emailReception)
+                    ->setSubject('[CHARS HORIZON 2020] CONFIRMATION DE VOTRE MESSAGE')
+                    ->setBodyHtml(nl2br($body));
 
                 try {
                     if ($mail->send()) {
@@ -1277,7 +1297,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function confirmMailAction() {
+    public function confirmMailAction()
+    {
         $oMenu = new Aurel_Table_Menu();
         $this->view->title = 'Contact';
         $this->_menu = $oMenu->getByTitle('contact');
@@ -1301,9 +1322,9 @@ class IndexController extends Aurel_Controller_Abstract {
 
             $mail = new Zend_Mail('utf-8');
             $mail->addTo($this->_config->emailReception)
-                    ->setFrom($this->_config->emailReception)
-                    ->setSubject('[CHARS HORIZON 2020] Nouveau message de ' . $message->email)
-                    ->setBodyHtml(nl2br($body));
+                ->setFrom($this->_config->emailReception)
+                ->setSubject('[CHARS HORIZON 2020] Nouveau message de ' . $message->email)
+                ->setBodyHtml(nl2br($body));
 
             try {
                 if ($mail->send()) {
@@ -1313,14 +1334,14 @@ class IndexController extends Aurel_Controller_Abstract {
                     $this->view->sent = true;
                 }
             } catch (Exception $e) {
-                
             }
         } else {
             $this->view->already = true;
         }
     }
 
-    public function downloadAction() {
+    public function downloadAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -1342,13 +1363,15 @@ class IndexController extends Aurel_Controller_Abstract {
      * @param string $dir
      * @return void
      */
-    private function _check_dir($dir) {
+    private function _check_dir($dir)
+    {
         if (!is_dir($dir)) {
             mkdir($dir);
         }
     }
 
-    public function uploadTmpAction() {
+    public function uploadTmpAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -1399,7 +1422,8 @@ class IndexController extends Aurel_Controller_Abstract {
         echo json_encode($return);
     }
 
-    public function cancelInscriptionAction() {
+    public function cancelInscriptionAction()
+    {
         if ($this->hasParam('id_article'))
             $id_article = $this->getParam('id_article');
         else
@@ -1425,7 +1449,8 @@ class IndexController extends Aurel_Controller_Abstract {
         $this->redirect($url_retour);
     }
 
-    public function participerAction() {
+    public function participerAction()
+    {
         $formData = $this->_request->getPost();
         $sessionAnnonce = new Zend_Session_Namespace('annonce');
         if (!$formData && $this->hasParam('valid') && $this->getParam('valid') == '1') {
@@ -1556,16 +1581,16 @@ class IndexController extends Aurel_Controller_Abstract {
 
                 $subject = "Votre inscription pour {$article->title}";
                 $body = "Votre inscription a bien été prise en compte\n" .
-                        $stringQte .
-                        "Votre commentaire : {$formData["comment"]}\n\n" .
-                        "<a href='http://{$_SERVER['HTTP_HOST']}/compte/reservations/open_modal/1/id_article/{$article->id_article}'>Je modifie mon inscription</a>\n\n";
+                    $stringQte .
+                    "Votre commentaire : {$formData["comment"]}\n\n" .
+                    "<a href='http://{$_SERVER['HTTP_HOST']}/compte/reservations/open_modal/1/id_article/{$article->id_article}'>Je modifie mon inscription</a>\n\n";
 
                 $user = $this->_getUser();
                 $mail = new Aurel_Mailer("utf-8");
                 $mail->setBodyHtmlWithDesign($body, $subject)
-                        ->setSubject($subject)
-                        ->addTo($user->email, $user->firstname . " " . $user->lastname)
-                        ->setFrom("no-reply@lepetitcharsien.com", "Carbon12011 Licensing");
+                    ->setSubject($subject)
+                    ->addTo($user->email, $user->firstname . " " . $user->lastname)
+                    ->setFrom("no-reply@lepetitcharsien.com", "Carbon12011 Licensing");
                 try {
                     $mail->send();
                 } catch (Exception $e) {
@@ -1575,18 +1600,18 @@ class IndexController extends Aurel_Controller_Abstract {
                 $url = "/action/synthese-inscription/id_article/{$article->id_article}/adminConnect/1/?url_retour=/admin/articles/reservations";
                 $subject = "Nouvelle inscription pour {$article->title}";
                 $body = "Nom : {$user->lastname}\n" .
-                        "Prénom : {$user->firstname}\n" .
-                        "Email : {$user->email}\n" .
-                        $stringQte .
-                        "Commentaire : {$formData["comment"]}\n\n" .
-                        "<a href='http://{$_SERVER['HTTP_HOST']}{$url}'>Accéder à la synthèse des inscrits</a>\n\n";
+                    "Prénom : {$user->firstname}\n" .
+                    "Email : {$user->email}\n" .
+                    $stringQte .
+                    "Commentaire : {$formData["comment"]}\n\n" .
+                    "<a href='http://{$_SERVER['HTTP_HOST']}{$url}'>Accéder à la synthèse des inscrits</a>\n\n";
                 $return['emailAnnonceur'] = $body;
                 $annonceur = $oUser->getById($article->id_user_creation);
                 $mail = new Aurel_Mailer("utf-8");
                 $mail->setBodyHtmlWithDesign($body, $subject)
-                        ->setSubject($subject)
-                        ->addTo($annonceur->email, $annonceur->firstname . " " . $annonceur->lastname)
-                        ->setFrom("no-reply@lepetitcharsien.com", "Carbon12011 Licensing");
+                    ->setSubject($subject)
+                    ->addTo($annonceur->email, $annonceur->firstname . " " . $annonceur->lastname)
+                    ->setFrom("no-reply@lepetitcharsien.com", "Carbon12011 Licensing");
                 try {
                     $mail->send();
                 } catch (Exception $e) {
@@ -1611,7 +1636,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function syntheseInscriptionAction() {
+    public function syntheseInscriptionAction()
+    {
         if ($this->hasParam('admin')) {
             $url_encode = urlencode($_SERVER["REQUEST_URI"]);
             $url_redirect = "/admin/index/login/url_redirect/$url_encode?pageForbidden=1";
@@ -1656,7 +1682,8 @@ class IndexController extends Aurel_Controller_Abstract {
         $this->view->article = $article;
     }
 
-    public function namesAction() {
+    public function namesAction()
+    {
         $id_article = $this->getParam('id_article');
         $id_inscription = $this->getParam('id_inscription');
         $return = $this->getParam('return');
@@ -1709,19 +1736,33 @@ class IndexController extends Aurel_Controller_Abstract {
         $this->view->inscription = $inscription;
     }
 
-    public function testAction() {
+    public function testAction()
+    {
         $this->_disableView();
         Zend_Debug::dump($_SERVER["HTTP_USER_AGENT"]);
     }
 
-    public function annuaireAction() {
-        
+    public function annuaireAction()
+    {
+    }
+
+
+    /**
+     * Undocumented function
+     *
+     * @return boolean
+     */
+    public function isSecure()
+    {
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || $_SERVER['SERVER_PORT'] == 443;
     }
 
     /**
      *
      */
-    public function showPopupOtherAction() {
+    public function showPopupOtherAction()
+    {
         $bootstrap = $this->getInvokeArg('bootstrap');
         $appinidata = $bootstrap->getOptions();
         $cookie_domain = null;
@@ -1729,14 +1770,24 @@ class IndexController extends Aurel_Controller_Abstract {
             $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
 
         setcookie(
-                'popup_other', 1, time() + 3600 * 24, '/', $cookie_domain
+            'popup_other',
+            1,
+            time() + 3600 * 24,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
     }
 
-    function beforeSave(Aurel_Table_Row_Article $article) {
+    function beforeSave(Aurel_Table_Row_Article $article)
+    {
         $content = strtolower(html_entity_decode(strip_tags($article->content)));
         $words = preg_split(
-                '/((^\p{P}+)|(\p{P}*\s+\p{P}*)|(\p{P}+$))/', $content, -1, PREG_SPLIT_NO_EMPTY
+            '/((^\p{P}+)|(\p{P}*\s+\p{P}*)|(\p{P}+$))/',
+            $content,
+            -1,
+            PREG_SPLIT_NO_EMPTY
         );
         $soundexWords = array();
         foreach ($words as $word) {
@@ -1746,7 +1797,10 @@ class IndexController extends Aurel_Controller_Abstract {
 
         $title = strtolower(html_entity_decode(strip_tags($article->title)));
         $words = preg_split(
-                '/((^\p{P}+)|(\p{P}*\s+\p{P}*)|(\p{P}+$))/', $title, -1, PREG_SPLIT_NO_EMPTY
+            '/((^\p{P}+)|(\p{P}*\s+\p{P}*)|(\p{P}+$))/',
+            $title,
+            -1,
+            PREG_SPLIT_NO_EMPTY
         );
         $soundexWords = array();
         foreach ($words as $word) {
@@ -1761,7 +1815,8 @@ class IndexController extends Aurel_Controller_Abstract {
     /**
      * Recherche
      */
-    public function searchAction() {
+    public function searchAction()
+    {
         $oArticle = new Aurel_Table_Article();
 
         /*
@@ -1783,7 +1838,8 @@ class IndexController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function checkAccessCodeAction() {
+    public function checkAccessCodeAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -1800,16 +1856,21 @@ class IndexController extends Aurel_Controller_Abstract {
 
             if ($access_code) {
                 $dateToday = new Aurel_Date();
-                
+
                 $date_start = new Aurel_Date($access_code->date_start);
                 $date_start->setTime('00:00:00');
-                
+
                 $date_end = new Aurel_Date($access_code->date_end);
                 $date_end->setTime('00:00:00');
-                
-                if($dateToday->isLater($date_start) && $dateToday->isEarlier($date_end)){
+
+                if ($dateToday->isLater($date_start) && $dateToday->isEarlier($date_end)) {
                     setcookie(
-                        'access_code_ok', 1, time() + 3600 * $access_code->delai, '/'
+                        'access_code_ok',
+                        1,
+                        time() + 3600 * $access_code->delai,
+                        '/',
+                        $this->isSecure(),
+                        true
                     );
 
                     $access_code->count++;
@@ -1820,10 +1881,10 @@ class IndexController extends Aurel_Controller_Abstract {
                     $return['message'] = "Code opération valide, redirection en cours";
                     $return['message_class'] = "alert-success";
                 } else {
-                    if($dateToday->isEarlier($date_start)){
+                    if ($dateToday->isEarlier($date_start)) {
                         $return['message'] = "Code opération valide à partir du " . $date_start->get(Aurel_Date::DATE_SHORT);
                         $return['message_class'] = "alert-danger";
-                    } elseif($dateToday->isLater($date_end)) {
+                    } elseif ($dateToday->isLater($date_end)) {
                         $return['message'] = "Code opération expiré depuis le " . $date_end->get(Aurel_Date::DATE_SHORT);
                         $return['message_class'] = "alert-danger";
                     }
@@ -1838,7 +1899,8 @@ class IndexController extends Aurel_Controller_Abstract {
     }
 
 
-    public function vouchersAction() {
+    public function vouchersAction()
+    {
         $oUser = new Aurel_Table_User();
         $userToConnect = $oUser->getById($this->_getUser()->id_user);
         $this->view->userToConnect = $userToConnect;

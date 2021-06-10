@@ -6,14 +6,26 @@
  * @author
  * @version 
  */
-class CompteController extends Aurel_Controller_Abstract {
+class CompteController extends Aurel_Controller_Abstract
+{
+    /**
+     * Undocumented function
+     *
+     * @return boolean
+     */
+    public function isSecure()
+    {
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || $_SERVER['SERVER_PORT'] == 443;
+    }
 
     /**
      * Pre-dispatch routines
      *
      * @return void
      */
-    public function preDispatch() {
+    public function preDispatch()
+    {
         parent::preDispatch();
 
         $menu_ini = new Zend_Config_ini(CONFIG_PATH . "/menu_compte.ini");
@@ -39,7 +51,8 @@ class CompteController extends Aurel_Controller_Abstract {
     /**
      * 
      */
-    public function previewAction() {
+    public function previewAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
         $subject = $this->_config->subject_invitation;
@@ -69,13 +82,14 @@ class CompteController extends Aurel_Controller_Abstract {
 
         $mailSend = new Aurel_Mailer("utf-8");
         $mailSend->setBodyHtmlWithDesign($body, $subject)
-                ->setFrom('contact@btob-adidas.com', 'adidas France')
-                ->setSubject($subject);
+            ->setFrom('contact@btob-adidas.com', 'adidas France')
+            ->setSubject($subject);
 
         echo $mailSend->getHtml();
     }
 
-    public function indexAction() {
+    public function indexAction()
+    {
         if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE)) {
             $this->redirect("/compte/login");
         }
@@ -149,7 +163,8 @@ class CompteController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function loginAction() {
+    public function loginAction()
+    {
         if ($this->hasParam('pageForbidden'))
             $this->view->message = "Vous devez vous connecter pour accéder à cette page";
 
@@ -174,7 +189,7 @@ class CompteController extends Aurel_Controller_Abstract {
 
             if (!empty($formData['username']) && !empty($formData['pass'])) {
                 $authAdapter->setIdentity($formData['username'])
-                        ->setCredential($formData['pass']);
+                    ->setCredential($formData['pass']);
                 $result = $auth->authenticate($authAdapter);
                 if ($result->isValid()) {
                     $id = $authAdapter->getResultRowObject('id_user');
@@ -194,7 +209,13 @@ class CompteController extends Aurel_Controller_Abstract {
 
                         if (isset($formData["remember"]) && $formData["remember"] == "1") {
                             setcookie(
-                                    'Auth', $user->id_user, time() + 3600 * 24 * 365, '/', $cookie_domain
+                                'Auth',
+                                $user->id_user,
+                                time() + 3600 * 24 * 365,
+                                '/',
+                                $cookie_domain,
+                                $this->isSecure(),
+                                true
                             );
                         }
 
@@ -236,7 +257,8 @@ class CompteController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function logoutAction() {
+    public function logoutAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -253,14 +275,31 @@ class CompteController extends Aurel_Controller_Abstract {
             $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
 
         setcookie(
-                'Auth', '', time() - 2600, '/', $cookie_domain
+            'Auth',
+            '',
+            time() - 2600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
 
         setcookie(
-                'popup', 1, time() + 30 * 3600 * 24, '/', $cookie_domain
+            'popup',
+            1,
+            time() + 30 * 3600 * 24,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
         setcookie(
-                'access_code_ok', 1, time() - 3600, '/'
+            'access_code_ok',
+            1,
+            time() - 3600,
+            '/',
+            $this->isSecure(),
+            true
         );
 
         if ($this->hasParam('url_redirect'))
@@ -271,7 +310,8 @@ class CompteController extends Aurel_Controller_Abstract {
         $this->redirect($url_redirect);
     }
 
-    public function newsletterAction() {
+    public function newsletterAction()
+    {
         $formData = $this->_request->getPost();
         if ($this->_request->isPost()) {
             $this->_disableLayout();
@@ -285,7 +325,8 @@ class CompteController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function annonceAction() {
+    public function annonceAction()
+    {
         $formData = $this->_request->getPost();
         if ($this->_request->isPost()) {
             $this->_disableLayout();
@@ -313,7 +354,8 @@ class CompteController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function annoncesAction() {
+    public function annoncesAction()
+    {
         $oAnnonces = new Aurel_Table_Article();
 
         $annonces = $oAnnonces->getAllAnnoncesByUser($this->_getUser()->id_user);
@@ -357,7 +399,8 @@ class CompteController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function verifElementRegisterAction() {
+    public function verifElementRegisterAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -440,7 +483,8 @@ class CompteController extends Aurel_Controller_Abstract {
         echo json_encode($return);
     }
 
-    public function registerAction() {
+    public function registerAction()
+    {
         Zend_Auth::getInstance()->clearIdentity();
         $this->view->show_popup = false;
         $this->view->headMeta()->appendName('robots', 'noindex,nofollow');
@@ -663,7 +707,8 @@ class CompteController extends Aurel_Controller_Abstract {
     /**
      * @return void
      */
-    public function registerAdviceAction() {
+    public function registerAdviceAction()
+    {
         $bootstrap = $this->getInvokeArg('bootstrap');
         $appinidata = $bootstrap->getOptions();
         $cookie_domain = null;
@@ -671,15 +716,22 @@ class CompteController extends Aurel_Controller_Abstract {
             $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
 
         setcookie(
-                'popup', 1, time() + 3600 * 24 * 30, '/', $cookie_domain
+            'popup',
+            1,
+            time() + 3600 * 24 * 30,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
     }
 
-    public function registerOkAction() {
-        
+    public function registerOkAction()
+    {
     }
 
-    public function rappelAction() {
+    public function rappelAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -690,11 +742,18 @@ class CompteController extends Aurel_Controller_Abstract {
             $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
 
         setcookie(
-                'popup', 1, time() + 3600 * 24 * 30, '/', $cookie_domain
+            'popup',
+            1,
+            time() + 3600 * 24 * 30,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
     }
 
-    public function rappelOtherAction() {
+    public function rappelOtherAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -718,7 +777,8 @@ class CompteController extends Aurel_Controller_Abstract {
      *
      * @return void
      */
-    public function desinscriptionAction() {
+    public function desinscriptionAction()
+    {
         $unsubscribe = $this->getParam('unsubscribe');
 
         $oUser = new Aurel_Table_User();
@@ -742,7 +802,8 @@ class CompteController extends Aurel_Controller_Abstract {
      *
      * @return void
      */
-    public function reservationsAction() {
+    public function reservationsAction()
+    {
         if ($this->hasParam('open_modal') && $this->getParam('open_modal') == '1' && $this->hasParam('id_article')) {
             $id_article = $this->getParam('id_article');
             $this->view->modal_url = $this->view->url(array('action' => 'participer', 'id_article' => $id_article, 'url_retour' => urlencode($this->view->url(array('open_modal' => null, 'id_article' => null)))), 'action', true);
@@ -795,7 +856,8 @@ class CompteController extends Aurel_Controller_Abstract {
      *
      * @return void
      */
-    public function passoublieAction() {
+    public function passoublieAction()
+    {
         $oUser = new Aurel_Table_User();
 
 
@@ -826,13 +888,13 @@ class CompteController extends Aurel_Controller_Abstract {
                 if ($user) {
                     $url = 'http://' . $_SERVER['HTTP_HOST'] . "/compte/passoublie?comHash=" . md5($user->email);
                     $body = "<h4>Oubli de votre mot de passe</h4>" . "\n\t" .
-                            "Veuillez suivre ce lien pour modifier votre mot de passe : <a href='$url'>$url</a><br/><br/>" . "\n\t" .
-                            "En cas de difficultés, allez à l'adresse suivante : $url<br/><br/><br/>" . "\n\t";
+                        "Veuillez suivre ce lien pour modifier votre mot de passe : <a href='$url'>$url</a><br/><br/>" . "\n\t" .
+                        "En cas de difficultés, allez à l'adresse suivante : $url<br/><br/><br/>" . "\n\t";
 
                     $mail = new Aurel_Mailer("utf-8");
                     $mail->setBodyHtmlWithDesign($body, "Mot de passe oublié")
-                            ->setSubject("Mot de passe oublié")
-                            ->addTo($user->email);
+                        ->setSubject("Mot de passe oublié")
+                        ->addTo($user->email);
 
                     try {
                         $mail->send();
@@ -871,11 +933,12 @@ class CompteController extends Aurel_Controller_Abstract {
     /**
      *
      */
-    public function annuaireAction() {
-        
+    public function annuaireAction()
+    {
     }
 
-    public function invitationsAction() {
+    public function invitationsAction()
+    {
         $oInvitation = new Aurel_Table_Invitation();
 
         $invitations = $oInvitation->getByUser($this->_getUser()->id_user);
@@ -885,7 +948,8 @@ class CompteController extends Aurel_Controller_Abstract {
         $this->view->ready = $ready->count() > 0;
     }
 
-    public function checkReadyAction() {
+    public function checkReadyAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -900,7 +964,8 @@ class CompteController extends Aurel_Controller_Abstract {
         echo json_encode($return);
     }
 
-    public function inviteAction() {
+    public function inviteAction()
+    {
 
         $oInvitation = new Aurel_Table_Invitation();
         $oUser = new Aurel_Table_User();
@@ -950,7 +1015,8 @@ class CompteController extends Aurel_Controller_Abstract {
         }
     }
 
-    public function resendAction() {
+    public function resendAction()
+    {
         $oInvitation = new Aurel_Table_Invitation();
         $oUser = new Aurel_Table_User();
 
@@ -982,21 +1048,19 @@ class CompteController extends Aurel_Controller_Abstract {
 
             $mailSend = new Aurel_Mailer("utf-8");
             $mailSend->setBodyHtmlWithDesign($body, $subject)
-                    ->setFrom('contact@btob-adidas.com', 'adidas France')
-                    ->setSubject($subject)
-                    ->addTo($invitation->email);
+                ->setFrom('contact@btob-adidas.com', 'adidas France')
+                ->setSubject($subject)
+                ->addTo($invitation->email);
             try {
                 $mailSend->send();
 
                 $invitation->state = Aurel_Table_Invitation::TYPE_RESENT;
                 $invitation->date_resent = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
             } catch (Exception $e) {
-                
             }
             $invitation->save();
         }
 
         $this->redirect($this->view->url(['action' => 'invitations', 'id_invitation' => null]));
     }
-
 }

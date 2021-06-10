@@ -8,20 +8,23 @@ require_once "AbstractController.php";
  * @author Aurel
  *
  */
-class Admin_IndexController extends Admin_AbstractController {
+class Admin_IndexController extends Admin_AbstractController
+{
 
     /**
      * Page index
      *
      * @return void
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         $this->redirect("/");
     }
-    
-    public function invitationsAction() {
+
+    public function invitationsAction()
+    {
         $state = $this->getParam('state', Aurel_Table_Invitation::TYPE_SENT);
-        
+
         $oInvitation = new Aurel_Table_Invitation();
 
         $invitations = $oInvitation->getAll($state);
@@ -37,7 +40,8 @@ class Admin_IndexController extends Admin_AbstractController {
      * 
      * @return void
      */
-    public function loginAction() {
+    public function loginAction()
+    {
         if ($this->hasParam('pageForbidden'))
             $this->view->message = "Vous devez vous connecter pour accéder à cette page";
 
@@ -60,7 +64,7 @@ class Admin_IndexController extends Admin_AbstractController {
 
             if (!empty($formData['username']) && !empty($formData['pass'])) {
                 $authAdapter->setIdentity($formData['username'])
-                        ->setCredential($formData['pass']);
+                    ->setCredential($formData['pass']);
                 $result = $auth->authenticate($authAdapter);
                 if ($result->isValid()) {
                     $id = $authAdapter->getResultRowObject('id_user');
@@ -100,11 +104,23 @@ class Admin_IndexController extends Admin_AbstractController {
     }
 
     /**
+     * Undocumented function
+     *
+     * @return boolean
+     */
+    public function isSecure()
+    {
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || $_SERVER['SERVER_PORT'] == 443;
+    }
+
+    /**
      * Page de Logout
      *
      * @return void
      */
-    public function logoutAction() {
+    public function logoutAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -121,11 +137,23 @@ class Admin_IndexController extends Admin_AbstractController {
             $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
 
         setcookie(
-                'Auth', '', time() - 2600, '/', $cookie_domain
+            'Auth',
+            '',
+            time() - 2600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
 
         setcookie(
-                'popup', 1, time() + 30 * 3600 * 24, '/', $cookie_domain
+            'popup',
+            1,
+            time() + 30 * 3600 * 24,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
 
         if ($this->hasParam('url_redirect'))
@@ -142,7 +170,8 @@ class Admin_IndexController extends Admin_AbstractController {
      * @param string $texte
      * @return string
      */
-    private function getFormatedText($texte) {
+    private function getFormatedText($texte)
+    {
         return $texte;
     }
 
@@ -151,7 +180,8 @@ class Admin_IndexController extends Admin_AbstractController {
      *
      * @return void
      */
-    public function editFooterAction() {
+    public function editFooterAction()
+    {
         $formData = $this->_request->getPost();
         if ($formData) {
             $this->_disableLayout();
@@ -174,7 +204,8 @@ class Admin_IndexController extends Admin_AbstractController {
         }
     }
 
-    public function configAction() {
+    public function configAction()
+    {
         $session = new Zend_Session_Namespace('config');
         $this->view->session = $session;
 
@@ -213,7 +244,8 @@ class Admin_IndexController extends Admin_AbstractController {
         }
     }
 
-    public function configAccessAction() {
+    public function configAccessAction()
+    {
         $session = new Zend_Session_Namespace('config');
         $this->view->session = $session;
 
@@ -238,8 +270,9 @@ class Admin_IndexController extends Admin_AbstractController {
 
         $this->view->accesss = $accesss;
     }
-    
-    public function configInvitationsAction() {
+
+    public function configInvitationsAction()
+    {
         $session = new Zend_Session_Namespace('config');
         $this->view->session = $session;
 
@@ -262,7 +295,8 @@ class Admin_IndexController extends Admin_AbstractController {
         }
     }
 
-    public function addEditAccessCodeAction() {
+    public function addEditAccessCodeAction()
+    {
         $oAccessCode = new Aurel_Table_AccessCode();
         $id_access_code = $this->getParam('id_access_code');
 
@@ -288,7 +322,8 @@ class Admin_IndexController extends Admin_AbstractController {
         $this->view->access_code = $access;
     }
 
-    public function deleteAccessCodeAction() {
+    public function deleteAccessCodeAction()
+    {
         $oAccessCode = new Aurel_Table_AccessCode();
         $id_access_code = $this->getParam('id_access_code');
 
@@ -309,5 +344,4 @@ class Admin_IndexController extends Admin_AbstractController {
 
         $this->view->access_code = $access;
     }
-
 }
