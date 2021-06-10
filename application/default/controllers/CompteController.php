@@ -301,12 +301,12 @@ class CompteController extends Aurel_Controller_Abstract
 
         session_destroy();
 
-        if ($this->hasParam('url_redirect'))
+        /* if ($this->hasParam('url_redirect'))
             $url_redirect = urldecode($this->getParam('url_redirect'));
         else
             $url_redirect = $this->view->url(array(), 'default', true);
 
-        $this->redirect($url_redirect);
+        $this->redirect($url_redirect); */
     }
 
     public function newsletterAction()
