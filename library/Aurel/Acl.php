@@ -159,7 +159,7 @@ class Aurel_Acl extends Zend_Acl {
 		$this->allow(self::ROLE_GUEST,self::PAGE_DEFAULT_ANNUAIRE);
 		$this->allow(self::ROLE_GUEST,self::PAGE_DEFAULT_SONDAGE);
 		$this->allow(self::ROLE_GUEST,self::PAGE_ADMIN_INDEX,array('login','index','logout'));
-		$this->allow(self::ROLE_GUEST,self::PAGE_DEFAULT_COMPTE,array('login','index','register','verif-element-register','rappel','rappel-other','desinscription','passoublie','register-advice'));
+		$this->allow(self::ROLE_GUEST,self::PAGE_DEFAULT_COMPTE,array('login','logout', 'index','register','verif-element-register','rappel','rappel-other','desinscription','passoublie','register-advice'));
 		
 		// RIGHTS FOR CONNECTED
 		$this->allow(self::ROLE_MEMBRE,self::RESSOURCE_MEMBRE);
