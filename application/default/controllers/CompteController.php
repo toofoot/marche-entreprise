@@ -301,6 +301,8 @@ class CompteController extends Aurel_Controller_Abstract
 
         session_destroy();
 
+        sleep(2);
+
         if ($this->hasParam('url_redirect'))
             $url_redirect = urldecode($this->getParam('url_redirect'));
         else
