@@ -198,9 +198,7 @@ class CompteController extends Aurel_Controller_Abstract
 
                     $bootstrap = $this->getInvokeArg('bootstrap');
                     $appinidata = $bootstrap->getOptions();
-                    $cookie_domain = null;
-                    if (isset($appinidata['resources']['session']) && isset($appinidata['resources']['session']['cookie_domain']))
-                        $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
+                    $cookie_domain = '';
 
                     if ($user->status == Aurel_Table_User::STATUS_ACTIF) {
                         $auth->getStorage()->write($id->id_user);
@@ -270,9 +268,7 @@ class CompteController extends Aurel_Controller_Abstract
 
         $bootstrap = $this->getInvokeArg('bootstrap');
         $appinidata = $bootstrap->getOptions();
-        $cookie_domain = null;
-        if (isset($appinidata['resources']['session']) && isset($appinidata['resources']['session']['cookie_domain']))
-            $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
+        $cookie_domain = '';
 
         setcookie(
             'Auth',
@@ -298,9 +294,12 @@ class CompteController extends Aurel_Controller_Abstract
             1,
             time() - 3600,
             '/',
+            $cookie_domain,
             $this->isSecure(),
             true
         );
+
+        session_destroy();
 
         if ($this->hasParam('url_redirect'))
             $url_redirect = urldecode($this->getParam('url_redirect'));
@@ -711,9 +710,7 @@ class CompteController extends Aurel_Controller_Abstract
     {
         $bootstrap = $this->getInvokeArg('bootstrap');
         $appinidata = $bootstrap->getOptions();
-        $cookie_domain = null;
-        if (isset($appinidata['resources']['session']) && isset($appinidata['resources']['session']['cookie_domain']))
-            $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
+        $cookie_domain = '';
 
         setcookie(
             'popup',
@@ -737,9 +734,7 @@ class CompteController extends Aurel_Controller_Abstract
 
         $bootstrap = $this->getInvokeArg('bootstrap');
         $appinidata = $bootstrap->getOptions();
-        $cookie_domain = null;
-        if (isset($appinidata['resources']['session']) && isset($appinidata['resources']['session']['cookie_domain']))
-            $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
+        $cookie_domain = '';
 
         setcookie(
             'popup',
@@ -759,9 +754,7 @@ class CompteController extends Aurel_Controller_Abstract
 
         $bootstrap = $this->getInvokeArg('bootstrap');
         $appinidata = $bootstrap->getOptions();
-        $cookie_domain = null;
-        if (isset($appinidata['resources']['session']) && isset($appinidata['resources']['session']['cookie_domain']))
-            $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
+        $cookie_domain = '';
 
         /* setcookie(
           'popup_other',

@@ -132,9 +132,7 @@ class Admin_IndexController extends Admin_AbstractController
 
         $bootstrap = $this->getInvokeArg('bootstrap');
         $appinidata = $bootstrap->getOptions();
-        $cookie_domain = null;
-        if (isset($appinidata['resources']['session']) && isset($appinidata['resources']['session']['cookie_domain']))
-            $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
+        $cookie_domain = '';
 
         setcookie(
             'Auth',
