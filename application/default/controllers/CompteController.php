@@ -60,7 +60,18 @@ class CompteController extends Aurel_Controller_Abstract
 
         $inviteur = $this->_getUser();
 
-        $message = $this->getParam('message');
+        $oInvitation = new Aurel_Table_Invitation();
+        $oUser = new Aurel_Table_User();
+
+        $id_invitation = $this->getParam('invitation');
+        $invitation = $oInvitation->getById($id_invitation);
+
+        if ($invitation) {
+            $subject = $this->_config->subject_reinvitation;
+            $body = $this->_config->body_reinvitation;
+        }
+
+        $message = $this->getParam('message', $invitation ? $invitation->message : null);
 
         $link = "#";
         $replacement = [
@@ -1016,46 +1027,58 @@ class CompteController extends Aurel_Controller_Abstract
         $oUser = new Aurel_Table_User();
 
         $id_invitation = $this->getParam('id_invitation');
-
         $invitation = $oInvitation->getById($id_invitation);
-        if ($invitation) {
-            $inviteur = $oUser->getById($invitation->id_user_creation);
-            $subject = $this->_config->subject_reinvitation;
-            $body = $this->_config->body_reinvitation;
 
-            $link = "http://marche-entreprises.btob-adidas.com/compte/register?invitation=" . md5($invitation->id_invitation);
-            $replacement = [
-                '#INVITEUR_PRENOM#' => $inviteur->firstname,
-                '#INVITEUR_NOM#' => $inviteur->lastname,
-                '#INVITEUR_SOCIETE#' => $inviteur->societe,
-                '#INVITEUR_EMAIL#' => $inviteur->email,
-                '#INVITEUR_FONCTION#' => $inviteur->fonction,
-                '#INVITE_EMAIL#' => $invitation->email,
-                '#INVITE_MESSAGE#' => $invitation->message,
-                '#LIEN#' => $link
-            ];
+        $formData = $this->_request->getPost();
+        if ($this->_request->isPost()) {
+            $this->_disableLayout();
+            $this->_disableView();
+            $return['code'] = 'ko';
+            if ($invitation) {
+                $inviteur = $oUser->getById($invitation->id_user_creation);
+                $subject = $this->_config->subject_reinvitation;
+                $body = $this->_config->body_reinvitation;
 
-            foreach ($replacement as $key => $value) {
-                $subject = str_replace($key, $value, $subject);
-                $body = str_replace($key, $value, $body);
+                $link = "http://marche-entreprises.btob-adidas.com/compte/register?invitation=" . md5($invitation->id_invitation);
+                $replacement = [
+                    '#INVITEUR_PRENOM#' => $inviteur->firstname,
+                    '#INVITEUR_NOM#' => $inviteur->lastname,
+                    '#INVITEUR_SOCIETE#' => $inviteur->societe,
+                    '#INVITEUR_EMAIL#' => $inviteur->email,
+                    '#INVITEUR_FONCTION#' => $inviteur->fonction,
+                    '#INVITE_EMAIL#' => $invitation->email,
+                    '#INVITE_MESSAGE#' => $formData['message'],
+                    '#LIEN#' => $link
+                ];
+
+                foreach ($replacement as $key => $value) {
+                    $subject = str_replace($key, $value, $subject);
+                    $body = str_replace($key, $value, $body);
+                }
+
+
+                $mailSend = new Aurel_Mailer("utf-8");
+                $mailSend->setBodyHtmlWithDesign($body, $subject)
+                    ->setFrom('contact@btob-adidas.com', 'adidas France')
+                    ->setSubject($subject)
+                    ->addTo($invitation->email);
+                try {
+                    $mailSend->send();
+
+                    $invitation->state = Aurel_Table_Invitation::TYPE_RESENT;
+                    $invitation->date_resent = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
+                } catch (Exception $e) {
+                }
+                $invitation->save();
+
+                $return['code'] = 'ok';
+                $url_redirect = $this->view->url(array('action' => 'invitations'), 'compte', true);
+                $return['url_redirect'] = $url_redirect;
             }
 
-
-            $mailSend = new Aurel_Mailer("utf-8");
-            $mailSend->setBodyHtmlWithDesign($body, $subject)
-                ->setFrom('contact@btob-adidas.com', 'adidas France')
-                ->setSubject($subject)
-                ->addTo($invitation->email);
-            try {
-                $mailSend->send();
-
-                $invitation->state = Aurel_Table_Invitation::TYPE_RESENT;
-                $invitation->date_resent = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
-            } catch (Exception $e) {
-            }
-            $invitation->save();
+            echo json_encode($return);
         }
 
-        $this->redirect($this->view->url(['action' => 'invitations', 'id_invitation' => null]));
+        $this->view->invitation = $invitation;
     }
 }
