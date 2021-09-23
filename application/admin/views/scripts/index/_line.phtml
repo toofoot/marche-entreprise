@@ -1,0 +1,24 @@
+<tr id="" class="<?= $this->invitation->state == Aurel_Table_Invitation::TYPE_VALIDATED ? "bg-success" : "" ?>">
+    <td><?= $this->invitation->email ?></td>
+    <td><?php $creator = $this->invitation->getCreator();
+        echo $creator ? $creator->email : '';
+        ?></td>
+    <td>
+        <?= $this->invitation->getState() ?>
+
+    </td>
+    <td>
+        <?php if ($this->invitation->date_inscription) : ?>
+            <?= $this->invitation->getDate('date_inscription') ?>
+        <?php elseif ($this->invitation->date_resent) : ?>
+            <?= $this->invitation->getDate('date_resent') ?>
+        <?php elseif ($this->invitation->date_sent) : ?>
+            <?= $this->invitation->getDate('date_sent') ?>
+        <?php endif; ?>
+    </td>
+    <td>
+        <?php if ($this->invitation->state == Aurel_Table_Invitation::TYPE_SENT || $this->invitation->state == Aurel_Table_Invitation::TYPE_RESENT) : ?>
+            <a class="btn btn-primary btn-sm relance" data-loading-text="Envoi en cours..." href="<?= $this->url(['action' => 'resend', 'id_invitation' => $this->invitation->id_invitation]) ?>">Relancer</a>
+        <?php endif; ?>
+    </td>
+</tr>

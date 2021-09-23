@@ -21,18 +21,83 @@ class Admin_IndexController extends Admin_AbstractController
         $this->redirect("/");
     }
 
+    public function resendAction()
+    {
+        $oInvitation = new Aurel_Table_Invitation();
+        $oUser = new Aurel_Table_User();
+
+        $id_invitation = $this->getParam('id_invitation');
+        $invitation = $oInvitation->getById($id_invitation);
+
+        $formData = $this->_request->getPost();
+        if ($this->_request->isPost()) {
+            $this->_disableLayout();
+            $this->_disableView();
+            $return['code'] = 'ko';
+            if ($invitation) {
+                $invitation->id_user_creation = $this->_getUser()->id_user;
+
+                $invitation->state = Aurel_Table_Invitation::TYPE_READYTORESEND;
+                $invitation->message = $formData['message'];
+                $invitation->save();
+
+                $return['code'] = 'ok';
+                $url_redirect = $this->view->url(array('action' => 'invitations', 'id_invitation' => null));
+                $return['url_redirect'] = $url_redirect;
+            } else {
+                $invitations = $oInvitation->getToRelance();
+
+                foreach ($invitations as $invitation) {
+                    $invitation->id_user_creation = $this->_getUser()->id_user;
+                    $invitation->state = Aurel_Table_Invitation::TYPE_READYTORESEND;
+                    $invitation->message = $formData['message'];
+                    $invitation->date_resent = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
+                    $invitation->save();
+                }
+
+                $return['code'] = 'ok';
+                $url_redirect = $this->view->url(array('action' => 'invitations', 'id_invitation' => null));
+                $return['url_redirect'] = $url_redirect;
+            }
+
+            echo json_encode($return);
+        }
+
+        $this->view->invitation = $invitation;
+    }
+
     public function invitationsAction()
     {
         $state = $this->getParam('state', Aurel_Table_Invitation::TYPE_SENT);
+        $this->view->state = $state;
+
+        if ($state == Aurel_Table_Invitation::TYPE_SENT) {
+            $state = [Aurel_Table_Invitation::TYPE_SENT, Aurel_Table_Invitation::TYPE_RESENT, Aurel_Table_Invitation::TYPE_READYTORESEND];
+        }
 
         $oInvitation = new Aurel_Table_Invitation();
 
         $invitations = $oInvitation->getAll($state);
-        $ready = $oInvitation->getReadyToSend();
+        $ready = $oInvitation->getReadyToReSend();
 
         $this->view->invitations = $invitations;
-        $this->view->state = $state;
         $this->view->ready = $ready->count() > 0;
+    }
+
+    public function checkReadyAction()
+    {
+        $this->_disableLayout();
+        $this->_disableView();
+
+        $oInvitation = new Aurel_Table_Invitation();
+
+        $ready = $oInvitation->getReadyToReSend();
+
+        $return = [
+            'refresh' => $ready->count() == 0
+        ];
+
+        echo json_encode($return);
     }
 
     /**

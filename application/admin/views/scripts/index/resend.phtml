@@ -1,0 +1,117 @@
+<a class='btn btn-primary' href='<?php echo $this->url(['action' => 'invitations']) ?>'><span class="glyphicon glyphicon-chevron-left"></span> Retour</a>
+<form id="formInvite" class="form-horizontal" method='post' action='<?php echo $this->url() ?>' role="form">
+    <div class="modal-body">
+        <div class="form-group">
+            <h1 class="text-center">Relance</h1>
+        </div>
+
+        <div class="form-group">
+            <?php echo $this->formLabel('email', 'Email contact coopté', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8 ">
+                <?php if ($this->invitation) : ?>
+                    <div class="has-feedback tocopy">
+                        <?php echo $this->formText('email[0]', $this->invitation->email, array('placeholder' => 'Email', "class" => "form-control", "readonly" => "readonly")) ?>
+                        <span class="message"></span>
+                        <span class="deleteCopy hidden"><button type="button" class="btn btn-link"><i class="glyphicon glyphicon-remove"></i></button></span>
+                    </div>
+                <?php else : ?>
+                    <p class="form-control-static"><i>Tous les invités non répondants</i></p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('message', 'Votre Message', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <?php echo $this->formTextarea('message', $this->invitation ? $this->invitation->message : null, array('placeholder' => 'Message', "class" => "form-control", "rows" => 3)) ?>
+            </div>
+        </div>
+        <div class="form-group has-feedback">
+            <?php echo $this->formLabel('apercu', 'Aperçu de l\'envoi', array('class' => 'col-xs-4 control-label')) ?>
+            <div class="col-xs-8">
+                <iframe id="apercuIframe" style="width:100%;border:none;height:330px;" src="/compte/preview/<?php if ($this->invitation) : ?>invitation/<?= $this->invitation->id_invitation;
+                                                                                                                                                    endif; ?>"></iframe>
+            </div>
+        </div>
+        <div class="text-right">
+            <?php echo $this->formSubmit('envoyer', 'Relancer invitations', array("class" => "btn btn-primary", "data-loading-text" => "Chargement...")) ?>
+        </div>
+    </div>
+    <div class="modal-footer">
+
+    </div>
+</form>
+<script type="text/javascript">
+    function addParam(url, param, value) {
+        var a = document.createElement('a'),
+            regex = /[?&]([^=]+)=([^&]*)/g;
+        var match, str = [];
+        a.href = url;
+        value = value || "";
+        while (match = regex.exec(a.search))
+            if (encodeURIComponent(param) != match[1])
+                str.push(match[1] + "=" + match[2]);
+        str.push(encodeURIComponent(param) + "=" + encodeURIComponent(value));
+        a.search = (a.search.substring(0, 1) == "?" ? "" : "?") + str.join("&");
+        return a.href;
+    }
+
+    $(function() {
+        $('.btn-link').click(function() {
+            var html = $($('.tocopy')[0].outerHTML);
+            var length = $('.tocopy').length;
+            var number = Number(length) + 1;
+
+            html.removeClass('has-error').removeClass('has-success');
+            html.find('.deleteCopy').removeClass('hidden');
+            html.find('.form-control-feedback').addClass('hidden').removeClass('glyphicon-remove').removeClass('glyphicon-ok');
+            html.find('input[type=text]').prop('id', 'email-' + length).prop('name', 'email[' + length + ']').prop('placeholder', 'Email ' + number);
+            html.find('.message').html('')
+            $('.tocopy').parent().append(html);
+        });
+
+        $(document).on("click", ".deleteCopy button", function() {
+            $(this).closest('.tocopy').remove();
+        });
+
+        $('#formInvite').submit(function() {
+            $('#envoyer').button('loading');
+            $('.tocopy').removeClass('has-error').removeClass('has-success');
+            $('.has-feedback .form-control-feedback').addClass('hidden').removeClass('glyphicon-remove').removeClass('glyphicon-ok');
+            $('.message').html('');
+            $.post(
+                '<?php echo $_SERVER["REQUEST_URI"] ?>',
+                $(this).serialize(),
+                function(transport) {
+                    if (transport.errors) {
+                        for (i in transport.errors) {
+                            var elt = transport.errors[i];
+                            $('#' + elt).parent().addClass('has-error').find('.glyphicon').removeClass('hidden').addClass('glyphicon-remove');
+                            if (transport.message[elt])
+                                $('#' + elt).parent().find('.message').html(transport.message[elt]);
+                        }
+                        var newHref = addParam($('#formUser .connect').prop('href'), 'emailLogin', $('#email').val());
+                        $('#formUser .connect').click(function() {
+                            $('#myLargeModal').modal('hide');
+                            $('#myModal .modal-content').load(newHref);
+                            $('#myModal').modal('show');
+                            return false;
+                        });
+                    }
+                    $('#envoyer').button('reset');
+                    if (transport.code == 'ok' && transport.url_redirect) {
+                        window.location.href = transport.url_redirect;
+                    }
+                }, 'json'
+            );
+            return false;
+        });
+
+        $('#message').keyup(function() {
+            var $value = $(this).val().replace(/\r?\n/g, '<br>');
+            x
+            $('#apercuIframe').prop('src', '/compte/preview/<?php if ($this->invitation) : ?>invitation/<?= $this->invitation->id_invitation;
+                                                                                                    endif; ?>?message=' + $value);
+        });
+    });
+</script>
