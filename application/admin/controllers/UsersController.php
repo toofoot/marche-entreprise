@@ -349,12 +349,33 @@ class Admin_UsersController extends Admin_AbstractController
             $this->_disableView();
             $return['code'] = 'ko';
 
+
+
             $identification = uniqid();
             if ($userInvited) {
+                $subject = $formData['objet'];
+                $body = $this->_config->body_notification;
+
+                $hash = Aurel_Encryptor::getInstance();
+                $hash->setDecryptedValue($userInvited->email);
+                $hash->setExpirySeconds(20000000);
+                $hash->encrypt();
+
+                $link = "http://marche-entreprises.btob-adidas.com/compte/l?h=" . $hash->getEncryptedValue();
+                $replacement = [
+                    '#INVITE_MESSAGE#' => $formData['message'],
+                    '#LIEN#' => $link,
+                ];
+
+                foreach ($replacement as $key => $value) {
+                    $subject = str_replace($key, $value, $subject);
+                    $body = str_replace($key, $value, $body);
+                }
+
                 $queue = $oQueue->createRow();
                 $queue->to = $userInvited->email;
-                $queue->subject = $formData['objet'];
-                $queue->body = $formData['message'];
+                $queue->subject = $subject;
+                $queue->body = $body;
                 $queue->status = Aurel_Table_Queue::STATUS_READYTOSEND;
                 $queue->date_creation = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
                 $queue->identification = $identification;
@@ -369,10 +390,30 @@ class Admin_UsersController extends Admin_AbstractController
                 $users = $oUser->getAll(Aurel_Table_User::STATUS_ACTIF);
 
                 foreach ($users as $userInvited) {
+
+                    $subject = $formData['objet'];
+                    $body = $this->_config->body_notification;
+
+                    $hash = Aurel_Encryptor::getInstance();
+                    $hash->setDecryptedValue($userInvited->email);
+                    $hash->setExpirySeconds(20000000);
+                    $hash->encrypt();
+
+                    $link = "http://marche-entreprises.btob-adidas.com/compte/l?h=" . $hash->getEncryptedValue();
+                    $replacement = [
+                        '#INVITE_MESSAGE#' => $formData['message'],
+                        '#LIEN#' => $link,
+                    ];
+
+                    foreach ($replacement as $key => $value) {
+                        $subject = str_replace($key, $value, $subject);
+                        $body = str_replace($key, $value, $body);
+                    }
+
                     $queue = $oQueue->createRow();
                     $queue->to = $userInvited->email;
-                    $queue->subject = $formData['objet'];
-                    $queue->body = $formData['message'];
+                    $queue->subject = $subject;
+                    $queue->body = $body;
                     $queue->status = Aurel_Table_Queue::STATUS_READYTOSEND;
                     $queue->date_creation = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
                     $queue->identification = $identification;

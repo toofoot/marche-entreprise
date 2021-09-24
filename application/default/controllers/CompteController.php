@@ -266,6 +266,69 @@ class CompteController extends Aurel_Controller_Abstract
         }
     }
 
+    public function lAction()
+    {
+        $this->_disableView();
+
+        $auth = Zend_Auth::getInstance();
+
+        if ($this->hasParam('url_redirect'))
+            $url_redirect = urldecode($this->getParam('url_redirect'));
+        else
+            $url_redirect = $this->view->url(array(), 'default', true);
+
+        if (!$this->hasParam('h')) {
+            $this->redirect('/');
+        }
+
+        $hash = $this->getParam('h');
+
+        $connect = Aurel_Encryptor::getInstance();
+        $connect->setEncryptedValue($hash);
+        $connect->decrypt();
+
+        if ($connect->getDecryptedValue()) {
+            if ($connect->isExpired()) {
+
+                $session = new Zend_Session_Namespace('inscription');
+                $session->message = "Lien d'auto-connexion expiré";
+                $session->setExpirationHops(1);
+
+                $this->redirect($url_redirect);
+            } else {
+                $email = $connect->getDecryptedValue();
+                $oUser = new Aurel_Table_User();
+                $user = $oUser->getByEmail($email);
+                if ($user->status == Aurel_Table_User::STATUS_ACTIF) {
+                    $auth->getStorage()->write($user->id_user);
+                    $type_connexion = new Zend_Session_Namespace('type_connexion');
+                    $type_connexion->type = 'membre';
+
+                    $user->date_last_connexion = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
+                    $user->ip_last_connexion = $_SERVER["REMOTE_ADDR"];
+                    $user->save();
+
+                    $this->view->message = "Vous êtes maintenant connecté";
+                    $this->view->displayMessage = true;
+                    $this->view->error = false;
+
+                    $session = new Zend_Session_Namespace('inscription');
+                    $session->message = "Vous êtes maintenant connecté";
+                    $session->setExpirationHops(1);
+
+                    $this->redirect($url_redirect);
+                }
+            }
+        } else {
+
+            $session = new Zend_Session_Namespace('inscription');
+            $session->message = "Lien d'auto-connexion invalide";
+            $session->setExpirationHops(1);
+
+            $this->redirect($url_redirect);
+        }
+    }
+
     public function logoutAction()
     {
         $this->_disableLayout();
