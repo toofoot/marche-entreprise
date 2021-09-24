@@ -7,7 +7,10 @@
         <div class="text-center">
             <a class="btn btn-primary" href="<?php echo $this->url(array('action' => 'download')) ?>"><span class="glyphicon glyphicon-download-alt"></span> Télécharger BDD utilisateurs</a>
             <a class="btn btn-primary" href="<?php echo $this->url(array('action' => 'add-edit')) ?>"><span class="glyphicon glyphicon-plus"></span> Ajouter nouvel utilisateur</a>
+
+            <a class="btn btn-primary" data-content="Envoyer notification" href="<?php echo $this->url(array('action' => 'send')) ?>"><span class="glyphicon glyphicon-envelope"></span> Envoyer notification à tous</a>
         </div>
+        <hr>
         <div class="col-sm-3 col-sm-offset-9">
             <form method="get" action="<?php echo $this->url(array('p' => null, 'orderby' => null, 'order' => null)) ?>">
                 <div class="input-group">
@@ -21,7 +24,6 @@
         <table class="table table-condensed article">
             <thead>
                 <tr>
-                    <th><a class="<?php echo $this->drop["name"] ?>" href='<?php echo $this->url($this->links['name']) . $this->addLink ?>'>Identifiant <span class="<?php echo $this->icones['name'] ?>"></span></a></th>
                     <th><a class="<?php echo $this->drop["lastname"] ?>" href='<?php echo $this->url($this->links['lastname']) . $this->addLink ?>'>Nom <span class="<?php echo $this->icones['lastname'] ?>"></span></a></th>
                     <th><a class="<?php echo $this->drop["firstname"] ?>" href='<?php echo $this->url($this->links['firstname']) . $this->addLink ?>'>Prénom <span class="<?php echo $this->icones['firstname'] ?>"></span></a></th>
                     <th><a class="<?php echo $this->drop["email"] ?>" href='<?php echo $this->url($this->links['email']) . $this->addLink ?>'>Email <span class="<?php echo $this->icones['email'] ?>"></span></a></th>
@@ -29,23 +31,34 @@
                     <th><a class="<?php echo $this->drop["type"] ?>" href='<?php echo $this->url($this->links['type']) . $this->addLink ?>'>Droits <span class="<?php echo $this->icones['type'] ?>"></span></a></th>
                     <th><a class="<?php echo $this->drop["date_last_connexion"] ?>" href='<?php echo $this->url($this->links['date_last_connexion']) . $this->addLink ?>'>Dernière connexion <span class="<?php echo $this->icones['date_last_connexion'] ?>"></span></a></th>
                     <th></th>
+                    <th class="text-right">Notification</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($this->usersActif as $key => $user): ?>
+                <?php foreach ($this->usersActif as $key => $user) : ?>
                     <tr class="">
-                        <td><?php echo $user->name ?></td>
                         <td><?php echo $user->lastname ?></td>
                         <td><?php echo $user->firstname ?></td>
                         <td><?php echo $user->email ?></td>
-                        <td class="text-center"><div class="text-success"><?php echo $user->directeur ? "<span class='glyphicon glyphicon-ok'></span>" : "" ?></div></td>
-                        <td><div><?php echo $user->rights() ?></div></td>
-                        <td><?php echo $user->date_last_connexion ? $user->getDate('date_last_connexion')->get(Aurel_Date::DATETIME) : "" ?></td>
+                        <td class="text-center">
+                            <div class="text-success"><?php echo $user->directeur ? "<span class='glyphicon glyphicon-ok'></span>" : "" ?></div>
+                        </td>
                         <td>
-                            <div class="btn-group btn-group-sm">
-                                <a class="btn btn-default" data-content="Modifier" href="<?php echo $this->url(array('action' => 'add-edit', 'id_user' => $user->id_user)) ?>"><span class="glyphicon glyphicon-pencil"></span></a>
-                                <a class="btn btn-default" data-content="Déplacer vers utilisateurs inactifs" data-toggle="modal" data-target="#mySmallModal" href="<?php echo $this->url(array('action' => 'delete', 'id_user' => $user->id_user)) ?>"><span class="glyphicon glyphicon-trash"></span></a>
-                            </div>
+                            <?php if ($user->rights()) : ?>
+                                <a class="rights" href='#' data-content="<?php echo $user->rights() ?>">Voir les droits</a>
+                            <?php endif ?>
+                        </td>
+                        <td><?php echo $user->date_last_connexion ? $user->getDate('date_last_connexion')->get(Aurel_Date::DATETIME) : "" ?></td>
+                        <td class="actionsBtn">
+                            <div><a class="btn btn-default btn-sm" data-content="Modifier" href="<?php echo $this->url(array('action' => 'add-edit', 'id_user' => $user->id_user)) ?>"><span class="glyphicon glyphicon-pencil"></span></a></div>
+                            <div><a class="btn btn-default btn-sm" data-content="Déplacer vers utilisateurs inactifs" data-toggle="modal" data-target="#mySmallModal" href="<?php echo $this->url(array('action' => 'delete', 'id_user' => $user->id_user)) ?>"><span class="glyphicon glyphicon-trash"></span></a></div>
+                        </td>
+                        <td class="text-right">
+                            <div><a class="btn btn-default btn-sm" data-content="Envoyer notification" href="<?php echo $this->url(array('action' => 'send', 'id_user' => $user->id_user)) ?>"><span class="glyphicon glyphicon-envelope"></span> Envoyer notification</a></div>
+
+                            <?php if ($user->date_send) : ?>
+                                <div class="small text-danger"><b>Dernière notification</b><br><?= $user->getDate('date_send')->get(Aurel_Date::DATETIME) ?></div>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -69,7 +82,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($this->usersInactif as $key => $user): ?>
+                <?php foreach ($this->usersInactif as $key => $user) : ?>
                     <tr class="<?php echo $user->status == Aurel_Table_User::STATUS_ACTIF ? "success" : "" ?>">
                         <td><?php echo $user->name ?></td>
                         <td><?php echo $user->lastname ?></td>
@@ -90,11 +103,17 @@
     </div>
 </div>
 <script type="text/javascript">
-    $(function () {
-        $('.btn-group a').popover({
+    $(function() {
+        $('.actionsBtn a').popover({
             trigger: 'hover',
             placement: 'top',
             container: 'body'
+        });
+        $('.rights').popover({
+            trigger: 'hover',
+            placement: 'top',
+            container: 'body',
+            'html': true
         });
     });
 </script>

@@ -72,7 +72,7 @@ class Aurel_Table_Row_User extends Zend_Db_Table_Row_Abstract implements Zend_Ac
             $string = "";
             for ($i = 0; $i < $length; $i++) {
                 $puissance = pow(2, $i);
-                if ($this->type_binaire{$i}) {
+                if ($this->type_binaire{$i} && isset($libelles[$puissance])) {
                     $string .= "<div class='badge' style='background-color:#357ebd;font-size:10px'>" . $libelles[$puissance] . "</div> ";
                 }
             }

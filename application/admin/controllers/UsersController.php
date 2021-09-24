@@ -8,14 +8,16 @@ require_once "AbstractController.php";
  * @author Aurel
  *
  */
-class Admin_UsersController extends Admin_AbstractController {
+class Admin_UsersController extends Admin_AbstractController
+{
 
     /**
      * Page index
      *
      * @return void
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         $oUsers = new Aurel_Table_User();
         $search = $this->getParam('search');
         $orderby = $this->getParam('orderby', 'status');
@@ -81,7 +83,8 @@ class Admin_UsersController extends Admin_AbstractController {
     /**
      * 
      */
-    public function downloadAction() {
+    public function downloadAction()
+    {
         $this->_disableLayout();
         $this->_disableView();
 
@@ -109,7 +112,8 @@ class Admin_UsersController extends Admin_AbstractController {
      * 
      * @param type $array
      */
-    public function outputCSV($array) {
+    public function outputCSV($array)
+    {
         $fp = fopen('php://output', 'w'); // this file actual writes to php output
         foreach ($array as $arr) {
             fputcsv($fp, $arr, ';');
@@ -120,7 +124,8 @@ class Admin_UsersController extends Admin_AbstractController {
     /**
      *  getCSV creates a line of CSV and returns it. 
      */
-    public function getCSV($array) {
+    public function getCSV($array)
+    {
         ob_start(); // buffer the output ...
         $this->outputCSV($array);
         return ob_get_clean(); // ... then return it as a string!
@@ -131,7 +136,8 @@ class Admin_UsersController extends Admin_AbstractController {
      *
      * @return void
      */
-    public function addEditAction() {
+    public function addEditAction()
+    {
         //$this->_disableLayout();
 
         $arrayStatus = array(
@@ -257,7 +263,8 @@ class Admin_UsersController extends Admin_AbstractController {
         }
     }
 
-    public function deleteAction() {
+    public function deleteAction()
+    {
         $this->_disableLayout();
 
         $oUser = new Aurel_Table_User();
@@ -281,4 +288,107 @@ class Admin_UsersController extends Admin_AbstractController {
         }
     }
 
+    /**
+     * 
+     */
+    public function previewAction()
+    {
+        $this->_disableLayout();
+        $this->_disableView();
+        $subject = $this->_config->subject_notification;
+        $body = $this->_config->body_notification;
+
+        $inviteur = $this->_getUser();
+
+        $oInvitation = new Aurel_Table_Invitation();
+        $oUser = new Aurel_Table_User();
+
+        $message = $this->getParam('message');
+        $object = $this->getParam('objet');
+
+        $subject = $object;
+
+        $link = "#";
+        $replacement = [
+            '#INVITEUR_PRENOM#' => $inviteur->firstname,
+            '#INVITEUR_NOM#' => $inviteur->lastname,
+            '#INVITEUR_SOCIETE#' => $inviteur->societe,
+            '#INVITEUR_EMAIL#' => $inviteur->email,
+            '#INVITEUR_FONCTION#' => $inviteur->fonction,
+            '#INVITE_EMAIL#' => "<i>emails</i>",
+            '#INVITE_MESSAGE#' => $message,
+            '#LIEN#' => $link
+        ];
+
+        foreach ($replacement as $key => $value) {
+            $subject = str_replace($key, $value, $subject);
+            $body = str_replace($key, $value, $body);
+        }
+
+
+        $mailSend = new Aurel_Mailer("utf-8");
+        $mailSend->setBodyHtmlWithDesign($body, $subject)
+            ->setFrom('contact@btob-adidas.com', 'adidas France')
+            ->setSubject($subject);
+
+        echo $mailSend->getHtml();
+    }
+
+    public function sendAction()
+    {
+        $oInvitation = new Aurel_Table_Invitation();
+        $oUser = new Aurel_Table_User();
+        $oQueue = new Aurel_Table_Queue();
+
+        $id_user = $this->getParam('id_user');
+        $userInvited = $oUser->getById($id_user);
+
+        $formData = $this->_request->getPost();
+        if ($this->_request->isPost()) {
+            $this->_disableLayout();
+            $this->_disableView();
+            $return['code'] = 'ko';
+
+            $identification = uniqid();
+            if ($userInvited) {
+                $queue = $oQueue->createRow();
+                $queue->to = $userInvited->email;
+                $queue->subject = $formData['objet'];
+                $queue->body = $formData['message'];
+                $queue->status = Aurel_Table_Queue::STATUS_READYTOSEND;
+                $queue->date_creation = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
+                $queue->identification = $identification;
+                $queue->id_user_creation = $this->_getUser()->id_user;
+                $queue->id_user = $userInvited->id_user;
+                $queue->save();
+
+                $return['code'] = 'ok';
+                $url_redirect = $this->view->url(array('action' => 'index', 'id_user' => null));
+                $return['url_redirect'] = $url_redirect;
+            } else {
+                $users = $oUser->getAll(Aurel_Table_User::STATUS_ACTIF);
+
+                foreach ($users as $userInvited) {
+                    $queue = $oQueue->createRow();
+                    $queue->to = $userInvited->email;
+                    $queue->subject = $formData['objet'];
+                    $queue->body = $formData['message'];
+                    $queue->status = Aurel_Table_Queue::STATUS_READYTOSEND;
+                    $queue->date_creation = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
+                    $queue->identification = $identification;
+                    $queue->id_user_creation = $this->_getUser()->id_user;
+                    $queue->id_user = $userInvited->id_user;
+                    $queue->save();
+                }
+
+                $return['code'] = 'ok';
+                $url_redirect = $this->view->url(array('action' => 'index', 'id_user' => null));
+                $return['url_redirect'] = $url_redirect;
+            }
+
+            echo json_encode($return);
+        }
+
+        $this->view->userInvited = $userInvited;
+    }
 }
