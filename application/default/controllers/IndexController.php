@@ -1867,6 +1867,7 @@ class IndexController extends Aurel_Controller_Abstract
                         1,
                         time() + 3600 * $access_code->delai,
                         '/',
+                        "",
                         $this->isSecure(),
                         true
                     );
