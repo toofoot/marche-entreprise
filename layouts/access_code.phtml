@@ -183,9 +183,6 @@
         })
         $(function() {
 
-            <?php if ($this->session && $this->session->message) : ?>
-                $('#messageModal').modal('show')
-            <?php endif; ?>
             <?php if ($this->popup_login) : ?>
                 $('#myModal .modal-content').load('<?php echo $this->url(array('action' => 'login', 'url_redirect' => $this->logout_url_redirect), 'compte', true) ?>?emailLogin=<?= $this->email_login ?>');
                 $('#myModal').modal('show')
@@ -320,6 +317,9 @@
                     remote: '<?php echo $this->url(array("action" => "register-ok"), 'compte', true) ?>'
                 });
             <?php endif ?>
+            <?php if ($this->session && $this->session->message) : ?>
+                $('#messageModal').modal('show')
+            <?php endif; ?>
         });
     </script>
 </body>

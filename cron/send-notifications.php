@@ -16,7 +16,7 @@ while ($queue = $oQueue->getOneReadyToSend()) {
 
     $mailSend = new Aurel_Mailer("utf-8");
     $mailSend->setBodyHtmlWithDesign($body, $subject)
-            ->setFrom('contact@btob-adidas.com', 'adidas France')
+            ->setFrom('contact@btob-adidas.com', 'adidas Sportminedor')
             ->setSubject($subject)
             ->addTo($queue->to);
     try {
