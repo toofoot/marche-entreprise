@@ -16,9 +16,10 @@
             <?= $this->invitation->getDate('date_sent') ?>
         <?php endif; ?>
     </td>
-    <td>
+    <td class="text-right">
         <?php if ($this->invitation->state == Aurel_Table_Invitation::TYPE_SENT || $this->invitation->state == Aurel_Table_Invitation::TYPE_RESENT) : ?>
-            <a class="btn btn-primary btn-sm relance" data-loading-text="Envoi en cours..." href="<?= $this->url(['action' => 'resend', 'id_invitation' => $this->invitation->id_invitation]) ?>">Relancer</a>
+            <a class="btn btn-primary btn-sm relance" href="<?= $this->url(['action' => 'resend', 'id_invitation' => $this->invitation->id_invitation]) ?>">Relancer</a>
         <?php endif; ?>
+        <a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#mySmallModal" href="<?= $this->url(['action' => 'delete-invitation', 'id_invitation' => $this->invitation->id_invitation]) ?>"><i class="glyphicon glyphicon-trash"></i></a>
     </td>
 </tr>

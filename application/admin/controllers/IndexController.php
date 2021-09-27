@@ -407,4 +407,27 @@ class Admin_IndexController extends Admin_AbstractController
 
         $this->view->access_code = $access;
     }
+
+    public function deleteInvitationAction()
+    {
+        $oInvitation = new Aurel_Table_Invitation();
+        $id_invitation = $this->getParam('id_invitation');
+
+        $access = null;
+        if ($id_invitation) {
+            $invitation = $oInvitation->getById($id_invitation);
+        }
+        if (!$invitation) {
+            $invitation = $oInvitation->createRow();
+        }
+
+        $formData = $this->getRequest()->getPost();
+        if ($formData) {
+            $invitation->delete();
+
+            $this->redirect($this->view->url(['action' => 'invitations', 'id_access_code' => null]));
+        }
+
+        $this->view->invitation = $invitation;
+    }
 }
