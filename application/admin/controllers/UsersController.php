@@ -328,7 +328,7 @@ class Admin_UsersController extends Admin_AbstractController
 
         $mailSend = new Aurel_Mailer("utf-8");
         $mailSend->setBodyHtmlWithDesign($body, $subject)
-            ->setFrom('contact@btob-adidas.com', 'adidas Sportminedor')
+            ->setFrom('contact@btob-adidas.com', 'Champion\'s league 2021-2022')
             ->setSubject($subject);
 
         echo $mailSend->getHtml();
