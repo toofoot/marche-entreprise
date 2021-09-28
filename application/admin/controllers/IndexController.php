@@ -345,6 +345,7 @@ class Admin_IndexController extends Admin_AbstractController
             $arrayToUpdate['body_invitation'] = $formData["body_invitation"];
             $arrayToUpdate['subject_reinvitation'] = $formData["subject_reinvitation"];
             $arrayToUpdate['body_reinvitation'] = $formData["body_reinvitation"];
+            $arrayToUpdate['from_mail'] = $formData["from_mail"];
 
             $oConfig = new Aurel_Table_Config();
             foreach ($arrayToUpdate as $key => $value) {

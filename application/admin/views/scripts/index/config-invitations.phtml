@@ -11,6 +11,12 @@
             <b>#LIEN#</b> : Lien d'inscription
         </div>
         <div class="form-group">
+            <?php echo $this->formLabel("from_mail", "Emetteur notification", array("class" => "col-sm-4 control-label")) ?>
+            <div class="col-sm-8">
+                <?php echo $this->formText("from_mail", $this->config->from_mail, array("class" => "form-control")) ?>
+            </div>
+        </div>
+        <div class="form-group">
             <?php echo $this->formLabel("subject_invitation", "Object mail invitation", array("class" => "col-sm-4 control-label")) ?>
             <div class="col-sm-8">
                 <?php echo $this->formText("subject_invitation", $this->config->subject_invitation, array("class" => "form-control")) ?>

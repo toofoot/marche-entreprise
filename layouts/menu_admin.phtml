@@ -16,6 +16,6 @@
     <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES)) : ?><a class="list-group-item" href='<?php echo $this->url(array('action' => 'trash', 'controller' => 'articles'), 'admin', true) ?>'>Corbeille Articles<?php if (isset($this->articles_corbeilles)) : ?><span class="badge"><?php echo $this->articles_corbeilles->count() ?></span><?php endif ?></a><?php endif ?>
     <?php if ($this->user->directeur) : ?><a class="list-group-item list-group-item-info" href='<?php echo $this->url(array('action' => 'config', 'controller' => 'index'), 'admin', true) ?>'>Configuration</a><?php endif ?>
     <?php if ($this->user->directeur) : ?><a class="list-group-item list-group-item-info" href='<?php echo $this->url(array('action' => 'config-access', 'controller' => 'index'), 'admin', true) ?>'>Configuration Accès</a><?php endif ?>
-    <?php if ($this->user->directeur) : ?><a class="list-group-item list-group-item-info" href='<?php echo $this->url(array('action' => 'config-invitations', 'controller' => 'index'), 'admin', true) ?>'>Configuration Invitations</a><?php endif ?>
+    <?php if ($this->user->directeur) : ?><a class="list-group-item list-group-item-info" href='<?php echo $this->url(array('action' => 'config-invitations', 'controller' => 'index'), 'admin', true) ?>'>Configuration Notifications</a><?php endif ?>
     <a class="list-group-item list-group-item-warning" href='<?php echo $this->url(array('action' => 'logout', 'url_redirect' => $this->logout_url_redirect), 'admin', true) ?>'>Deconnexion</a>
 </div>
