@@ -5,6 +5,7 @@ include_once 'bootstrap.php';
 $oInvitation = new Aurel_Table_Invitation();
 $oUser = new Aurel_Table_User();
 
+$config = Aurel_Table_Config::getConfig();
     
 while ($invitation = $oInvitation->getOneReadyToSend()) {
     
@@ -32,7 +33,7 @@ while ($invitation = $oInvitation->getOneReadyToSend()) {
 
     $mailSend = new Aurel_Mailer("utf-8");
     $mailSend->setBodyHtmlWithDesign($body, $subject)
-            ->setFrom('contact@btob-adidas.com', 'adidas Sportminedor')
+            ->setFrom('contact@btob-adidas.com', $config->from_mail)
             ->setSubject($subject)
             ->addTo($invitation->email);
     try {

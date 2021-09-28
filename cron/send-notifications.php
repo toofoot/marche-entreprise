@@ -5,6 +5,7 @@ include_once 'bootstrap.php';
 $oQueue = new Aurel_Table_Queue();
 $oUser = new Aurel_Table_User();
 
+$config = Aurel_Table_Config::getConfig();
     
 while ($queue = $oQueue->getOneReadyToSend()) {
     
@@ -16,7 +17,7 @@ while ($queue = $oQueue->getOneReadyToSend()) {
 
     $mailSend = new Aurel_Mailer("utf-8");
     $mailSend->setBodyHtmlWithDesign($body, $subject)
-            ->setFrom('contact@btob-adidas.com', 'Champion\'s league 2021-2022')
+            ->setFrom('contact@btob-adidas.com', $config->from_mail)
             ->setSubject($subject)
             ->addTo($queue->to);
     try {
