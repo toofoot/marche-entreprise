@@ -395,6 +395,19 @@ class CompteController extends Aurel_Controller_Abstract
                 $user = $this->_getUser();
 
                 $user->newsletter = $formData['newsletter'];
+
+                $db = Zend_Registry::get('db');
+
+                $select = "UPDATE `pronoteam_adidas`.`utilisateurs`
+                SET recoimail = {$formData['newsletter']}, recoimailforum = {$formData['newsletter']}
+                where `email` = '{$user->email}'";
+
+                try {
+                    $result = $db->query($select);
+                } catch (Exception $e) {
+                    
+                }
+
                 $user->save();
             }
         }

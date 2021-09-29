@@ -150,7 +150,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                 $this->view->show_popup = false;
             }
 
-            if ($this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"]) && strpos($_SERVER["REQUEST_URI"], 'admin') === false && strpos($_SERVER["REQUEST_URI"], 'login') === false && strpos($_SERVER["REQUEST_URI"], 'passoublie') === false && !$this->hasParam('invitation')) {
+            if ($this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"]) && strpos($_SERVER["REQUEST_URI"], 'admin') === false && strpos($_SERVER["REQUEST_URI"], 'login') === false && strpos($_SERVER["REQUEST_URI"], 'passoublie') === false && strpos($_SERVER["REQUEST_URI"], 'desinscription') === false && !$this->hasParam('invitation')) {
                 $emailGet = $this->getParam('email',null);
                 //var_dump($emailGet);die();
                 if (isset($emailGet)) {

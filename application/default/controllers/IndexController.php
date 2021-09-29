@@ -15,6 +15,63 @@ class IndexController extends Aurel_Controller_Abstract
     protected $_menu = null;
     protected $_sousmenu = null;
 
+
+    public function aboutAction()
+    {
+        $page = $this->getParam('page');
+
+        $this->view->page = $page;
+
+        $this->view->html = $this->_config->$page;
+
+        if (!$this->_config->$page) {
+            throw new Exception();
+        }
+    }
+
+    public function desinscriptionAction()
+    {
+        $this->_disableLayout();
+        $this->_disableView();
+
+        $hash = $this->getParam('hash');
+
+        $connect = Aurel_Encryptor::getInstance();
+        $connect->setEncryptedValue($hash);
+        $connect->decrypt();
+
+        if ($connect->getDecryptedValue()) {
+            if ($connect->isExpired()) {
+                echo "<h1><center>Lien expiré</center></h1>";
+            } else {
+                $email = $connect->getDecryptedValue();
+                $oUser = new Aurel_Table_User();
+                $user = $oUser->getByEmail($email);
+
+                if ($user) {
+
+                    $db = Zend_Registry::get('db');
+
+                    $select = "UPDATE `pronoteam_adidas`.`utilisateurs`
+                    SET recoimail = 0, recoimailforum = 0
+                    where `email` = '$email'";
+
+                    try {
+                        $result = $db->query($select);
+                    } catch (Exception $e) {
+                    }
+
+                    $user->newsletter = 0;
+                    //$user->recoimailforum = 0;
+                    $user->save();
+                }
+                echo "<h1><center>Vous êtes maintenant désinscris de la réception d'emails</center></h1>";
+            }
+        } else {
+            echo "<h1><center>Lien invalide</center></h1>";
+        }
+    }
+
     /**
      * Pre-dispatch routines
      *

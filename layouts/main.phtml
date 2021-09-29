@@ -183,6 +183,12 @@
                     </div>
                 </div>
             </footer>
+            <div>&copy; <?= date('Y') ?> <?= $this->translate('par Toofoot SAS') ?>. <?= $this->translate('Tous droits réservés') ?>
+                - <a href='<?= $this->url(['page' => 'mentions-legales'], 'about', true) ?>' class="text-white">Mentions Légales</a>
+                - <a href='<?= $this->url(['page' => 'politique-de-confidentialite'], 'about', true) ?>' class="text-white">Politique de confidentialité</a>
+                - <a href='<?= $this->url(['page' => 'politique-de-cookies'], 'about', true) ?>' class="text-white">Politique de cookies</a>
+
+            </div>
         </div>
     </div>
     <div class="scrollMonths invisible"></div>

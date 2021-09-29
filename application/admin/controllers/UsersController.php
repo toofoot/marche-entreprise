@@ -361,7 +361,7 @@ class Admin_UsersController extends Admin_AbstractController
                 $hash->setExpirySeconds(20000000);
                 $hash->encrypt();
 
-                $link = "http://marche-entreprises.btob-adidas.com/compte/l?h=" . $hash->getEncryptedValue();
+                $link = "https://marche-entreprises.btob-adidas.com/compte/l?h=" . $hash->getEncryptedValue();
                 $replacement = [
                     '#INVITE_MESSAGE#' => $formData['message'],
                     '#LIEN#' => $link,
