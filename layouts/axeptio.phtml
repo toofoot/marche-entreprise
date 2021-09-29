@@ -1,0 +1,52 @@
+<script>
+    function setCookie(nom, valeur, expire, chemin, domaine, securite) {
+        document.cookie = nom + ' = ' + escape(valeur) + '  ' +
+            ((expire == undefined) ? '' : ('; expires = ' + expire.toGMTString())) +
+            ((chemin == undefined) ? '' : ('; path = ' + chemin)) +
+            ((domaine == undefined) ? '' : ('; domain = ' + domaine)) +
+            ((securite == true) ? '; secure' : '');
+    }
+
+    function launchGA() {
+        var el = document.createElement('script');
+        el.setAttribute('async', true);
+        el.setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=UA-124516479-1');
+        document.body.append(el);
+
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-124516479-1');
+    }
+    window.axeptioSettings = {
+        clientId: "6153354ef8f18729d229c76e",
+        cookiesVersion: "marche entreprises adidas SportMinedor",
+        userCookiesDuration: 6 * 30
+    };
+
+    (function(d, s) {
+        var t = d.getElementsByTagName(s)[0],
+            e = d.createElement(s);
+        e.async = true;
+        e.src = "//static.axept.io/sdk.js";
+        t.parentNode.insertBefore(e, t);
+    })(document, "script");
+
+    void 0 === window._axcb && (window._axcb = []);
+    window._axcb.push(function(axeptio) {
+        axeptio.on("cookies:complete", function(choices) {
+            if (choices.google_analytics) {
+                launchGA();
+            }
+            if (!choices.Auth) {
+                $.get(
+                    '<?php echo $this->url(array('action' => 'remove-auth'), 'compte', true) ?>'
+                )
+            }
+        })
+    });
+</script>

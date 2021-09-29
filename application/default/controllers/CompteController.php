@@ -413,6 +413,37 @@ class CompteController extends Aurel_Controller_Abstract
         }
     }
 
+    public function removeAuthAction()
+    {
+        $this->_disableLayout();
+        $this->_disableView();
+
+        $bootstrap = $this->getInvokeArg('bootstrap');
+        $appinidata = $bootstrap->getOptions();
+        $cookie_domain = null;
+        if (isset($appinidata['resources']['session']) && isset($appinidata['resources']['session']['cookie_domain']))
+            $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
+
+        setcookie(
+            'Auth',
+            '',
+            time() - 2600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
+        );
+        setcookie(
+            'access_code_ok',
+            1,
+            time() - 3600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
+        );
+    }
+
     public function annonceAction()
     {
         $formData = $this->_request->getPost();
