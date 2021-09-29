@@ -1,10 +1,12 @@
 <?php
 
-class Aurel_Mailer extends Zend_Mail {
+class Aurel_Mailer extends Zend_Mail
+{
 
     protected $_html;
 
-    public function setBodyHtml($html, $charset = "utf-8", $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE) {
+    public function setBodyHtml($html, $charset = "utf-8", $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE)
+    {
         if ($charset === null) {
             $charset = $this->_charset;
         }
@@ -34,12 +36,30 @@ class Aurel_Mailer extends Zend_Mail {
         return $this;
     }
 
-    public function setBodyHtmlWithDesign($html, $subject, $charset = "utf-8", $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE) {
+    public function setBodyHtmlWithDesign($html, $subject, $charset = "utf-8", $encoding = Zend_Mime::ENCODING_QUOTEDPRINTABLE, $config = null, $user = null)
+    {
         if ($charset === null) {
             $charset = $this->_charset;
         }
         $host = isset($_SERVER["HTTP_HOST"]) ? $_SERVER["HTTP_HOST"] : "www.lepetitcharsien.com";
         $body = $html;
+
+        $hash = null;
+        if ($user) {
+            $hashing = Aurel_Encryptor::getInstance();
+            $hashing->setDecryptedValue($user->email);
+            $hashing->setExpirySeconds(20000000);
+            $hashing->encrypt();
+
+            $hash = $hashing->getEncryptedValue();
+            $footer_email = $config ? $config->footer_email : null;
+        } else {
+            $footer_email = $config ? $config->footer_email_invitation : null;
+        }
+
+
+        $footer_email = str_replace('#HASH#', $hash, $footer_email);
+        $body = str_replace('#HASH#', $hash, $body);
 
         $html = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' . "\n";
         $html .= "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
@@ -65,6 +85,7 @@ class Aurel_Mailer extends Zend_Mail {
                                     " . nl2br($body) . "
                                     </td>
 				</tr>
+                {$footer_email}
 				</tbody>
 			</table>
 		";
@@ -84,8 +105,8 @@ class Aurel_Mailer extends Zend_Mail {
         return $this;
     }
 
-    public function getHtml() {
+    public function getHtml()
+    {
         return $this->_html;
     }
-
 }

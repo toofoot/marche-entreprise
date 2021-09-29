@@ -349,8 +349,6 @@ class Admin_UsersController extends Admin_AbstractController
             $this->_disableView();
             $return['code'] = 'ko';
 
-
-
             $identification = uniqid();
             if ($userInvited) {
                 $subject = $formData['objet'];
@@ -387,7 +385,7 @@ class Admin_UsersController extends Admin_AbstractController
                 $url_redirect = $this->view->url(array('action' => 'index', 'id_user' => null));
                 $return['url_redirect'] = $url_redirect;
             } else {
-                $users = $oUser->getAll(Aurel_Table_User::STATUS_ACTIF);
+                $users = $oUser->getAllForNewsletter();
 
                 foreach ($users as $userInvited) {
 
