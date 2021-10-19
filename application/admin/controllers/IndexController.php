@@ -202,21 +202,13 @@ class Admin_IndexController extends Admin_AbstractController
         setcookie(
             'Auth',
             '',
-            time() - 2600,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            time() - 2600
         );
 
         setcookie(
             'popup',
             1,
-            time() + 30 * 3600 * 24,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            time() + 30 * 3600 * 24
         );
 
         if ($this->hasParam('url_redirect'))
