@@ -220,7 +220,11 @@ class CompteController extends Aurel_Controller_Abstract
                             setcookie(
                                 'Auth',
                                 $user->id_user,
-                                time() + 3600 * 24 * 365
+                                time() + 3600 * 24 * 365,
+                                '/',
+                                $cookie_domain,
+                                $this->isSecure(),
+                                true
                             );
                         }
 
@@ -343,18 +347,30 @@ class CompteController extends Aurel_Controller_Abstract
         setcookie(
             'Auth',
             '',
-            time() - 3600
+            time() - 3600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
 
         setcookie(
             'popup',
             '',
-            time() - 3600
+            time() - 3600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
         setcookie(
             'access_code_ok',
             '',
-            time() - 3600
+            time() - 3600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
 
         session_destroy();
@@ -404,19 +420,25 @@ class CompteController extends Aurel_Controller_Abstract
 
         $bootstrap = $this->getInvokeArg('bootstrap');
         $appinidata = $bootstrap->getOptions();
-        $cookie_domain = null;
-        if (isset($appinidata['resources']['session']) && isset($appinidata['resources']['session']['cookie_domain']))
-            $cookie_domain = $appinidata['resources']['session']['cookie_domain'];
+        $cookie_domain = '';
 
         setcookie(
             'Auth',
             '',
-            time() - 2600
+            time() - 2600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
         setcookie(
             'access_code_ok',
             1,
-            time() - 3600
+            time() - 3600,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
     }
 
@@ -811,7 +833,11 @@ class CompteController extends Aurel_Controller_Abstract
         setcookie(
             'popup',
             1,
-            time() + 3600 * 24 * 30
+            time() + 3600 * 24 * 30,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
     }
 
@@ -831,7 +857,11 @@ class CompteController extends Aurel_Controller_Abstract
         setcookie(
             'popup',
             1,
-            time() + 3600 * 24 * 30
+            time() + 3600 * 24 * 30,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
     }
 

@@ -1827,7 +1827,11 @@ class IndexController extends Aurel_Controller_Abstract
         setcookie(
             'popup_other',
             1,
-            time() + 3600 * 24
+            time() + 3600 * 24,
+            '/',
+            $cookie_domain,
+            $this->isSecure(),
+            true
         );
     }
 
@@ -1918,7 +1922,11 @@ class IndexController extends Aurel_Controller_Abstract
                     setcookie(
                         'access_code_ok',
                         1,
-                        time() + 3600 * $access_code->delai
+                        time() + 3600 * $access_code->delai,
+                        '/',
+                        "",
+                        $this->isSecure(),
+                        true
                     );
 
                     $access_code->count++;
