@@ -82,7 +82,8 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                 //->appendStylesheet('/javascript/galleria/themes/classic/galleria.classic.css')
                 ->appendStylesheet('/javascript/swiper/idangerous.swiper.css')
                 ->appendStylesheet('/css/style.css?t=7')
-                ->appendStylesheet('/javascript/colorbox-master/example1/colorbox.css');
+                ->appendStylesheet('/javascript/colorbox-master/example1/colorbox.css')
+                ->appendStylesheet('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css');
         //$this->view->headLink()->appendAlternate('http://' . $_SERVER["HTTP_HOST"] . '/flux.rss','application/rss+xml','Flux RSS');
 
         /* ->headLink(array('rel' => 'shortcut icon',

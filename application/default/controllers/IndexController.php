@@ -31,8 +31,8 @@ class IndexController extends Aurel_Controller_Abstract
 
     public function desinscriptionAction()
     {
-        $this->_disableLayout();
-        $this->_disableView();
+        $this->_helper->layout->setLayout('main2');
+        $this->view->headScript()->appendFile("https://www.google.com/recaptcha/api.js?render=6LcZ1hAdAAAAADpsWPRZc-jfD5O4m2Y1md8tmO3K");
 
         $hash = $this->getParam('hash');
 
@@ -42,7 +42,10 @@ class IndexController extends Aurel_Controller_Abstract
 
         if ($connect->getDecryptedValue()) {
             if ($connect->isExpired()) {
-                echo "<h1><center>Lien expiré</center></h1>";
+                $this->_disableLayout();
+                $this->_disableView();
+
+                $this->view->message = 'Lien expiré';
             } else {
                 $email = $connect->getDecryptedValue();
                 $oUser = new Aurel_Table_User();
@@ -50,24 +53,52 @@ class IndexController extends Aurel_Controller_Abstract
 
                 if ($user) {
 
-                    $db = Zend_Registry::get('db');
+                    $this->view->form = true;
+                    $this->view->message = 'Suppression de la liste de diffusion en cours<br><br><i class=\'fa fa-spinner fa-5x fa-pulse\'></i>';
+                    $formData = $this->_request->getPost();
+                    if ($formData) {
 
-                    $select = "UPDATE `pronoteam_adidas`.`utilisateurs`
-                    SET recoimail = 0, recoimailforum = 0
-                    where `email` = '$email'";
+                        $data = array(
+                            'secret' => "6LcZ1hAdAAAAAHLeIY26gVRgTQ5hu_KDSRFrFnpR",
+                            'response' => $formData['g-recaptcha-response']
+                        );
 
-                    try {
-                        $result = $db->query($select);
-                    } catch (Exception $e) {
+                        $verify = curl_init();
+                        curl_setopt($verify, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+                        curl_setopt($verify, CURLOPT_POST, true);
+                        curl_setopt($verify, CURLOPT_POSTFIELDS, http_build_query($data));
+                        curl_setopt($verify, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($verify, CURLOPT_RETURNTRANSFER, true);
+                        $response = curl_exec($verify);
+
+                        $json_response = json_decode($response, true);
+
+                        if ($json_response['success']) {
+                            $db = Zend_Registry::get('db');
+
+                            $select = "UPDATE `pronoteam_adidas`.`utilisateurs`
+                            SET recoimail = 0, recoimailforum = 0
+                            where `email` = '$email'";
+
+                            try {
+                                $result = $db->query($select);
+                            } catch (Exception $e) {
+                            }
+
+                            $user->newsletter = 0;
+                            //$user->recoimailforum = 0;
+                            $user->save();
+
+                            $this->view->message =  "Vous êtes maintenant désinscris de la réception d'emails";
+                            $this->view->novalidation = true;
+                        }
                     }
-
-                    $user->newsletter = 0;
-                    //$user->recoimailforum = 0;
-                    $user->save();
                 }
-                echo "<h1><center>Vous êtes maintenant désinscris de la réception d'emails</center></h1>";
             }
         } else {
+            $this->_disableLayout();
+            $this->_disableView();
+
             echo "<h1><center>Lien invalide</center></h1>";
         }
     }

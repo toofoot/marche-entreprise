@@ -1,0 +1,254 @@
+<?php echo $this->doctype() ?>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+
+<head>
+
+    <script>
+        if (window.addEventListener) {
+            window.addEventListener("message", onMessage, false);
+        } else if (window.attachEvent) {
+            window.attachEvent("onmessage", onMessage, false);
+        }
+
+        function onMessage(event) {
+            var data = event.data;
+            if (data.url) {
+                location.href = "#" + data.url;
+            }
+        }
+    </script>
+    <?php echo $this->headMeta() ?>
+    <?php echo $this->headTitle() ?>
+    <?php echo $this->headLink() ?>
+    <?php echo $this->headStyle() ?>
+    <?php echo $this->headScript() ?>
+</head>
+
+<body>
+    <div>
+        <div id="main">
+            <div class="container">
+                <div class="withHeaderTop text-center">
+                    <?php echo $this->layout()->content ?>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div class="text-center">&copy; <?= date('Y') ?> <?= $this->translate('par Toofoot SAS') ?>. <?= $this->translate('Tous droits réservés') ?>
+                - <a href='<?= $this->url(['page' => 'mentions-legales'], 'about', true) ?>' class="text-white">Mentions Légales</a>
+                - <a href='<?= $this->url(['page' => 'politique-de-confidentialite'], 'about', true) ?>' class="text-white">Politique de confidentialité</a>
+                - <a href='<?= $this->url(['page' => 'politique-de-cookies'], 'about', true) ?>' class="text-white">Politique de cookies</a>
+
+            </div>
+        </div>
+    </div>
+    <div class="scrollMonths invisible"></div>
+
+    <?php if ($this->session && $this->session->message) : ?>
+        <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <h3><?= $this->session->message ?></h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">FERMER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif ?>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <img src="/images/ajax-loader-bar.gif" alt="loader" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myLargeModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <img src="/images/ajax-loader-bar.gif" alt="loader" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mySmallModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <img src="/images/ajax-loader-bar.gif" alt="loader" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)) : ?>
+        <div id="adminSlider">
+            <?php echo $this->formHidden('statusSlider', 'closed') ?>
+            <div id="sliderToggle">
+                <a class="btn btn-lg" href='#'>
+                    <small>MENU<br />ADMIN</small><br />
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+            </div>
+            <div id="admin" class="">
+                <?php echo $this->render('menu_admin.phtml'); ?>
+
+            </div>
+        </div>
+    <?php endif ?>
+    <script type="text/javascript">
+        $('#myModal').on('hidden.bs.modal', function() {
+            $('#myModal').removeData('bs.modal').find(".modal-content").html(
+                '<div class="modal-body text-center">' +
+                '<img src="/images/ajax-loader-bar.gif" alt="loader" />' +
+                '</div>'
+            );
+        });
+        $('#myLargeModal').on('hidden.bs.modal', function() {
+            $('#myLargeModal').removeData('bs.modal').find(".modal-content").html(
+                '<div class="modal-body text-center">' +
+                '<img src="/images/ajax-loader-bar.gif" alt="loader" />' +
+                '</div>'
+            );
+        });
+        $('#mySmallModal').on('hidden.bs.modal', function() {
+            $('#mySmallModal').removeData('bs.modal').find(".modal-content").html(
+                '<div class="modal-body text-center">' +
+                '<img src="/images/ajax-loader-bar.gif" alt="loader" />' +
+                '</div>'
+            );
+        });
+        $('#myModal').on('loaded.bs.modal', function(e) {
+            $(window).trigger('resize');
+        })
+        $('#myLargeModal').on('loaded.bs.modal', function(e) {
+            $(window).trigger('resize');
+        })
+        $('#mySmallModal').on('loaded.bs.modal', function(e) {
+            $(window).trigger('resize');
+        })
+        $(function() {
+            <?php if ($this->session && $this->session->message) : ?>
+                $('#messageModal').modal('show')
+            <?php endif; ?>
+            <?php if ($this->popup_login) : ?>
+                $('#myModal .modal-content').load('<?php echo $this->url(array('action' => 'login', 'url_redirect' => $this->logout_url_redirect), 'compte', true) ?>?emailLogin=<?= $this->email_login ?>');
+                $('#myModal').modal('show')
+            <?php endif; ?>
+            <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN)) : ?>
+                $('#sliderToggle a').click(function() {
+                    if ($('#statusSlider').val() == 'closed') {
+                        $('#adminSlider').stop(true, true).animate({
+                            left: 0
+                        });
+                        $('#main').stop(true, true).animate({
+                            marginLeft: 315
+                        });
+                        $('header').stop(true, true).animate({
+                            marginLeft: 315
+                        });
+                        $('#statusSlider').val('open');
+                        $('#sliderToggle a span').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-left');
+                    } else {
+                        $('#adminSlider').stop(true, true).animate({
+                            left: -315
+                        });
+                        $('#main').stop(true, true).animate({
+                            marginLeft: 0
+                        });
+                        $('header').stop(true, true).animate({
+                            marginLeft: 0
+                        });
+                        $('#statusSlider').val('closed');
+                        $('#sliderToggle a span').addClass('glyphicon-chevron-right').removeClass('glyphicon-chevron-left');
+                    }
+                    $(this).blur();
+                    return false;
+                });
+                $('.delete').click(function() {
+                    return confirm("Etes vous sur de vouloir supprimer ce menu ?");
+                });
+
+                <?php if ($this->isAllowed(Aurel_Acl::RESSOURCE_ADMIN_MENUS)) : ?>
+                    $('.toOrder').sortable({
+                        items: ".elt_of_menu",
+                        update: function(event, ui) {
+                            order = $(this).sortable("toArray").toString();
+                            $.post(
+                                '<?php echo $this->url(array('action' => 'sort-menu', 'controller' => 'menu'), 'admin', true) ?>',
+                                'order=' + order
+                            );
+                        }
+                    });
+
+                    $('.toSortSousMenu').sortable({
+                        items: ".relative",
+                        update: function(event, ui) {
+                            order = $(this).sortable("toArray").toString();
+                            $.post(
+                                '<?php echo $this->url(array('action' => 'sort', 'controller' => 'menu'), 'admin', true) ?>',
+                                'order=' + order
+                            );
+                        }
+                    });
+                <?php endif ?>
+            <?php endif ?>
+
+            /**
+             *
+             * HOVER MENU
+             *
+             var timeout = null;
+             $(".dropdown").hover(
+             function(){
+             clearTimeout(timeout);
+             $(".dropdown").not(this).removeClass('open');
+             $(this).addClass('open');
+             },
+             function(){
+             var elt = $(this);
+             timeout = setTimeout(function(){
+             elt.removeClass('open');
+             },400);
+             }
+             );*/
+
+            /**
+             *
+             * MENU ON TOP
+             var offsetTopNav = $('nav').offset().top;
+             var heightNav = $('nav').height();
+             $('nav').parent().css('height',heightNav);
+             $(window).bind('scroll', function() {
+             if ($(window).scrollTop() > offsetTopNav) {
+             $('nav').addClass('navbar-fixed-top');
+             }
+             else {
+             $('nav').removeClass('navbar-fixed-top');
+             }
+             });
+             */
+            <?php if ($this->show_popup_other) : ?>
+                $('#myLargeModal').modal({
+                    remote: '<?php echo $this->url(array(), 'showpopupother', true) ?>'
+                });
+            <?php elseif ($this->show_popup) : ?>
+                $('#myLargeModal').modal({
+                    remote: '<?php echo $this->url(array("action" => "register-advice"), 'compte', true) ?>'
+                });
+            <?php endif ?>
+            <?php if ($this->session->inscription) : ?>
+                $('#mySmallModal').modal({
+                    remote: '<?php echo $this->url(array("action" => "register-ok"), 'compte', true) ?>'
+                });
+            <?php endif ?>
+        });
+    </script>
+    <?= $this->render('axeptio.phtml') ?>
+</body>
+
+</html>
