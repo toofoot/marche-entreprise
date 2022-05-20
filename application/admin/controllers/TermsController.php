@@ -13,7 +13,7 @@ class Admin_TermsController extends Admin_AbstractController
 		$this->view->headScript()
 		->appendFile('/javascript/ckeditor/ckeditor.js')
 		;
-			
+
 		/*$this->view->headLink()
 		->appendStylesheet('/javascript/ckeditor/content.css')
 		;*/

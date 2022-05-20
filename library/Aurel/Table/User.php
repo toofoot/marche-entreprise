@@ -12,8 +12,8 @@ class Aurel_Table_User extends Aurel_Table_Abstract
     protected $_name = 'user';
     protected $_rowClass = 'Aurel_Table_Row_User';
 
-    const STATUS_ACTIF = 1;
-    const STATUS_INACTIF = 2;
+    public const STATUS_ACTIF = 1;
+    public const STATUS_INACTIF = 2;
 
     /**
      * Genere un mot de passe de 8 caractères aléatoirement
@@ -30,9 +30,8 @@ class Aurel_Table_User extends Aurel_Table_Abstract
         // on choisis au hasard un des caractères et on l'ajoute à password 8 fois
         while ($i < 8) {
             // On choisis un chiffre au hasard et on regarde le caractere correspondant dans $possible
-            $nbr = rand(0, 49);
-            $char = $possible{
-            $nbr};
+            $nbr = random_int(0, 49);
+            $char = $possible[$nbr];
             // si ce caractère est déjà dans le password, on ne l'insere pas
             if (!strstr($password, $char)) {
                 $password .= $char;
@@ -158,7 +157,7 @@ class Aurel_Table_User extends Aurel_Table_Abstract
         $i = 0;
         while ($somme != 0) {
             if ($somme % 2 != 0) {
-                $result[] = pow(2, $i);
+                $result[] = 2 ** $i;
             }
             $i++;
             $somme = $somme >> 1;

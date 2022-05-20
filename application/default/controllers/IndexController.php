@@ -82,7 +82,7 @@ class IndexController extends Aurel_Controller_Abstract
 
                             try {
                                 $result = $db->query($select);
-                            } catch (Exception $e) {
+                            } catch (Exception) {
                             }
 
                             $user->newsletter = 0;
@@ -203,7 +203,7 @@ class IndexController extends Aurel_Controller_Abstract
                         try {
                             $mail->send();
                             $return["sent"] = true;
-                        } catch (Exception $e) {
+                        } catch (Exception) {
                         }
                     }
                 }
@@ -489,7 +489,7 @@ class IndexController extends Aurel_Controller_Abstract
                     }
                     try {
                         $mail->send();
-                    } catch (Exception $e) {
+                    } catch (Exception) {
                     }
 
                     $this->redirect($this->view->url(array('basename_article' => $article->basename), 'basename_annonce', true));
@@ -504,6 +504,7 @@ class IndexController extends Aurel_Controller_Abstract
 
     public function isUserAction()
     {
+        $return = [];
         $this->_disableLayout();
         $this->_disableView();
 
@@ -689,6 +690,7 @@ class IndexController extends Aurel_Controller_Abstract
 
     public function articlesInAccueilAction()
     {
+        $return = [];
         $this->_disableLayout();
         $this->_disableView();
 
@@ -752,6 +754,7 @@ class IndexController extends Aurel_Controller_Abstract
 
     public function annoncesInAccueilAction()
     {
+        $return = [];
         $this->_disableLayout();
         $this->_disableView();
 
@@ -774,6 +777,7 @@ class IndexController extends Aurel_Controller_Abstract
 
     public function annoncesAction()
     {
+        $return = [];
         $this->_basenamePrincipal = $this->getParam('basename_principal', null);
         $this->_basenameSecondaire = $this->getParam('basename_secondaire', null) !== '' ? $this->getParam('basename_secondaire', null) : null;
 
@@ -826,9 +830,7 @@ class IndexController extends Aurel_Controller_Abstract
         }
 
         $this->view->articles = $newTabArticles;
-
-        end($newTabArticles);
-        $idLastArticle = key($newTabArticles);
+        $idLastArticle = array_key_last($newTabArticles);
         reset($newTabArticles);
         $this->view->urlLink = $this->view->url(array('id_last_article' => $idLastArticle));
         $this->view->textLink = "Lire les articles plus anciens, publiés précédemment";
@@ -853,6 +855,7 @@ class IndexController extends Aurel_Controller_Abstract
      */
     public function pageAction()
     {
+        $return = [];
         $this->_basenamePrincipal = $this->getParam('basename_principal', null);
         $this->_basenameSecondaire = $this->getParam('basename_secondaire', null) !== '' ? $this->getParam('basename_secondaire', null) : null;
 
@@ -961,9 +964,7 @@ class IndexController extends Aurel_Controller_Abstract
             }
 
             $this->view->articles = $newTabArticles;
-
-            end($newTabArticles);
-            $idLastArticle = key($newTabArticles);
+            $idLastArticle = array_key_last($newTabArticles);
             reset($newTabArticles);
             $this->view->urlLink = $this->view->url(array('id_last_article' => $idLastArticle));
             $this->view->textLink = "Lire les articles plus anciens, publiés précédemment";
@@ -986,6 +987,7 @@ class IndexController extends Aurel_Controller_Abstract
 
     public function agendaAction()
     {
+        $return = [];
         $this->view->headTitle("Agenda", "PREPEND");
         $oArticle = new Aurel_Table_Article();
         $avenir = $oArticle->getAvenir();
@@ -1029,9 +1031,7 @@ class IndexController extends Aurel_Controller_Abstract
         }
 
         $this->view->passe = $newTabArticles;
-
-        end($newTabArticles);
-        $idLastArticle = key($newTabArticles);
+        $idLastArticle = array_key_last($newTabArticles);
         reset($newTabArticles);
         $this->view->urlLink = $this->view->url(array('id_last_article' => $idLastArticle));
         $this->view->textLink = "Voir les événements plus anciens";
@@ -1421,7 +1421,7 @@ class IndexController extends Aurel_Controller_Abstract
                     $message->save();
                     $this->view->sent = true;
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
         } else {
             $this->view->already = true;
@@ -1594,7 +1594,7 @@ class IndexController extends Aurel_Controller_Abstract
             $solde += array_sum($tabQuantites);
         }
 
-        $max = $solde !== null ? $solde : 10;
+        $max = $solde ?? 10;
         $tabChiffre = array();
         for ($i = 0; $i <= $max; $i++) {
             $tabChiffre[$i] = $i;
@@ -1681,7 +1681,7 @@ class IndexController extends Aurel_Controller_Abstract
                     ->setFrom("no-reply@lepetitcharsien.com", "Carbon12011 Licensing");
                 try {
                     $mail->send();
-                } catch (Exception $e) {
+                } catch (Exception) {
                     //echo $mail->getBodyHtml();
                 }
 
@@ -1702,7 +1702,7 @@ class IndexController extends Aurel_Controller_Abstract
                     ->setFrom("no-reply@lepetitcharsien.com", "Carbon12011 Licensing");
                 try {
                     $mail->send();
-                } catch (Exception $e) {
+                } catch (Exception) {
                     //echo $mail->getBodyHtml();
                 }
 
@@ -1858,11 +1858,7 @@ class IndexController extends Aurel_Controller_Abstract
         setcookie(
             'popup_other',
             1,
-            time() + 3600 * 24,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() + 3600 * 24, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
     }
 
@@ -1953,11 +1949,7 @@ class IndexController extends Aurel_Controller_Abstract
                     setcookie(
                         'access_code_ok',
                         1,
-                        time() + 3600 * $access_code->delai,
-                        '/',
-                        "",
-                        $this->isSecure(),
-                        true
+                        ['expires' => time() + 3600 * $access_code->delai, 'path' => '/', 'domain' => "", 'secure' => $this->isSecure(), 'httponly' => true]
                     );
 
                     $access_code->count++;

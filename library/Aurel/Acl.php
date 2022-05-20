@@ -8,45 +8,45 @@ class Aurel_Acl extends Zend_Acl {
 	/**
 	 * ROLES
 	 */
-	const ROLE_GUEST = 'guest';
-	const ROLE_MEMBRE = 'membre';
-	const ROLE_ADMIN = 'admin';
+	public const ROLE_GUEST = 'guest';
+	public const ROLE_MEMBRE = 'membre';
+	public const ROLE_ADMIN = 'admin';
 	
 	/** 
 	 * PAGES
 	 */
-	const PAGE_DEFAULT_ERROR = 'default_error';
-	const PAGE_DEFAULT_INDEX = 'default_index';
-	const PAGE_DEFAULT_COMPTE = 'default_compte';
-	const PAGE_DEFAULT_ANNUAIRE = 'default_annuaire';
-	const PAGE_DEFAULT_SONDAGE = 'default_sondage';
-	const PAGE_ADMIN_ARTICLES = 'admin_articles';
-	const PAGE_ADMIN_INDEX = 'admin_index';
-	const PAGE_ADMIN_MENU = 'admin_menu';
-	const PAGE_ADMIN_PHOTOS = 'admin_photos';
-	const PAGE_ADMIN_TERMS = 'admin_terms';
-	const PAGE_ADMIN_USERS = 'admin_users';
-	const PAGE_ADMIN_ANNUAIRE = 'admin_annuaire';
-	const PAGE_ADMIN_SONDAGE = 'admin_sondage';
+	public const PAGE_DEFAULT_ERROR = 'default_error';
+	public const PAGE_DEFAULT_INDEX = 'default_index';
+	public const PAGE_DEFAULT_COMPTE = 'default_compte';
+	public const PAGE_DEFAULT_ANNUAIRE = 'default_annuaire';
+	public const PAGE_DEFAULT_SONDAGE = 'default_sondage';
+	public const PAGE_ADMIN_ARTICLES = 'admin_articles';
+	public const PAGE_ADMIN_INDEX = 'admin_index';
+	public const PAGE_ADMIN_MENU = 'admin_menu';
+	public const PAGE_ADMIN_PHOTOS = 'admin_photos';
+	public const PAGE_ADMIN_TERMS = 'admin_terms';
+	public const PAGE_ADMIN_USERS = 'admin_users';
+	public const PAGE_ADMIN_ANNUAIRE = 'admin_annuaire';
+	public const PAGE_ADMIN_SONDAGE = 'admin_sondage';
 
 	/**
 	 * RESSOURCES
 	 */
-	const RESSOURCE_GUEST = 'guest';
-	const RESSOURCE_MEMBRE = 'membre';
-	const RESSOURCE_ADMIN = 'admin';
+	public const RESSOURCE_GUEST = 'guest';
+	public const RESSOURCE_MEMBRE = 'membre';
+	public const RESSOURCE_ADMIN = 'admin';
 	
-	const RESSOURCE_ADMIN_REDACTEUR = 1;
-	const RESSOURCE_ADMIN_ARTICLES = 2;
+	public const RESSOURCE_ADMIN_REDACTEUR = 1;
+	public const RESSOURCE_ADMIN_ARTICLES = 2;
 //	const RESSOURCE_ADMIN_NEWSLETTER = 4;
 //	const RESSOURCE_ADMIN_ANNONCES = 8;
-	const RESSOURCE_ADMIN_MEMBRES = 16;
-	const RESSOURCE_ADMIN_HEADER = 32;
-	const RESSOURCE_ADMIN_FOOTER = 64;
-	const RESSOURCE_ADMIN_ACCESSRAPIDE = 128;
-	const RESSOURCE_ADMIN_MENUS = 256;
+	public const RESSOURCE_ADMIN_MEMBRES = 16;
+	public const RESSOURCE_ADMIN_HEADER = 32;
+	public const RESSOURCE_ADMIN_FOOTER = 64;
+	public const RESSOURCE_ADMIN_ACCESSRAPIDE = 128;
+	public const RESSOURCE_ADMIN_MENUS = 256;
 //	const RESSOURCE_ADMIN_ANNUAIRE = 512;
-	const RESSOURCE_ADMIN_SONDAGE = 1024;
+	public const RESSOURCE_ADMIN_SONDAGE = 1024;
 
 	var $_array_page = array(
 		self::RESSOURCE_ADMIN_REDACTEUR => array(self::PAGE_ADMIN_ARTICLES,self::PAGE_ADMIN_PHOTOS),
@@ -105,7 +105,7 @@ class Aurel_Acl extends Zend_Acl {
 	
 	private function get_class_constants()
 	{
-		$reflect = new ReflectionClass(get_class($this));
+		$reflect = new ReflectionClass($this::class);
 		return $reflect->getConstants();
 	}
 	
@@ -113,7 +113,7 @@ class Aurel_Acl extends Zend_Acl {
 		$constants = $this->get_class_constants();
 		$tab = array();
 		foreach($constants as $constant=>$value){
-			if(strpos($constant,"RESSOURCE_ADMIN_") !== false)
+			if(str_contains($constant,"RESSOURCE_ADMIN_"))
 				$tab[$constant] = $value;
 		}
 		

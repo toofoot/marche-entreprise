@@ -4,3 +4,5 @@ marche-entreprise.ini
 tmp/*
 logs/*
 translate/*
+vendor/
+rector.php

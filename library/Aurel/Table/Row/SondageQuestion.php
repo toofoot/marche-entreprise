@@ -18,17 +18,11 @@ class Aurel_Table_Row_SondageQuestion extends Zend_Db_Table_Row_Abstract
     }
 
     public function getTypeOption(){
-        switch($this->type) {
-            case Aurel_Table_SondageQuestion::TYPE_CHECKBOX:
-                return "checkbox";
-                break;
-            case Aurel_Table_SondageQuestion::TYPE_RADIO:
-                return "radio";
-                break;
-            default:
-                return "";
-                break;
-        }
+        return match ($this->type) {
+            Aurel_Table_SondageQuestion::TYPE_CHECKBOX => "checkbox",
+            Aurel_Table_SondageQuestion::TYPE_RADIO => "radio",
+            default => "",
+        };
     }
 
     public function deleteOptions(){

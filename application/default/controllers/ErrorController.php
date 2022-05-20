@@ -28,19 +28,19 @@ class ErrorController extends Aurel_Controller_Abstract
 	        
 	        		break;
 	        	case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER:
-	        		switch (get_class($errors->exception))
+	        		switch ($errors->exception::class)
 	        		{
-	        			case 'Zend_View_Exception' :
+	        			case \Zend_View_Exception::class :
 	        				$this->getResponse()->setRawHeader('HTTP/1.1 404 non trouvé');
 	        				self::$httpCode = 404;
 	        				self::$errorMessage = 'Erreur de traitement d\'une vue';
 	        				break;
-	        			case 'Zend_Db_Exception' :
+	        			case \Zend_Db_Exception::class :
 	        				$this->getResponse()->setRawHeader('HTTP/1.1 500');
 	        				self::$httpCode = 500;
 	        				self::$errorMessage = 'Erreur de traitement dans la base de données';
 	        				break;
-	        			case 'Zend_Acl_Exception' :
+	        			case \Zend_Acl_Exception::class :
 	        				$this->getResponse()->setRawHeader('HTTP/1.1 403');
 	        				self::$httpCode = 403;
 	        				self::$errorMessage = 'Page interdite';

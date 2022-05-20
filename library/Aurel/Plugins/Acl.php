@@ -12,7 +12,7 @@ class Aurel_Plugins_Acl extends Zend_Controller_Plugin_Abstract {
 
         $acl = new Aurel_Acl();
 
-        Zend_Registry::set("Zend_Acl", $acl);
+        Zend_Registry::set(\Zend_Acl::class, $acl);
 
         $role = 'guest';
         if(Zend_Registry::isRegistered('role'))

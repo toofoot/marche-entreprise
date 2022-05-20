@@ -12,6 +12,7 @@ define('CONFIG_PATH', BASE_PATH . '/config');
 
 set_include_path(implode(PATH_SEPARATOR,array(LIB_PATH,APP_PATH,get_include_path())));
 
+include __DIR__ . '/../vendor/autoload.php';
 require_once "Zend/Application.php"; 
 
 // Create application, bootstrap, and run

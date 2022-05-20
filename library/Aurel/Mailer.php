@@ -41,14 +41,14 @@ class Aurel_Mailer extends Zend_Mail
         if ($charset === null) {
             $charset = $this->_charset;
         }
-        $host = isset($_SERVER["HTTP_HOST"]) ? $_SERVER["HTTP_HOST"] : "www.lepetitcharsien.com";
+        $host = $_SERVER["HTTP_HOST"] ?? "www.lepetitcharsien.com";
         $body = $html;
 
         $hash = null;
         if ($user) {
             $hashing = Aurel_Encryptor::getInstance();
             $hashing->setDecryptedValue($user->email);
-            $hashing->setExpirySeconds(20000000);
+            $hashing->setExpirySeconds(20_000_000);
             $hashing->encrypt();
 
             $hash = $hashing->getEncryptedValue();

@@ -13,7 +13,8 @@ class Aurel_Upload
 	 * @return string
 	 */
 	public static function transformPng($path){
-    	switch(pathinfo($path, PATHINFO_EXTENSION)) {
+    	$img_src_ressource = null;
+					switch(pathinfo($path, PATHINFO_EXTENSION)) {
             case "jpeg":
                 $img_src_ressource = imagecreatefromjpeg($path);
                 break;
@@ -27,7 +28,7 @@ class Aurel_Upload
                 $img_src_ressource = imagecreatefrompng($path);
                 break;
         }
-        list($width, $height) = getimagesize($path);
+        [$width, $height] = getimagesize($path);
         
         $img_dst_ressource = imagecreatetruecolor($width, $height);
         // PRESERVE TRANSPARENCY
@@ -51,7 +52,8 @@ class Aurel_Upload
      * @param string $prefix
      */
     public static function resizeImg($path, $max_width = 100, $max_height = 100, $prefix = 'thumb',$agrandi = false) {
-        switch(pathinfo($path, PATHINFO_EXTENSION)) {
+        $img_src_ressource = null;
+								switch(pathinfo($path, PATHINFO_EXTENSION)) {
             case "jpeg":
                 $img_src_ressource = imagecreatefromjpeg($path);
                 break;
@@ -66,8 +68,8 @@ class Aurel_Upload
                 break;
         }
 
-        list($width, $height) = getimagesize($path);
-        list($newwidth, $newheight) = self::_getNewSize($width, $height, $max_width, $max_height, $agrandi);
+        [$width, $height] = getimagesize($path);
+        [$newwidth, $newheight] = self::_getNewSize($width, $height, $max_width, $max_height, $agrandi);
         $img_dst_ressource = imagecreatetruecolor($newwidth, $newheight);
         // PRESERVE TRANSPARENCY
 		imagealphablending($img_dst_ressource, false);
@@ -100,7 +102,8 @@ class Aurel_Upload
      * @param string $prefix
      */
     public static function resizeChalaud($path) {
-    	switch(pathinfo($path, PATHINFO_EXTENSION)) {
+    	$img_src_ressource = null;
+					switch(pathinfo($path, PATHINFO_EXTENSION)) {
     		case "jpeg":
     			$img_src_ressource = imagecreatefromjpeg($path);
     			break;
@@ -115,7 +118,7 @@ class Aurel_Upload
     			break;
     	}
     
-    	list($width, $height) = getimagesize($path);
+    	[$width, $height] = getimagesize($path);
     	if($width >= $height){
     		$max_width = 850;
     		$max_height = 850;
@@ -123,7 +126,7 @@ class Aurel_Upload
     		$max_width = 420;
     		$max_height = 1000;
     	}
-    	list($newwidth, $newheight) = self::_getNewSize($width, $height, $max_width, $max_height, true);
+    	[$newwidth, $newheight] = self::_getNewSize($width, $height, $max_width, $max_height, true);
     	$img_dst_ressource = imagecreatetruecolor($newwidth, $newheight);
     	// PRESERVE TRANSPARENCY
     	imagealphablending($img_dst_ressource, false);
@@ -157,7 +160,8 @@ class Aurel_Upload
      * @param string $filename
      */
 	public static function cropImg($path, $new_width = 100, $new_height = 100, $filename = 'thumb') {
-        switch(pathinfo($path, PATHINFO_EXTENSION)) {
+        $img_src_ressource = null;
+								switch(pathinfo($path, PATHINFO_EXTENSION)) {
             case "jpeg":
                 $img_src_ressource = imagecreatefromjpeg($path);
                 break;
@@ -172,7 +176,7 @@ class Aurel_Upload
                 break;
         }
 
-        list($width, $height) = getimagesize($path);
+        [$width, $height] = getimagesize($path);
         $img_dst_ressource = imagecreatetruecolor($new_width, $new_height);
         // PRESERVE TRANSPARENCY
 		imagealphablending($img_dst_ressource, false);
@@ -223,7 +227,8 @@ class Aurel_Upload
      * @param unknown_type $prefix
      */
 	public static function centerImg($path, $thumbnail_width=100,$thumbnail_height=100, $prefix = 'center') {
-        switch(pathinfo($path, PATHINFO_EXTENSION)) {
+        $img_src_ressource = null;
+								switch(pathinfo($path, PATHINFO_EXTENSION)) {
             case "jpeg":
                 $img_src_ressource = imagecreatefromjpeg($path);
                 break;
@@ -238,7 +243,7 @@ class Aurel_Upload
                 break;
         }
 
-        list($width_orig, $height_orig) = getimagesize($path);
+        [$width_orig, $height_orig] = getimagesize($path);
         if($thumbnail_width >= $width_orig && $thumbnail_height >= $height_orig){
 	    	$x = ($thumbnail_width - $width_orig) / 2;
 	    	$y = ($thumbnail_height - $height_orig) / 2;
@@ -287,25 +292,12 @@ class Aurel_Upload
     	$exif = exif_read_data($path);
     	if(isset($img_src_ressource) && isset($exif['Orientation'])){
     		$ort = $exif['Orientation'];
-    		switch($ort)
-    		{
-    			case 3: // 180 rotate left
-    				$rotation = imagerotate($img_src_ressource, 180, 0);
-    				break;
-    
-    			case 5:
-    			case 6:
-    			case 7: // horizontal flip + 90 rotate right
-    				$rotation = imagerotate($img_src_ressource, -90, 0);
-    				break;
-    
-    			case 8:
-    				$rotation = imagerotate($img_src_ressource, 90, 0);
-    				break;
-    			default:
-    				$rotation = imagerotate($img_src_ressource, 0, 0);
-    				break;
-    		}
+    		$rotation = match ($ort) {
+							3 => imagerotate($img_src_ressource, 180, 0),
+							5, 6, 7 => imagerotate($img_src_ressource, -90, 0),
+							8 => imagerotate($img_src_ressource, 90, 0),
+							default => imagerotate($img_src_ressource, 0, 0),
+						};
     		imagealphablending($rotation, false);
     		imagesavealpha($rotation, true);
     

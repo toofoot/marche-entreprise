@@ -20,6 +20,7 @@ defined('APPLICATION_ENV')
                                          : 'prod'));
  
 /** Zend_Application */
+include __DIR__ . '/../vendor/autoload.php';
 require_once 'Aurel/Application.php';
  
 // Create application, bootstrap, and run

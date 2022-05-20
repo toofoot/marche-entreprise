@@ -359,6 +359,8 @@ class Admin_PhotosController extends Admin_AbstractController {
     }
 
     public function uploadPhotoSiteAction() {
+        $upload_dir = null;
+        $filename = null;
         $this->_disableLayout();
         $this->_disableView();
 

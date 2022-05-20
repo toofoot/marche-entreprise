@@ -178,14 +178,10 @@ class SimpleImage {
 	 *
 	 */
 	function blur($type = 'selective', $passes = 1) {
-		switch (strtolower($type)) {
-			case 'gaussian':
-				$type = IMG_FILTER_GAUSSIAN_BLUR;
-				break;
-			default:
-				$type = IMG_FILTER_SELECTIVE_BLUR;
-				break;
-		}
+		$type = match (strtolower($type)) {
+			'gaussian' => IMG_FILTER_GAUSSIAN_BLUR,
+			default => IMG_FILTER_SELECTIVE_BLUR,
+		};
 		for ($i = 0; $i < $passes; $i++) {
 			imagefilter($this->image, $type);
 		}
@@ -229,7 +225,7 @@ class SimpleImage {
 	 * @return SimpleImage
 	 *
 	 */
-	function colorize($color, $opacity) {
+	function colorize($color, float|int $opacity) {
 		$rgba = $this->normalize_color($color);
 		$alpha = $this->keep_within(127 - (127 * $opacity), 0, 127);
 		imagefilter($this->image, IMG_FILTER_COLORIZE, $this->keep_within($rgba['r'], 0, 255), $this->keep_within($rgba['g'], 0, 255), $this->keep_within($rgba['b'], 0, 255), $alpha);
@@ -285,10 +281,10 @@ class SimpleImage {
 		
 		// Determine crop size
 		if ($x2 < $x1) {
-			list($x1, $x2) = array($x2, $x1);
+			[$x1, $x2] = array($x2, $x1);
 		}
 		if ($y2 < $y1) {
-			list($y1, $y2) = array($y2, $y1);
+			[$y1, $y2] = array($y2, $y1);
 		}
 		$crop_width = $x2 - $x1;
 		$crop_height = $y2 - $y1;
@@ -553,7 +549,7 @@ class SimpleImage {
 	 * @throws Exception
 	 *
 	 */
-	function opacity($opacity) {
+	function opacity(float|int $opacity) {
 		
 		// Determine opacity
 		$opacity = $this->keep_within($opacity, 0, 1) * 100;
@@ -704,7 +700,7 @@ class SimpleImage {
 	 * @return SimpleImage
 	 *
 	 */
-	function overlay($overlay, $position = 'center', $opacity = 1, $x_offset = 0, $y_offset = 0) {
+	function overlay($overlay, $position = 'center', float|int $opacity = 1, $x_offset = 0, $y_offset = 0) {
 		
 		// Load overlay image
 		if( !($overlay instanceof SimpleImage) ) {
@@ -929,7 +925,6 @@ class SimpleImage {
 	 *
 	 * @param string		$text
 	 * @param string		$font_file
-	 * @param float|int		$font_size
 	 * @param string		$color
 	 * @param string		$position
 	 * @param int			$x_offset
@@ -939,7 +934,7 @@ class SimpleImage {
 	 * @throws Exception
 	 *
 	 */
-	function text($text, $font_file, $font_size = 12, $color = '#000000', $position = 'center', $x_offset = 0, $y_offset = 0) {
+	function text($text, $font_file, float|int $font_size = 12, $color = '#000000', $position = 'center', $x_offset = 0, $y_offset = 0) {
 		
 		// todo - this method could be improved to support the text angle
 		$angle = 0;
@@ -1071,20 +1066,12 @@ class SimpleImage {
 		if(empty($this->imagestring)) {
 			$info = getimagesize($this->filename);
 			
-			switch ($info['mime']) {
-				case 'image/gif':
-					$this->image = imagecreatefromgif($this->filename);
-					break;
-				case 'image/jpeg':
-					$this->image = imagecreatefromjpeg($this->filename);
-					break;
-				case 'image/png':
-					$this->image = imagecreatefrompng($this->filename);
-					break;
-				default:
-					throw new Exception('Invalid image: '.$this->filename);
-					break;
-			}
+			$this->image = match ($info['mime']) {
+				'image/gif' => imagecreatefromgif($this->filename),
+				'image/jpeg' => imagecreatefromjpeg($this->filename),
+				'image/png' => imagecreatefrompng($this->filename),
+				default => throw new Exception('Invalid image: '.$this->filename),
+			};
 		} elseif (function_exists('getimagesizefromstring')) {
 			$info = getimagesizefromstring($this->imagestring);
 		} else {
@@ -1185,10 +1172,9 @@ class SimpleImage {
 	 * @param int|float		$min
 	 * @param int|float		$max
 	 *
-	 * @return int|float
 	 *
 	 */
-	protected function keep_within($value, $min, $max) {
+	protected function keep_within(int|float $value, int|float $min, int|float $max): int|float {
 		
 		if ($value < $min) {
 			return $min;
@@ -1208,23 +1194,22 @@ class SimpleImage {
 	 * @param string		$color	Hex color string, array(red, green, blue) or array(red, green, blue, alpha).
 	 * 								Where red, green, blue - integers 0-255, alpha - integer 0-127
 	 *
-	 * @return array|bool
 	 *
 	 */
-	protected function normalize_color($color) {
+	protected function normalize_color($color): array|bool {
 		
 		if (is_string($color)) {
 			
 			$color = trim($color, '#');
 			
 			if (strlen($color) == 6) {
-				list($r, $g, $b) = array(
+				[$r, $g, $b] = array(
 					$color[0].$color[1],
 					$color[2].$color[3],
 					$color[4].$color[5]
 				);
 			} elseif (strlen($color) == 3) {
-				list($r, $g, $b) = array(
+				[$r, $g, $b] = array(
 					$color[0].$color[0],
 					$color[1].$color[1],
 					$color[2].$color[2]
@@ -1246,14 +1231,14 @@ class SimpleImage {
 					'r' => $this->keep_within($color['r'], 0, 255),
 					'g' => $this->keep_within($color['g'], 0, 255),
 					'b' => $this->keep_within($color['b'], 0, 255),
-					'a' => $this->keep_within(isset($color['a']) ? $color['a'] : 0, 0, 127)
+					'a' => $this->keep_within($color['a'] ?? 0, 0, 127)
 				);
 			} elseif (isset($color[0], $color[1], $color[2])) {
 				return array(
 					'r' => $this->keep_within($color[0], 0, 255),
 					'g' => $this->keep_within($color[1], 0, 255),
 					'b' => $this->keep_within($color[2], 0, 255),
-					'a' => $this->keep_within(isset($color[3]) ? $color[3] : 0, 0, 127)
+					'a' => $this->keep_within($color[3] ?? 0, 0, 127)
 				);
 			}
 			

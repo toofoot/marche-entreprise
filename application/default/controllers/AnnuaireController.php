@@ -279,7 +279,7 @@ class AnnuaireController extends Aurel_Controller_Abstract
 						try{
 							$mail->send();
 							$return["sent"] = true;
-						} catch(Exception $e){
+						} catch(Exception){
 							
 						}
 					}
@@ -292,6 +292,7 @@ class AnnuaireController extends Aurel_Controller_Abstract
 	
 	public function editFicheAction(){
 
+		$sendMail = null;
 		$this->view->validAuto = $this->getParam('valid');
         $oAnnuaireSousCategorie = new Aurel_Table_AnnuaireSousCategorie();
 		$oAnnuaireCategorie = new Aurel_Table_AnnuaireCategorie();
@@ -448,7 +449,7 @@ class AnnuaireController extends Aurel_Controller_Abstract
                         $annuaire_fiche->mail = null;
                     if (!empty($formData["website"])) {
                         $website = stripslashes($formData["website"]);
-                        if (strpos($website, "http") === false)
+                        if (!str_contains($website, "http"))
                             $website = "http://" . $website;
                         $annuaire_fiche->website = $website;
                     } else
@@ -576,7 +577,7 @@ class AnnuaireController extends Aurel_Controller_Abstract
                         try {
                             $mail->send();
                             $return['sent'] = 1;
-                        } catch (Exception $e) {
+                        } catch (Exception) {
                             //Zend_Debug::dump($usersAdminAnnuaire->toArray());
                             //echo $body;die();
                         }
@@ -594,6 +595,8 @@ class AnnuaireController extends Aurel_Controller_Abstract
 	}
 	
 	public function isUserAction(){
+		$return = [];
+		$user = null;
 		$this->_disableLayout();
 		$this->_disableView();
 	

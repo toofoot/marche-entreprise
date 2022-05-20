@@ -7,11 +7,11 @@
 */
 class Aurel_Table_AnnuaireFiche extends Aurel_Table_Abstract 
 {
-	const STATUS_INACTIF = 0;
-	const STATUS_ACTIF = 1;
-	const STATUS_CORBEILLE = 2;
-	const STATUS_WAITING = 3;
-	const STATUS_WAITING_PROPRIETAIRE = 4;
+	public const STATUS_INACTIF = 0;
+	public const STATUS_ACTIF = 1;
+	public const STATUS_CORBEILLE = 2;
+	public const STATUS_WAITING = 3;
+	public const STATUS_WAITING_PROPRIETAIRE = 4;
 	/**
 	 * The table name.
 	 *

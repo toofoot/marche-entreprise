@@ -85,9 +85,8 @@ class Config
     /**
      * Undocumented variable
      *
-     * @var array
      */
-    private $data = array();
+    private array $data = array();
 
     /**
      * Undocumented function

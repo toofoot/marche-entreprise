@@ -32,7 +32,8 @@ class Admin_MenuController extends Admin_AbstractController
      * @return void
      */
     public function addEditAction(){
-    	$this->_disableLayout();
+    	$arrayUrl = [];
+					$this->_disableLayout();
     	
     	$oMenu = new Aurel_Table_Menu();
     	$menu = $oMenu->getByTitle($this->getParam('basename_principal'));
@@ -82,7 +83,8 @@ class Admin_MenuController extends Admin_AbstractController
      * @return void
      */
     public function addEditMenuAction(){
-    	$this->_disableLayout();
+    	$arrayUrl = [];
+					$this->_disableLayout();
     	 
     	$oMenu = new Aurel_Table_Menu();
     	$oSousMenu = new Aurel_Table_SousMenu();
@@ -294,7 +296,8 @@ class Admin_MenuController extends Admin_AbstractController
     }
     
     public function deleteCovAction(){
-    	$this->_disableLayout();
+    	$return = [];
+					$this->_disableLayout();
     	$this->_disableView();
     	 
     	$oMenu = new Aurel_Table_Menu();

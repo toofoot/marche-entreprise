@@ -5,21 +5,17 @@
  *
  * @param string $encryption_key The encryption in HEX
  */
-class Aurel_Encryptor
+class Aurel_Encryptor implements \Stringable
 {
     /**
      * Decrypted value
-     *
-     * @var string
      */
-    private $_decrypted_value;
+    private ?string $_decrypted_value = null;
 
     /**
      * Encrypted value
-     *
-     * @var string
      */
-    private $_encrypted_value;
+    private ?string $_encrypted_value = null;
 
     /**
      * Expiry seconds
@@ -37,15 +33,13 @@ class Aurel_Encryptor
 
     /**
      * Date expired
-     *
-     * @var DateTime
      */
-    private $_date_expired;
+    private ?\DateTime $_date_expired = null;
 
     /** @var string $encrypt_method Method to use for encryption */
-    private    $encrypt_method = 'AES-256-CBC';
-    private    $secret_key  = 'yGjCd5jkTTBUTlZbHYO8TEv42yv7br6b';
-    private    $secret_iv   = '38q22yhi8zbEC7Sw115e2zZ9UPY9LkJd';
+    private    string $encrypt_method = 'AES-256-CBC';
+    private    string $secret_key  = 'yGjCd5jkTTBUTlZbHYO8TEv42yv7br6b';
+    private    string $secret_iv   = '38q22yhi8zbEC7Sw115e2zZ9UPY9LkJd';
 
     /**
      * Undocumented function
@@ -186,12 +180,12 @@ class Aurel_Encryptor
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (!$this->getDecryptedValue()) {
             $this->decrypt();
         }
-        return $this->getDecryptedValue();
+        return (string) $this->getDecryptedValue();
     }
 
     /**

@@ -85,6 +85,7 @@ class Admin_UsersController extends Admin_AbstractController
      */
     public function downloadAction()
     {
+        $array = [];
         $this->_disableLayout();
         $this->_disableView();
 
@@ -336,6 +337,7 @@ class Admin_UsersController extends Admin_AbstractController
 
     public function sendAction()
     {
+        $return = [];
         $oInvitation = new Aurel_Table_Invitation();
         $oUser = new Aurel_Table_User();
         $oQueue = new Aurel_Table_Queue();
@@ -356,7 +358,7 @@ class Admin_UsersController extends Admin_AbstractController
 
                 $hash = Aurel_Encryptor::getInstance();
                 $hash->setDecryptedValue($userInvited->email);
-                $hash->setExpirySeconds(20000000);
+                $hash->setExpirySeconds(20_000_000);
                 $hash->encrypt();
 
                 $link = "https://marche-entreprises.btob-adidas.com/compte/l?h=" . $hash->getEncryptedValue();
@@ -394,7 +396,7 @@ class Admin_UsersController extends Admin_AbstractController
 
                     $hash = Aurel_Encryptor::getInstance();
                     $hash->setDecryptedValue($userInvited->email);
-                    $hash->setExpirySeconds(20000000);
+                    $hash->setExpirySeconds(20_000_000);
                     $hash->encrypt();
 
                     $link = "http://marche-entreprises.btob-adidas.com/compte/l?h=" . $hash->getEncryptedValue();

@@ -12,6 +12,7 @@ class SondageController extends Aurel_Controller_Abstract {
      *
      */
     public function indexAction() {
+        $tabResponses = [];
         $oSondage = new Aurel_Table_Sondage();
         $oSondageQuestion = new Aurel_Table_SondageQuestion();
         $oSondageOption = new Aurel_Table_SondageOption();

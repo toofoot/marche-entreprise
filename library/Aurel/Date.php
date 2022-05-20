@@ -10,11 +10,11 @@ class Aurel_Date extends Zend_Date{
 	 * Format for MYSQL_DATE
 	 * @var string
 	 */
-	const 	MYSQL_DATE = 'yyyy-MM-dd';
+	public const 	MYSQL_DATE = 'yyyy-MM-dd';
 	
 	/**
 	 * Format for MYSQL_DATETIME
 	 * @var string
 	 */
-	const 	MYSQL_DATETIME = 'yyyy-MM-dd HH:mm:ss';
+	public const 	MYSQL_DATETIME = 'yyyy-MM-dd HH:mm:ss';
 }

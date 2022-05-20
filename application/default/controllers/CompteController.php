@@ -101,6 +101,7 @@ class CompteController extends Aurel_Controller_Abstract
 
     public function indexAction()
     {
+        $return = [];
         if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE)) {
             $this->redirect("/compte/login");
         }
@@ -220,11 +221,7 @@ class CompteController extends Aurel_Controller_Abstract
                             setcookie(
                                 'Auth',
                                 $user->id_user,
-                                time() + 3600 * 24 * 365,
-                                '/',
-                                $cookie_domain,
-                                $this->isSecure(),
-                                true
+                                ['expires' => time() + 3600 * 24 * 365, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
                             );
                         }
 
@@ -347,30 +344,18 @@ class CompteController extends Aurel_Controller_Abstract
         setcookie(
             'Auth',
             '',
-            time() - 3600,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() - 3600, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
 
         setcookie(
             'popup',
             '',
-            time() - 3600,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() - 3600, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
         setcookie(
             'access_code_ok',
             '',
-            time() - 3600,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() - 3600, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
 
         if ($this->hasParam('url_redirect'))
@@ -400,7 +385,7 @@ class CompteController extends Aurel_Controller_Abstract
 
                 try {
                     $result = $db->query($select);
-                } catch (Exception $e) {
+                } catch (Exception) {
                     
                 }
 
@@ -421,25 +406,18 @@ class CompteController extends Aurel_Controller_Abstract
         setcookie(
             'Auth',
             '',
-            time() - 2600,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() - 2600, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
         setcookie(
             'access_code_ok',
             1,
-            time() - 3600,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() - 3600, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
     }
 
     public function annonceAction()
     {
+        $return = [];
         $formData = $this->_request->getPost();
         if ($this->_request->isPost()) {
             $this->_disableLayout();
@@ -598,6 +576,7 @@ class CompteController extends Aurel_Controller_Abstract
 
     public function registerAction()
     {
+        $return = [];
         Zend_Auth::getInstance()->clearIdentity();
         $this->view->show_popup = false;
         $this->view->headMeta()->appendName('robots', 'noindex,nofollow');
@@ -829,11 +808,7 @@ class CompteController extends Aurel_Controller_Abstract
         setcookie(
             'popup',
             1,
-            time() + 3600 * 24 * 30,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() + 3600 * 24 * 30, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
     }
 
@@ -853,11 +828,7 @@ class CompteController extends Aurel_Controller_Abstract
         setcookie(
             'popup',
             1,
-            time() + 3600 * 24 * 30,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() + 3600 * 24 * 30, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
     }
 
@@ -1074,6 +1045,7 @@ class CompteController extends Aurel_Controller_Abstract
     public function inviteAction()
     {
 
+        $return = [];
         $oInvitation = new Aurel_Table_Invitation();
         $oUser = new Aurel_Table_User();
 
@@ -1124,6 +1096,7 @@ class CompteController extends Aurel_Controller_Abstract
 
     public function resendAction()
     {
+        $return = [];
         $oInvitation = new Aurel_Table_Invitation();
         $oUser = new Aurel_Table_User();
 
@@ -1168,7 +1141,7 @@ class CompteController extends Aurel_Controller_Abstract
 
                     $invitation->state = Aurel_Table_Invitation::TYPE_RESENT;
                     $invitation->date_resent = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
-                } catch (Exception $e) {
+                } catch (Exception) {
                 }
                 $invitation->save();
 

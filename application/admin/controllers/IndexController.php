@@ -23,6 +23,7 @@ class Admin_IndexController extends Admin_AbstractController
 
     public function resendAction()
     {
+        $return = [];
         $oInvitation = new Aurel_Table_Invitation();
         $oUser = new Aurel_Table_User();
 
@@ -202,21 +203,13 @@ class Admin_IndexController extends Admin_AbstractController
         setcookie(
             'Auth',
             '',
-            time() - 2600,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() - 2600, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
 
         setcookie(
             'popup',
             1,
-            time() + 30 * 3600 * 24,
-            '/',
-            $cookie_domain,
-            $this->isSecure(),
-            true
+            ['expires' => time() + 30 * 3600 * 24, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
         );
 
         if ($this->hasParam('url_redirect'))
@@ -245,6 +238,7 @@ class Admin_IndexController extends Admin_AbstractController
      */
     public function editFooterAction()
     {
+        $return = [];
         $formData = $this->_request->getPost();
         if ($formData) {
             $this->_disableLayout();
@@ -269,6 +263,7 @@ class Admin_IndexController extends Admin_AbstractController
 
     public function configAction()
     {
+        $arrayToUpdate = [];
         $session = new Zend_Session_Namespace('config');
         $this->view->session = $session;
 
@@ -309,6 +304,7 @@ class Admin_IndexController extends Admin_AbstractController
 
     public function configAccessAction()
     {
+        $arrayToUpdate = [];
         $session = new Zend_Session_Namespace('config');
         $this->view->session = $session;
 
@@ -336,6 +332,7 @@ class Admin_IndexController extends Admin_AbstractController
 
     public function configInvitationsAction()
     {
+        $arrayToUpdate = [];
         $session = new Zend_Session_Namespace('config');
         $this->view->session = $session;
 
@@ -411,6 +408,7 @@ class Admin_IndexController extends Admin_AbstractController
 
     public function deleteInvitationAction()
     {
+        $invitation = null;
         $oInvitation = new Aurel_Table_Invitation();
         $id_invitation = $this->getParam('id_invitation');
 

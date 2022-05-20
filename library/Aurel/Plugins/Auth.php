@@ -12,7 +12,6 @@ class Aurel_Plugins_Auth extends Zend_Controller_Plugin_Abstract {
     /**
      * Authenticate the user
      *
-     * @param Zend_Controller_Request_Abstract $request
      */
     public function routeShutdown(Zend_Controller_Request_Abstract $request) {
         // get the Zend_Auth instance

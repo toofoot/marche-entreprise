@@ -11,10 +11,10 @@ class Aurel_Table_Newsletter extends Aurel_Table_Abstract
 	protected $_name = 'newsletter';
 	protected $_rowClass = 'Aurel_Table_Row_Newsletter';
 
-    const STATUS_INIT = 0;
-    const STATUS_TOSENDADMIN = 1;
-    const STATUS_TOSENDMEMBERS = 2;
-    const STATUS_SENT = 3;
+    public const STATUS_INIT = 0;
+    public const STATUS_TOSENDADMIN = 1;
+    public const STATUS_TOSENDMEMBERS = 2;
+    public const STATUS_SENT = 3;
 
 	/**
 	* Genere un mot de passe de 8 caractères aléatoirement
@@ -31,8 +31,8 @@ class Aurel_Table_Newsletter extends Aurel_Table_Abstract
 		// on choisis au hasard un des caractères et on l'ajoute à password 8 fois
 		while ($i < 8) { 
 			// On choisis un chiffre au hasard et on regarde le caractere correspondant dans $possible
-			$nbr = rand (0,49);
-			$char = $possible{$nbr};
+			$nbr = random_int (0,49);
+			$char = $possible[$nbr];
 			// si ce caractère est déjà dans le password, on ne l'insere pas
 			if (!strstr($password, $char))
 			{ 

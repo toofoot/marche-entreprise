@@ -77,7 +77,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 						try{
 							$mail->send();
 							$return["sent"] = true;
-						} catch(Exception $e){
+						} catch(Exception){
 								
 						}
 					}
@@ -351,7 +351,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
                     $annuaire_fiche->mail = null;
     			if(!empty($formData["website"])){
     				$website = stripslashes($formData["website"]);
-    				if(strpos($website, "http") === false)
+    				if(!str_contains($website, "http"))
     					$website = "http://" . $website;
     				$annuaire_fiche->website = $website;
     			}
@@ -692,6 +692,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 	}
 	
 	public function toggleFicheAction(){
+		$return = [];
 		$this->_disableLayout();
 		$this->_disableView();
 		$oAnnuaireFiche = new Aurel_Table_AnnuaireFiche();

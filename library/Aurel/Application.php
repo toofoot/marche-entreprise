@@ -20,14 +20,10 @@ class Aurel_Application extends Zend_Application {
     	$environment = $this->getEnvironment();
         $suffix      = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 
-        switch ($suffix) {
-            case 'ini':
-                $config = new Zend_Config_Ini($file, null, array('allowModifications' => true));
-                break;
-
-            default:
-                throw new Zend_Application_Exception('Invalid configuration file provided; unknown config type');
-        }
+        $config = match ($suffix) {
+									'ini' => new Zend_Config_Ini($file, null, array('allowModifications' => true)),
+									default => throw new Zend_Application_Exception('Invalid configuration file provided; unknown config type'),
+								};
 
         // and the configuration file (by environement)
         if (!empty($environment)) {

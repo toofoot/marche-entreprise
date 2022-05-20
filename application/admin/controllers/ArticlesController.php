@@ -25,6 +25,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
      * @return void
      */
     public function addArticleAction() {
+        $array = [];
         $this->_disableLayout();
 
         $oMenu = new Aurel_Table_Menu();
@@ -152,7 +153,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                     ->setFrom("no-reply@lepetitcharsien.com", "Le Petit Charsien");
             try {
                 $mail->send();
-            } catch (Exception $e) {
+            } catch (Exception) {
                 
             }
 
@@ -264,6 +265,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function editArticleAction() {
+        $sousmenu = null;
         $oSousMenu = new Aurel_Table_SousMenu();
         $oMenu = new Aurel_Table_Menu();
         $oArticle = new Aurel_Table_Article();
@@ -412,9 +414,9 @@ class Admin_ArticlesController extends Admin_AbstractController {
                     $article->inscription_quantite_limite = null;
                 }
 
-                if (count($tabInscriptions) > count($formData["inscription"])) {
-                    $from = count($formData["inscription"]);
-                    $to = count($tabInscriptions) - 1;
+                if ((is_countable($tabInscriptions) ? count($tabInscriptions) : 0) > (is_countable($formData["inscription"]) ? count($formData["inscription"]) : 0)) {
+                    $from = is_countable($formData["inscription"]) ? count($formData["inscription"]) : 0;
+                    $to = (is_countable($tabInscriptions) ? count($tabInscriptions) : 0) - 1;
 
                     for ($i = $from; $i <= $to; $i++) {
                         $tabInscriptions[$i]->delete();
@@ -731,6 +733,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function copyArticleAction() {
+        $arrayUrl = [];
         $this->_disableLayout();
 
         $oArticle = new Aurel_Table_Article();
@@ -772,7 +775,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $newArticle->order = 0;
             }
 
-            if (strpos($copyTo, "sous_menu") !== false) {
+            if (str_contains($copyTo, "sous_menu")) {
                 $id_sous_menu = intval(str_replace("sous_menu_", "", $copyTo));
                 $newArticle->id_sous_menu = $id_sous_menu;
                 $newArticle->id_menu = null;
@@ -844,6 +847,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function editPictureAction() {
+        $arrayUrl = [];
         $oArticle = new Aurel_Table_Article();
         $article = $oArticle->getById($this->getParam('id_article'));
 
@@ -906,6 +910,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function addFileAction() {
+        $arrayUrl = [];
         $this->_disableLayout();
 
         $oFile = new Aurel_Table_File();
@@ -966,6 +971,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function renameFileAction() {
+        $arrayUrl = [];
         $this->_disableLayout();
 
         $oArticle = new Aurel_Table_Article();
@@ -1030,6 +1036,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function deleteFileAction() {
+        $return = [];
         $this->_disableLayout();
         $this->_disableView();
 
@@ -1134,6 +1141,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function addNewsletterAction() {
+        $return = [];
         if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_ADMIN_NEWSLETTER)) {
             throw new Zend_Acl_Exception("Ressource non autorisé for $this->_role");
         }
@@ -1240,6 +1248,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function sendNewsletterAction() {
+        $return = [];
         if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_ADMIN_NEWSLETTER)) {
             throw new Zend_Acl_Exception("Ressource non autorisé for $this->_role");
         }
@@ -1311,6 +1320,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     public function getManquantsAction() {
+        $return = [];
         if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_ADMIN_NEWSLETTER)) {
             throw new Zend_Acl_Exception("Ressource non autorisé for $this->_role");
         }
@@ -1344,7 +1354,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $reste = str_replace($dateString, "", $value);
                 $reste = trim(str_replace($type, "", $reste));
 
-                list($email, $error) = explode(" => ", $reste);
+                [$email, $error] = explode(" => ", $reste);
 
                 $logs[$email]['date'] = $date->get(Aurel_Date::DATETIME_SHORT);
                 $logs[$email]['email'] = $email;

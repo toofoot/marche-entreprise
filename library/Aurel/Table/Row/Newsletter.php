@@ -4,7 +4,7 @@
 * @author aurelien.cornu <aurelien.cornu@gmail.com>
 * @version 0.1
 */
-class Aurel_Table_Row_Newsletter extends Zend_Db_Table_Row_Abstract
+class Aurel_Table_Row_Newsletter extends Zend_Db_Table_Row_Abstract implements \Stringable
 {
 	public function getDate($which,$type = Aurel_Date::MYSQL_DATETIME){
 		if($this->$which){
@@ -14,7 +14,7 @@ class Aurel_Table_Row_Newsletter extends Zend_Db_Table_Row_Abstract
 		return null;
 	}
 	
-	public function __toString(){
-		return $this->body;
+	public function __toString(): string{
+		return (string) $this->body;
 	}
 }

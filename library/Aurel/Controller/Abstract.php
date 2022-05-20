@@ -151,7 +151,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                 $this->view->show_popup = false;
             }
 
-            if ($this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"]) && strpos($_SERVER["REQUEST_URI"], 'admin') === false && strpos($_SERVER["REQUEST_URI"], 'login') === false && strpos($_SERVER["REQUEST_URI"], 'passoublie') === false && strpos($_SERVER["REQUEST_URI"], 'desinscription') === false && !$this->hasParam('invitation')) {
+            if ($this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"]) && !str_contains($_SERVER["REQUEST_URI"], 'admin') && !str_contains($_SERVER["REQUEST_URI"], 'login') && !str_contains($_SERVER["REQUEST_URI"], 'passoublie') && !str_contains($_SERVER["REQUEST_URI"], 'desinscription') && !$this->hasParam('invitation')) {
                 $emailGet = $this->getParam('email',null);
                 //var_dump($emailGet);die();
                 if (isset($emailGet)) {
@@ -163,7 +163,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                         $this->_helper->layout->setLayout('access_code');
                         $this->view->popup_login = true;
                         $this->view->email_login = $email;
-                    } elseif (strpos($_SERVER["REQUEST_URI"], 'compte/register') === false) {
+                    } elseif (!str_contains($_SERVER["REQUEST_URI"], 'compte/register')) {
                         $query_string = $_SERVER['QUERY_STRING'];
                         $this->redirect('/compte/register?' . $query_string);
                     }
@@ -179,7 +179,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                     if ($user) {
                         $this->view->popup_login = true;
                         $this->view->email_login = $email;
-                    } elseif (strpos($_SERVER["REQUEST_URI"], 'compte/register') === false) {
+                    } elseif (!str_contains($_SERVER["REQUEST_URI"], 'compte/register')) {
                         $query_string = $_SERVER['QUERY_STRING'];
                         $this->redirect('/compte/register?' . $query_string);
                     }
@@ -225,7 +225,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
      * @return Aurel_Acl
      */
     protected function _getAcl() {
-        return Zend_Registry::get("Zend_Acl");
+        return Zend_Registry::get(\Zend_Acl::class);
     }
 
     /**

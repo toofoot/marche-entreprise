@@ -5,9 +5,9 @@
  * @author aurelien.cornu <aurelien.cornu@gmail.com>
  * @version 0.1
  */
-class Aurel_Table_Row_User extends Zend_Db_Table_Row_Abstract implements Zend_Acl_Role_Interface {
+class Aurel_Table_Row_User extends Zend_Db_Table_Row_Abstract implements Zend_Acl_Role_Interface, \Stringable {
 
-    public function __toString() {
+    public function __toString(): string {
         return $this->getRoleId();
     }
 
@@ -36,7 +36,7 @@ class Aurel_Table_Row_User extends Zend_Db_Table_Row_Abstract implements Zend_Ac
         $i = 0;
         while ($somme != 0) {
             if ($somme % 2 != 0) {
-                $result[] = pow(2, $i);
+                $result[] = 2 ** $i;
             }
             $i++;
             $somme = $somme >> 1;
@@ -71,8 +71,8 @@ class Aurel_Table_Row_User extends Zend_Db_Table_Row_Abstract implements Zend_Ac
             $length = strlen($this->type_binaire);
             $string = "";
             for ($i = 0; $i < $length; $i++) {
-                $puissance = pow(2, $i);
-                if ($this->type_binaire{$i} && isset($libelles[$puissance])) {
+                $puissance = 2 ** $i;
+                if ($this->type_binaire[$i] && isset($libelles[$puissance])) {
                     $string .= "<div class='badge' style='background-color:#357ebd;font-size:10px'>" . $libelles[$puissance] . "</div> ";
                 }
             }

@@ -7,10 +7,10 @@
 */
 class Aurel_Table_Mail extends Aurel_Table_Abstract 
 {
-	const STATUS_INIT = 0;
-	const STATUS_WAIT = 1;
-	const STATUS_SENT = 2;
-	const STATUS_ERROR = 3;
+	public const STATUS_INIT = 0;
+	public const STATUS_WAIT = 1;
+	public const STATUS_SENT = 2;
+	public const STATUS_ERROR = 3;
 	
 	/**
 	 * The table name.

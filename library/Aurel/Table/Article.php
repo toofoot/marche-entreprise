@@ -13,13 +13,13 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	 */
 	protected $_name = 'article';
 	
-	const STATUS_INACTIF = 0;
-	const STATUS_ACTIF = 1;
-	const STATUS_CORBEILLE = 2;
+	public const STATUS_INACTIF = 0;
+	public const STATUS_ACTIF = 1;
+	public const STATUS_CORBEILLE = 2;
 	
-	const STATE_ANNONCE_WAITING = 0;
-	const STATE_ANNONCE_SUCCESS = 1;
-	const STATE_ANNONCE_REFUSED = 2;
+	public const STATE_ANNONCE_WAITING = 0;
+	public const STATE_ANNONCE_SUCCESS = 1;
+	public const STATE_ANNONCE_REFUSED = 2;
 	
 	/**
 	 * Classname for row

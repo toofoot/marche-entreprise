@@ -14,7 +14,7 @@ class Aurel_View_Helper_IsAllowed extends Zend_View_Helper_Abstract
 
     public function __construct()
     {
-        $acl = Zend_Registry::get('Zend_Acl');
+        $acl = Zend_Registry::get(\Zend_Acl::class);
 
         if (!isset($acl)) {
             require_once 'Zend/View/Exception.php';

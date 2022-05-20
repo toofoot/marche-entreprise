@@ -192,7 +192,7 @@ class Admin_SondageController extends Admin_AbstractController
                                 $option->type = Aurel_Table_SondageOption::REPONSE_LIBRE;
                             }
                         } else {
-                            if(strpos($key,'id_') !== false){
+                            if(str_contains($key,'id_')){
                                 $id = str_replace('id_','',$key);
                                 $option = $oSondageOption->getById($id);
                             } else {
