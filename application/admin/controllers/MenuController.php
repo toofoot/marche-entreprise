@@ -64,10 +64,12 @@ class Admin_MenuController extends Admin_AbstractController
 			$sousmenu->id_menu = $menu->id_menu;
     		$sousmenu->id_user_modification = $this->_getUser()->id_user;
 			$sousmenu->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
+
+
             if(isset($formData["sous_menu_annuaire"]))
-    		    $sousmenu->sous_menu_annuaire = $formData["sous_menu_annuaire"];
+    		    $sousmenu->sous_menu_annuaire = (int) $formData["sous_menu_annuaire"];
 			if(isset($formData["sous_menu_annonce"]))
-    			$sousmenu->sous_menu_annonce = $formData["sous_menu_annonce"];
+    			$sousmenu->sous_menu_annonce = (int) $formData["sous_menu_annonce"];
     		$sousmenu->save();
     		
     		$arrayUrl['basename_principal'] = $menu->basename;

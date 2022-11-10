@@ -368,9 +368,9 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $article->id_menu = $formData['id_menu'];
                 $article->id_sous_menu = null;
             }
-            $article->hide_home = $formData['hide_home'];
+            $article->hide_home = (int) $formData['hide_home'];
             $article->annonce = 0;
-            $article->portrait = $formData['portrait'];
+            $article->portrait = (int) $formData['portrait'];
             $article->status = $formData['status'];
             $article->title = stripslashes($formData['title']);
             $article->basename = $oArticle->getBasename(stripslashes($formData['title']));
