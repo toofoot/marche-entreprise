@@ -185,6 +185,10 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                     }
                 }
             }
+        } else {
+            if($this->_getUser()->password == null){
+                $this->_helper->layout->setLayout('password');
+            }
         }
         if (!isset($_COOKIE["popup_other"])) {
             $this->view->show_popup_other = false;

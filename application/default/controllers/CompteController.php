@@ -309,9 +309,11 @@ class CompteController extends Aurel_Controller_Abstract
                     $this->view->displayMessage = true;
                     $this->view->error = false;
 
-                    $session = new Zend_Session_Namespace('inscription');
-                    $session->message = "Vous êtes maintenant connecté";
-                    $session->setExpirationHops(1);
+                    if($user->password){
+                        $session = new Zend_Session_Namespace('inscription');
+                        $session->message = "Vous êtes maintenant connecté";
+                        $session->setExpirationHops(1);
+                    }
 
                     $this->redirect($url_redirect);
                 }
@@ -386,7 +388,6 @@ class CompteController extends Aurel_Controller_Abstract
                 try {
                     $result = $db->query($select);
                 } catch (Exception) {
-                    
                 }
 
                 $user->save();
@@ -571,6 +572,41 @@ class CompteController extends Aurel_Controller_Abstract
                 break;
         }
 
+        echo json_encode($return);
+    }
+
+    public function passwordAction()
+    {
+        $this->_disableLayout();
+        $this->_disableView();
+        $return = [];
+
+        $formData = $this->_request->getPost();
+        if ($this->_request->isPost()) {
+            $continue = true;
+            if (trim($formData['password']) == "" || trim($formData['password2']) == "") {
+                $continue = false;
+                $return['errors'][] = 'password';
+                $return['errors'][] = 'password2';
+                if (trim($formData['password']) == "")
+                    $return['message'] = "Tous les champs sont obligatoires";
+            }
+            
+            $return['code'] = 'ko';
+            if ($continue) {
+                $return['code'] = 'ok';
+                if ($formData["password"] == $formData["password2"] && trim($formData["password"]) != "") {
+                    $this->_getUser()->password = stripslashes($formData["password"]);
+
+                    $session = new Zend_Session_Namespace('inscription');
+                    $session->message = "Votre mot de passe a été créé";
+                    $session->setExpirationHops(1);
+                }
+                $this->_getUser()->save();
+            }
+            $return['redirect_url'] = '/';
+            $return['redirect'] = true;
+        }
         echo json_encode($return);
     }
 
