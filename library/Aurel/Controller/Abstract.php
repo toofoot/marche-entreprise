@@ -81,7 +81,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                 //->appendStylesheet('/javascript/bootstrap/css/bootstrap-theme.min.css')
                 //->appendStylesheet('/javascript/galleria/themes/classic/galleria.classic.css')
                 ->appendStylesheet('/javascript/swiper/idangerous.swiper.css')
-                ->appendStylesheet('/css/style.css?t=8')
+                ->appendStylesheet('/css/style.css?t=9')
                 ->appendStylesheet('/javascript/colorbox-master/example1/colorbox.css')
                 ->appendStylesheet('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css');
         //$this->view->headLink()->appendAlternate('http://' . $_SERVER["HTTP_HOST"] . '/flux.rss','application/rss+xml','Flux RSS');
