@@ -72,7 +72,7 @@ class Aurel_Mailer extends Zend_Mail
 				<tbody>
 				<tr>
                                     <td style='height:40px;color:#fff;text-align:center;font-size:16px;vertical-align:middle;background-color:#000'> 
-                                        <img src=\"http://marche-entreprises.btob-adidas.com/images/logo_adidas.jpg\" alt=\"Logo adidas\" /> 
+                                        <img src=\"http://marche-entreprises.btob-adidas.com/images/logo_adidas.png\" alt=\"Logo adidas\" /> 
                                     </td>
                                     <td style='height:40px;width:600px;color:#fff;text-align:center;font-size:16px;vertical-align:middle;background-color:#000'>
                                         
