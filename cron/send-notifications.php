@@ -32,7 +32,7 @@ while ($queue = $oQueue->getOneReadyToSend()) {
         $queue->date_sent = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
     } catch (Exception $e) {
 
-        $queue->state = Aurel_Table_Queue::STATUS_INIT;
+        $queue->status = Aurel_Table_Queue::STATUS_INIT;
     }
     $queue->save();
 }
