@@ -13,7 +13,7 @@ while ($invitation = $oInvitation->getOneReadyToSend()) {
     $subject = $config->subject_invitation;
     $body = $config->body_invitation;
     
-    $link = "http://marche-entreprises.btob-adidas.com/compte/register?invitation=" . md5($invitation->id_invitation);
+    $link = "http://marche-entreprises.btob-adidas.com/compte/register?invitation=" . md5((string) $invitation->id_invitation);
     $replacement = [
         '#INVITEUR_PRENOM#' => $inviteur->firstname,
         '#INVITEUR_NOM#' => $inviteur->lastname,
@@ -26,8 +26,8 @@ while ($invitation = $oInvitation->getOneReadyToSend()) {
     ];
     
     foreach($replacement as $key => $value){
-        $subject = str_replace($key, $value, $subject);
-        $body = str_replace($key, $value, $body);
+        $subject = str_replace($key, $value, (string) $subject);
+        $body = str_replace($key, $value, (string) $body);
     }
     
 
@@ -42,7 +42,7 @@ while ($invitation = $oInvitation->getOneReadyToSend()) {
         
         $invitation->state = Aurel_Table_Invitation::TYPE_SENT;
         $invitation->date_sent = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
-    } catch (Exception $e) {
+    } catch (Exception) {
         
         $invitation->state = Aurel_Table_Invitation::TYPE_INIT;
     }

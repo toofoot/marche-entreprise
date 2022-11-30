@@ -9,7 +9,7 @@ class Admin_AbstractController extends Aurel_Controller_Abstract
 {
 	protected $_role;
 	
-	protected $_articles = array();
+	protected $_articles = [];
 	protected $_menu = null;
 	protected $_sousmenu = null;
 	
@@ -26,7 +26,7 @@ class Admin_AbstractController extends Aurel_Controller_Abstract
     	$auth = Zend_Auth::getInstance();
     	
     	if((!$auth->hasIdentity() || !$this->_getAcl()->isAllowed($this->_role,Aurel_Acl::RESSOURCE_ADMIN)) && $this->view->actionName != 'login'){
-    		$this->redirect($this->view->url(array("action"=>"login","controller"=>"index"),'admin',true));
+    		$this->redirect($this->view->url(["action"=>"login", "controller"=>"index"],'admin',true));
     	}
     }
 }

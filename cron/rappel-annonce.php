@@ -6,7 +6,7 @@
 	$date = new Aurel_Date();
 	$date->setTime("00:00");
 	
-	$mailUsers = array();
+	$mailUsers = [];
 	foreach($annonces as $annonce){
 		$dateArchive = $annonce
 		->getDate('date_validation')

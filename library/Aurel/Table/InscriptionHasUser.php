@@ -23,8 +23,8 @@ class Aurel_Table_InscriptionHasUser extends Aurel_Table_Abstract
 	
 	public function getByUser($id_user){
 		$select = $this->select()
-		->from(array('ihu'=>'inscription_has_user'))
-		->joinInner(array('i'=>'inscription'), 'ihu.id_inscription = i.id_inscription', array())
+		->from(['ihu'=>'inscription_has_user'])
+		->joinInner(['i'=>'inscription'], 'ihu.id_inscription = i.id_inscription', [])
 		->where('id_user = ?',$id_user)
 		->group('id_article');
 		return $this->fetchAll($select);
@@ -32,14 +32,14 @@ class Aurel_Table_InscriptionHasUser extends Aurel_Table_Abstract
 	
 	public function getByArticle($id_article,$with_names = false){
 		$select = $this->select()
-		->from(array('ihu'=>'inscription_has_user'))
-		->joinInner(array('i'=>'inscription'), 'ihu.id_inscription = i.id_inscription', array())
+		->from(['ihu'=>'inscription_has_user'])
+		->joinInner(['i'=>'inscription'], 'ihu.id_inscription = i.id_inscription', [])
 		->where('id_article = ?',$id_article);
 		
 		if($with_names){
 			$select
 			->setIntegrityCheck(false)
-			->joinInner(array('u'=>'user'), 'ihu.id_user = u.id_user', array('*'));
+			->joinInner(['u'=>'user'], 'ihu.id_user = u.id_user', ['*']);
 		}
 		
 		return $this->fetchAll($select);
@@ -47,15 +47,15 @@ class Aurel_Table_InscriptionHasUser extends Aurel_Table_Abstract
 	
 	public function getByArticleAndInscription($id_article,$id_inscription,$with_names = false){
 		$select = $this->select()
-		->from(array('ihu'=>'inscription_has_user'))
-		->joinInner(array('i'=>'inscription'), 'ihu.id_inscription = i.id_inscription', array())
+		->from(['ihu'=>'inscription_has_user'])
+		->joinInner(['i'=>'inscription'], 'ihu.id_inscription = i.id_inscription', [])
 		->where('i.id_article = ?',$id_article)
 		->where('ihu.id_inscription = ?',$id_inscription);
 		
 		if($with_names){
 			$select
 			->setIntegrityCheck(false)
-			->joinInner(array('u'=>'user'), 'ihu.id_user = u.id_user', array('*'));
+			->joinInner(['u'=>'user'], 'ihu.id_user = u.id_user', ['*']);
 		}
 		
 		return $this->fetchAll($select);
@@ -63,8 +63,8 @@ class Aurel_Table_InscriptionHasUser extends Aurel_Table_Abstract
 	
 	public function getByUserAndArticle($id_user,$id_article){
 		$select = $this->select()
-		->from(array('ihu'=>'inscription_has_user'))
-		->joinInner(array('i'=>'inscription'), 'ihu.id_inscription = i.id_inscription', array())
+		->from(['ihu'=>'inscription_has_user'])
+		->joinInner(['i'=>'inscription'], 'ihu.id_inscription = i.id_inscription', [])
 		->where('id_user = ?',$id_user)
 		->where('id_article = ?',$id_article);
 		return $this->fetchAll($select);

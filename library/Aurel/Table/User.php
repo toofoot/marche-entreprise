@@ -12,8 +12,8 @@ class Aurel_Table_User extends Aurel_Table_Abstract
     protected $_name = 'user';
     protected $_rowClass = 'Aurel_Table_Row_User';
 
-    public const STATUS_ACTIF = 1;
-    public const STATUS_INACTIF = 2;
+    final public const STATUS_ACTIF = 1;
+    final public const STATUS_INACTIF = 2;
 
     /**
      * Genere un mot de passe de 8 caractères aléatoirement
@@ -75,7 +75,7 @@ class Aurel_Table_User extends Aurel_Table_Abstract
     {
         $select = $this->select();
         if ($typeBinaire !== null) {
-            $select->from(["u" => "user"], array('*', 'type_binaire' => new Zend_Db_Expr("REVERSE(RIGHT(concat('0000000000',BIN(`type`)),11))")));
+            $select->from(["u" => "user"], ['*', 'type_binaire' => new Zend_Db_Expr("REVERSE(RIGHT(concat('0000000000',BIN(`type`)),11))")]);
             $select->setIntegrityCheck(false);
             $select->joinLeft(['q' => 'queue'], 'q.id_user = u.id_user', ['date_send' => new Zend_Db_Expr('MAX(q.date_creation)')]);
             $select->group('u.id_user');
@@ -127,10 +127,10 @@ class Aurel_Table_User extends Aurel_Table_Abstract
         $select = $this->select()
             ->setIntegrityCheck(false)
             ->distinct()
-            ->from(array("u" => "user"), array("email"))
-            ->joinLeft(array("a" => "article"), "a.id_user_creation = u.id_user", array("count" => new Zend_Db_Expr("COUNT(a.id_article)")))
-            ->joinLeft(array("sm" => "sous_menu"), "sm.id_sous_menu = a.id_sous_menu", array("sous_menu_name" => "name"))
-            ->joinLeft(array("m" => "menu"), "m.id_menu = sm.id_menu", array("menu_name" => "name"))
+            ->from(["u" => "user"], ["email"])
+            ->joinLeft(["a" => "article"], "a.id_user_creation = u.id_user", ["count" => new Zend_Db_Expr("COUNT(a.id_article)")])
+            ->joinLeft(["sm" => "sous_menu"], "sm.id_sous_menu = a.id_sous_menu", ["sous_menu_name" => "name"])
+            ->joinLeft(["m" => "menu"], "m.id_menu = sm.id_menu", ["menu_name" => "name"])
             ->where(new Zend_Db_Expr("SUBSTRING(REVERSE(RIGHT(concat('0000000000',BIN(u.`type`)),11)),1,1) = 1"))
             ->where("a.annonce = 0 OR a.annonce IS NULL")
             ->where("a.date_creation IS NULL OR DATE(a.date_creation) >= ?", $start_date->get(Aurel_Date::MYSQL_DATE))
@@ -153,7 +153,7 @@ class Aurel_Table_User extends Aurel_Table_Abstract
      */
     public static function decompose($somme)
     {
-        $result = array();
+        $result = [];
         $i = 0;
         while ($somme != 0) {
             if ($somme % 2 != 0) {

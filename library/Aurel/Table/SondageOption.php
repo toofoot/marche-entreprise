@@ -7,8 +7,8 @@
 */
 class Aurel_Table_SondageOption extends Aurel_Table_Abstract
 {
-    public const REPONSE_INT = 0;
-    public const REPONSE_LIBRE = 1;
+    final public const REPONSE_INT = 0;
+    final public const REPONSE_LIBRE = 1;
 
 	/**
 	 * The table name.
@@ -26,11 +26,11 @@ class Aurel_Table_SondageOption extends Aurel_Table_Abstract
 
     public function getBasename($strToClean)
     {
-        $strToClean = html_entity_decode($strToClean);
+        $strToClean = html_entity_decode((string) $strToClean);
         $strToClean = mb_strtolower($strToClean, 'UTF-8');
         $strToClean = str_replace(
-            array('à','â','ä','á','ã','å','î','ï','ì','í','ô','ö','ò','ó','õ','ø','ù','û','ü','ú','é','è','ê','ë','ç','ÿ','ñ',),
-            array('a','a','a','a','a','a','i','i','i','i','o','o','o','o','o','o','u','u','u','u','e','e','e','e','c','y','n',),
+            ['à', 'â', 'ä', 'á', 'ã', 'å', 'î', 'ï', 'ì', 'í', 'ô', 'ö', 'ò', 'ó', 'õ', 'ø', 'ù', 'û', 'ü', 'ú', 'é', 'è', 'ê', 'ë', 'ç', 'ÿ', 'ñ'],
+            ['a', 'a', 'a', 'a', 'a', 'a', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'e', 'e', 'e', 'e', 'c', 'y', 'n'],
             $strToClean
         );
         $strToClean = preg_replace("#[^A-Z0-9\_]#i", "-", $strToClean);

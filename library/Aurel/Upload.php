@@ -202,21 +202,13 @@ class Aurel_Upload
         }
         
         $img_dst_chemin = pathinfo($path, PATHINFO_DIRNAME) . "/" . $filename . pathinfo($path, PATHINFO_FILENAME) . '.' . pathinfo($path, PATHINFO_EXTENSION);
-        switch(pathinfo($path, PATHINFO_EXTENSION)) {
-            case "jpeg":
-                imagejpeg($img_dst_ressource, $img_dst_chemin);
-                break;
-            case "jpg":
-                imagejpeg($img_dst_ressource, $img_dst_chemin);
-                break;
-            case "gif":
-                imagegif ($img_dst_ressource, $img_dst_chemin);
-                break;
-            case "png":
-                imagepng($img_dst_ressource, $img_dst_chemin);
-                break;
-        }
-        return $img_dst_chemin;
+        match (pathinfo($path, PATHINFO_EXTENSION)) {
+            "jpeg" => imagejpeg($img_dst_ressource, $img_dst_chemin),
+            "jpg" => imagejpeg($img_dst_ressource, $img_dst_chemin),
+            "gif" => imagegif ($img_dst_ressource, $img_dst_chemin),
+            "png" => imagepng($img_dst_ressource, $img_dst_chemin),
+            default => $img_dst_chemin,
+        };
     }
     
     /**
@@ -279,7 +271,7 @@ class Aurel_Upload
     }
     
     public static function rotateImg($path){
-    	$extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+    	$extension = strtolower(pathinfo((string) $path, PATHINFO_EXTENSION));
     	switch($extension) {
     		case "jpeg":
     			$img_src_ressource = imagecreatefromjpeg($path);
@@ -301,8 +293,8 @@ class Aurel_Upload
     		imagealphablending($rotation, false);
     		imagesavealpha($rotation, true);
     
-    		$img_dst_chemin = pathinfo($path, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR
-    		. pathinfo($path, PATHINFO_FILENAME) . '.' . $extension;
+    		$img_dst_chemin = pathinfo((string) $path, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR
+    		. pathinfo((string) $path, PATHINFO_FILENAME) . '.' . $extension;
     		switch($extension) {
     			case "jpeg":
     				imagejpeg($rotation, $img_dst_chemin,90);
@@ -388,6 +380,6 @@ class Aurel_Upload
     		$newwidth = $width;
     		$newheight = $height;
     	}
-    	return array($newwidth, $newheight);
+    	return [$newwidth, $newheight];
     }
 }

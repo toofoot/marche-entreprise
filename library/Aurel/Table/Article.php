@@ -13,13 +13,13 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	 */
 	protected $_name = 'article';
 	
-	public const STATUS_INACTIF = 0;
-	public const STATUS_ACTIF = 1;
-	public const STATUS_CORBEILLE = 2;
+	final public const STATUS_INACTIF = 0;
+	final public const STATUS_ACTIF = 1;
+	final public const STATUS_CORBEILLE = 2;
 	
-	public const STATE_ANNONCE_WAITING = 0;
-	public const STATE_ANNONCE_SUCCESS = 1;
-	public const STATE_ANNONCE_REFUSED = 2;
+	final public const STATE_ANNONCE_WAITING = 0;
+	final public const STATE_ANNONCE_SUCCESS = 1;
+	final public const STATE_ANNONCE_REFUSED = 2;
 	
 	/**
 	 * Classname for row
@@ -36,10 +36,10 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAllBySousMenu($id_sous_menu,$admin = false,$user = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
+		->from(['a'=>'article'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
 		->where('a.id_sous_menu = ?',$id_sous_menu)
 		->where('a.annonce = ?',0)
 		->order('a.order_rubrique ASC')
@@ -66,10 +66,10 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAllByMenu($id_menu,$admin = false,$user = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
+		->from(['a'=>'article'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
 		->where('a.id_menu = ?',$id_menu)
 		->where('a.annonce = ?',0)
 		->order('a.order_rubrique ASC')
@@ -98,12 +98,12 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAll($limit = null,$offset = null,$home = false){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
-		->joinLeft(array('m'=>'menu'),'a.id_menu = m.id_menu',array('menu_name'=>'m.name'))
-		->joinLeft(array('s'=>'sous_menu'),'a.id_sous_menu = s.id_sous_menu',array('sous_menu_name'=>'s.name'))
+		->from(['a'=>'article'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
+		->joinLeft(['m'=>'menu'],'a.id_menu = m.id_menu',['menu_name'=>'m.name'])
+		->joinLeft(['s'=>'sous_menu'],'a.id_sous_menu = s.id_sous_menu',['sous_menu_name'=>'s.name'])
 		->where('a.status = ?',self::STATUS_ACTIF)
 		->order('a.order ASC')
 		->where('a.hide_home = ?',0)
@@ -114,7 +114,7 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 			$select
 			->where('a.annonce = ?',0);
 		} else {
-            $select->joinLeft(array('m2'=>'menu'),'m2.id_menu = s.id_menu',array('menu_name2'=>'m2.name'));
+            $select->joinLeft(['m2'=>'menu'],'m2.id_menu = s.id_menu',['menu_name2'=>'m2.name']);
         }
 		
 		$select->limit($limit,$offset);
@@ -130,16 +130,16 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
     public function search($search, $limit = null,$offset = null){
         $select = $this->select()
             ->setIntegrityCheck(false)
-            ->from(array('a'=>'article'))
-            ->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-            ->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-            ->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
-            ->joinLeft(array('m'=>'menu'),'a.id_menu = m.id_menu',array('menu_name'=>'m.name'))
-            ->joinLeft(array('s'=>'sous_menu'),'a.id_sous_menu = s.id_sous_menu',array('sous_menu_name'=>'s.name'))
+            ->from(['a'=>'article'])
+            ->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+            ->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+            ->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
+            ->joinLeft(['m'=>'menu'],'a.id_menu = m.id_menu',['menu_name'=>'m.name'])
+            ->joinLeft(['s'=>'sous_menu'],'a.id_sous_menu = s.id_sous_menu',['sous_menu_name'=>'s.name'])
             ->where('a.status = ?',self::STATUS_ACTIF)
             ->group('a.id_article');
 
-        $searchTab = explode(" ",$search);
+        $searchTab = explode(" ",(string) $search);
         foreach($searchTab as &$word){
             $word = Aurel_Phonetique::convert($word);
         }
@@ -160,7 +160,7 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
      */
 	public function getAllIntegrity($limit = null,$offset = null,$home = false){
 		$select = $this->select()
-		->from(array('a'=>'article'))
+		->from(['a'=>'article'])
 		->where('a.status = ?',self::STATUS_ACTIF)
 		->where('a.hide_home = ?',0)
 		->order('a.order ASC')
@@ -183,12 +183,12 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAllCorbeille($limit = null,$offset = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
-		->joinLeft(array('m'=>'menu'),'a.id_menu = m.id_menu',array('menu_name'=>'m.name'))
-		->joinLeft(array('s'=>'sous_menu'),'a.id_sous_menu = s.id_sous_menu',array('sous_menu_name'=>'s.name'))
+		->from(['a'=>'article'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
+		->joinLeft(['m'=>'menu'],'a.id_menu = m.id_menu',['menu_name'=>'m.name'])
+		->joinLeft(['s'=>'sous_menu'],'a.id_sous_menu = s.id_sous_menu',['sous_menu_name'=>'s.name'])
 		->where('a.status = ?',self::STATUS_CORBEILLE)
 		->where('a.annonce = ?',0)
 		->order('a.date_creation DESC')
@@ -207,12 +207,12 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAllAnnoncesWaiting($limit = null,$offset = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
-		->joinLeft(array('m'=>'menu'),'a.id_menu = m.id_menu',array('menu_name'=>'m.name'))
-		->joinLeft(array('s'=>'sous_menu'),'a.id_sous_menu = s.id_sous_menu',array('sous_menu_name'=>'s.name'))
+		->from(['a'=>'article'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
+		->joinLeft(['m'=>'menu'],'a.id_menu = m.id_menu',['menu_name'=>'m.name'])
+		->joinLeft(['s'=>'sous_menu'],'a.id_sous_menu = s.id_sous_menu',['sous_menu_name'=>'s.name'])
 		//->where('a.status = ?',self::STATUS_CORBEILLE)
 		->where('a.annonce = ?',1)
 		->where('a.state_annonce = ?',Aurel_Table_Article::STATE_ANNONCE_WAITING)
@@ -231,7 +231,7 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getNumberAnnoncesBySousMenu($days = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'),array('a.id_sous_menu','num'=> new Zend_Db_Expr('COUNT(a.id_article)')))
+		->from(['a'=>'article'],['a.id_sous_menu', 'num'=> new Zend_Db_Expr('COUNT(a.id_article)')])
 		->where('a.annonce = ?',1)
 		->where('a.state_annonce = ?',Aurel_Table_Article::STATE_ANNONCE_SUCCESS)
 		->group('a.id_sous_menu');
@@ -249,7 +249,7 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
      */
 	public function getAllCorbeilleForDelete(){
 		$select = $this->select()
-		->from(array('a'=>'article'))
+		->from(['a'=>'article'])
 		->where('a.status = ?',self::STATUS_CORBEILLE)
 		->where('a.annonce = ?',0);
 		
@@ -263,9 +263,9 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAvenir($limit = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('m'=>'menu'),'a.id_menu = m.id_menu',array('menu_name'=>'m.name'))
-		->joinLeft(array('s'=>'sous_menu'),'a.id_sous_menu = s.id_sous_menu',array('sous_menu_name'=>'s.name'))
+		->from(['a'=>'article'])
+		->joinLeft(['m'=>'menu'],'a.id_menu = m.id_menu',['menu_name'=>'m.name'])
+		->joinLeft(['s'=>'sous_menu'],'a.id_sous_menu = s.id_sous_menu',['sous_menu_name'=>'s.name'])
 		->where('link_event = ?',1)
 		->where('a.annonce = ?',0)
 		->where('a.status = ?',self::STATUS_ACTIF)
@@ -285,9 +285,9 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getPasse($limit = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('m'=>'menu'),'a.id_menu = m.id_menu',array('menu_name'=>'m.name'))
-		->joinLeft(array('s'=>'sous_menu'),'a.id_sous_menu = s.id_sous_menu',array('sous_menu_name'=>'s.name'))
+		->from(['a'=>'article'])
+		->joinLeft(['m'=>'menu'],'a.id_menu = m.id_menu',['menu_name'=>'m.name'])
+		->joinLeft(['s'=>'sous_menu'],'a.id_sous_menu = s.id_sous_menu',['sous_menu_name'=>'s.name'])
 		->where('link_event = ?',1)
 		->where('a.annonce = ?',0)
 		->where('a.status = ?',self::STATUS_ACTIF)
@@ -306,9 +306,9 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getPortrait(){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
+		->from(['a'=>'article'])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
 		->where('a.status = ?',self::STATUS_ACTIF)
 		->where('a.portrait = ?',1)
 		->where('a.annonce = ?',0)
@@ -326,11 +326,11 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
      */
 	public function getBasename($strToClean)
 	{
-		$strToClean = html_entity_decode($strToClean);
+		$strToClean = html_entity_decode((string) $strToClean);
 		$strToClean = mb_strtolower($strToClean, 'UTF-8');
 		$strToClean = str_replace(
-				array('à','â','ä','á','ã','å','î','ï','ì','í','ô','ö','ò','ó','õ','ø','ù','û','ü','ú','é','è','ê','ë','ç','ÿ','ñ',),
-				array('a','a','a','a','a','a','i','i','i','i','o','o','o','o','o','o','u','u','u','u','e','e','e','e','c','y','n',),
+				['à', 'â', 'ä', 'á', 'ã', 'å', 'î', 'ï', 'ì', 'í', 'ô', 'ö', 'ò', 'ó', 'õ', 'ø', 'ù', 'û', 'ü', 'ú', 'é', 'è', 'ê', 'ë', 'ç', 'ÿ', 'ñ'],
+				['a', 'a', 'a', 'a', 'a', 'a', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'e', 'e', 'e', 'e', 'c', 'y', 'n'],
 				$strToClean
 		);
 		$strToClean = preg_replace("#[^A-Z0-9\_]#i", "-", $strToClean);
@@ -346,10 +346,10 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getByTitle($page){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
+		->from(['a'=>'article'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
 		->where('a.basename = ?',$page)
 		//->where('a.annonce = ?',0)
 		->order('a.date_creation DESC')
@@ -423,10 +423,10 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAllAnnoncesBySousMenu($id_sous_menu,$days = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
+		->from(['a'=>'article'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
 		->where('a.id_sous_menu = ?',$id_sous_menu)
 		->where('a.annonce = ?',1)
 		->order('a.order_rubrique ASC')
@@ -450,12 +450,12 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAllAnnoncesLimit($days = null){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('u'=>'user'),'a.id_user_creation = u.id_user',array('u.email'))
-		->joinLeft(array('s'=>'sous_menu'),'a.id_sous_menu = s.id_sous_menu',array('sous_menu_name'=>'s.name'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
+		->from(['a'=>'article'])
+		->joinLeft(['u'=>'user'],'a.id_user_creation = u.id_user',['u.email'])
+		->joinLeft(['s'=>'sous_menu'],'a.id_sous_menu = s.id_sous_menu',['sous_menu_name'=>'s.name'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
 		->where('a.annonce = ?',1)
 		->order('a.order_rubrique ASC')
 		->order('a.date_creation DESC')
@@ -477,10 +477,10 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAllAnnoncesByUser($id_user){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('f'=>'file'),'a.id_article = f.id_article',array('id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'),'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')))
-		->joinLeft(array('p'=>'photo'),'a.picture = p.id_photo',array('extension'))
-		->joinLeft(array('p2'=>'photo'),'a.id_article = p2.id_article',array('nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'),'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')))
+		->from(['a'=>'article'])
+		->joinLeft(['f'=>'file'],'a.id_article = f.id_article',['id_files'=>new Zend_Db_Expr('GROUP_CONCAT(distinct f.id_file ORDER BY f.order)'), 'names'=>new Zend_Db_Expr('GROUP_CONCAT(distinct CONCAT(f.name,".",f.extension) ORDER BY f.order)')])
+		->joinLeft(['p'=>'photo'],'a.picture = p.id_photo',['extension'])
+		->joinLeft(['p2'=>'photo'],'a.id_article = p2.id_article',['nbPhotos'=>new Zend_Db_Expr('COUNT(DISTINCT CONCAT(p2.id_photo,".",p2.extension))'), 'id_photos'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT CONCAT(p2.id_photo,".",p2.extension) ORDER BY p2.order ASC,p2.id_photo ASC)')])
 		->where('a.id_user_creation = ?',$id_user)
 		->where('a.annonce = ?',1)
 		->order('a.order_rubrique ASC')
@@ -496,9 +496,9 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
 	public function getAllAnnonces(){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('a'=>'article'))
-		->joinLeft(array('u'=>'user'),'a.id_user_creation = u.id_user',array('u.email'))
-		->joinLeft(array('s'=>'sous_menu'),'a.id_sous_menu = s.id_sous_menu',array('sous_menu_name'=>'s.name'))
+		->from(['a'=>'article'])
+		->joinLeft(['u'=>'user'],'a.id_user_creation = u.id_user',['u.email'])
+		->joinLeft(['s'=>'sous_menu'],'a.id_sous_menu = s.id_sous_menu',['sous_menu_name'=>'s.name'])
 		->where('a.annonce = ?',1)
 		->order('a.order_rubrique ASC')
 		->order('a.date_creation DESC')
@@ -512,7 +512,7 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
      * @return int
      */
 	public function updateSupOrder($order){
-		return $this->update(array("order" => new Zend_Db_Expr("IFNULL(`order`,0) + $order")), "`annonce` = 0 AND `hide_home` = 0");
+		return $this->update(["order" => new Zend_Db_Expr("IFNULL(`order`,0) + $order")], "`annonce` = 0 AND `hide_home` = 0");
 	}
 
     /**
@@ -520,7 +520,7 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
      * @return int
      */
 	public function updateSupOrderRubrique($order){
-		return $this->update(array("order_rubrique" => "IFNULL(`order_rubrique`,0) + $order"), "`annonce` = 0 AND `hide_home` = 0");
+		return $this->update(["order_rubrique" => "IFNULL(`order_rubrique`,0) + $order"], "`annonce` = 0 AND `hide_home` = 0");
 	}
 
     /**
@@ -531,8 +531,8 @@ class Aurel_Table_Article extends Aurel_Table_Abstract
     public function getAllNews($limit = null,$offset = null, $delaimonth = null){
         $select = $this->select()
             ->setIntegrityCheck(false)
-            ->from(array('a'=>'article'))
-            ->joinLeft(array('m'=>'menu'),'a.id_menu = m.id_menu',array('menu_name'=>'m.name'))
+            ->from(['a'=>'article'])
+            ->joinLeft(['m'=>'menu'],'a.id_menu = m.id_menu',['menu_name'=>'m.name'])
             //->where('a.status = ?',self::STATUS_CORBEILLE)
             ->where('m.news = ?',1)
             ->where('status = ?',self::STATUS_ACTIF)

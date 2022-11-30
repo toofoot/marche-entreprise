@@ -14,7 +14,7 @@ class Aurel_Table_Row_Article extends Zend_Db_Table_Row_Abstract
 	
 	public function getIdPhotos($number = null){
 		if($this->id_photos){
-			$list = explode(",", $this->id_photos);
+			$list = explode(",", (string) $this->id_photos);
 			if($number)
 				$list = array_slice($list, 0, $number, true);
 			return $list;
@@ -27,7 +27,7 @@ class Aurel_Table_Row_Article extends Zend_Db_Table_Row_Abstract
 	}
 	
 	public function getHour($which){
-		$hour = substr($this->$which, 0, 5);
+		$hour = substr((string) $this->$which, 0, 5);
 		$hour = str_replace(":", "h", $hour);
 		return $hour;
 	}

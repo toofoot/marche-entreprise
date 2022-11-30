@@ -5,12 +5,12 @@
  * @author  Aurélien Cornu
  * @version 1.0
  */
-define('BASE_PATH',realpath(dirname(dirname(__FILE__))));
-define('LIB_PATH', realpath(dirname(dirname(__FILE__)) . '/library'));
-define('APP_PATH', realpath(dirname(dirname(__FILE__)) . '/application'));
+define('BASE_PATH',realpath(dirname(__FILE__, 2)));
+define('LIB_PATH', realpath(dirname(__FILE__, 2) . '/library'));
+define('APP_PATH', realpath(dirname(__FILE__, 2) . '/application'));
 define('CONFIG_PATH', BASE_PATH . '/config');
 
-set_include_path(implode(PATH_SEPARATOR,array(LIB_PATH,APP_PATH,get_include_path())));
+set_include_path(implode(PATH_SEPARATOR,[LIB_PATH, APP_PATH, get_include_path()]));
 
 include __DIR__ . '/../vendor/autoload.php';
 require_once "Zend/Application.php"; 
@@ -19,7 +19,7 @@ require_once "Zend/Application.php";
 $env = $argv[1];
 //$env = 'molly-handball-fr';
 
-$application = new Zend_Application( $env, dirname(__FILE__) . '/config.ini');
+$application = new Zend_Application( $env, __DIR__ . '/config.ini');
 $application->bootstrap('db');
 $application->bootstrap('mail');
             

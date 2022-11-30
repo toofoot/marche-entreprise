@@ -8,12 +8,12 @@
  */
 class Aurel_Table_SondageQuestion extends Aurel_Table_Abstract {
 
-    public const TYPE_CHECKBOX = 0;
-    public const TYPE_RADIO = 1;
-    public const TYPE_TEXT = 2;
-    public const TYPE_SELECT = 3;
-    public const TYPE_RADIO_INLINE = 4;
-    public const TYPE_TITLE = 5;
+    final public const TYPE_CHECKBOX = 0;
+    final public const TYPE_RADIO = 1;
+    final public const TYPE_TEXT = 2;
+    final public const TYPE_SELECT = 3;
+    final public const TYPE_RADIO_INLINE = 4;
+    final public const TYPE_TITLE = 5;
 
     /**
      * The table name.
@@ -30,10 +30,10 @@ class Aurel_Table_SondageQuestion extends Aurel_Table_Abstract {
     protected $_rowClass = 'Aurel_Table_Row_SondageQuestion';
 
     public function getBasename($strToClean) {
-        $strToClean = html_entity_decode($strToClean);
+        $strToClean = html_entity_decode((string) $strToClean);
         $strToClean = mb_strtolower($strToClean, 'UTF-8');
         $strToClean = str_replace(
-                array('à', 'â', 'ä', 'á', 'ã', 'å', 'î', 'ï', 'ì', 'í', 'ô', 'ö', 'ò', 'ó', 'õ', 'ø', 'ù', 'û', 'ü', 'ú', 'é', 'è', 'ê', 'ë', 'ç', 'ÿ', 'ñ',), array('a', 'a', 'a', 'a', 'a', 'a', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'e', 'e', 'e', 'e', 'c', 'y', 'n',), $strToClean
+                ['à', 'â', 'ä', 'á', 'ã', 'å', 'î', 'ï', 'ì', 'í', 'ô', 'ö', 'ò', 'ó', 'õ', 'ø', 'ù', 'û', 'ü', 'ú', 'é', 'è', 'ê', 'ë', 'ç', 'ÿ', 'ñ'], ['a', 'a', 'a', 'a', 'a', 'a', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'e', 'e', 'e', 'e', 'c', 'y', 'n'], $strToClean
         );
         $strToClean = preg_replace("#[^A-Z0-9\_]#i", "-", $strToClean);
         $strToClean = preg_replace("#-{2,}#", '-', $strToClean);

@@ -35,33 +35,9 @@ class Admin_UsersController extends Admin_AbstractController
         $users = $oUsers->getAll(Aurel_Table_User::STATUS_INACTIF);
         $this->view->usersInactif = $users;
 
-        $links = array(
-            'name' => array('orderby' => 'name', 'order' => 'asc'),
-            'firstname' => array('orderby' => 'firstname', 'order' => 'asc'),
-            'lastname' => array('orderby' => 'lastname', 'order' => 'asc'),
-            'email' => array('orderby' => 'email', 'order' => 'asc'),
-            'directeur' => array('orderby' => 'directeur', 'order' => 'asc'),
-            'type' => array('orderby' => 'type', 'order' => 'asc'),
-            'date_last_connexion' => array('orderby' => 'date_last_connexion', 'order' => 'asc')
-        );
-        $icones = array(
-            'name' => null,
-            'firstname' => null,
-            'lastname' => null,
-            'email' => null,
-            'directeur' => null,
-            'type' => null,
-            'date_last_connexion' => null
-        );
-        $drop = array(
-            'name' => null,
-            'firstname' => null,
-            'lastname' => null,
-            'email' => null,
-            'directeur' => null,
-            'type' => null,
-            'date_last_connexion' => null
-        );
+        $links = ['name' => ['orderby' => 'name', 'order' => 'asc'], 'firstname' => ['orderby' => 'firstname', 'order' => 'asc'], 'lastname' => ['orderby' => 'lastname', 'order' => 'asc'], 'email' => ['orderby' => 'email', 'order' => 'asc'], 'directeur' => ['orderby' => 'directeur', 'order' => 'asc'], 'type' => ['orderby' => 'type', 'order' => 'asc'], 'date_last_connexion' => ['orderby' => 'date_last_connexion', 'order' => 'asc']];
+        $icones = ['name' => null, 'firstname' => null, 'lastname' => null, 'email' => null, 'directeur' => null, 'type' => null, 'date_last_connexion' => null];
+        $drop = ['name' => null, 'firstname' => null, 'lastname' => null, 'email' => null, 'directeur' => null, 'type' => null, 'date_last_connexion' => null];
         if (isset($links[$orderby])) {
             if ($order == 'asc') {
                 $links[$orderby]['order'] = 'desc';
@@ -83,7 +59,7 @@ class Admin_UsersController extends Admin_AbstractController
     /**
      * 
      */
-    public function downloadAction()
+    public function downloadAction(): never
     {
         $array = [];
         $this->_disableLayout();
@@ -106,7 +82,7 @@ class Admin_UsersController extends Admin_AbstractController
         header("Content-Type: application/octet-stream");
         header("Content-Disposition: attachment; filename=users.csv;");
         header("Content-Transfer-Encoding: binary");
-        exit(utf8_decode($this->getCSV($array)));
+        exit(utf8_decode((string) $this->getCSV($array)));
     }
 
     /**
@@ -141,10 +117,7 @@ class Admin_UsersController extends Admin_AbstractController
     {
         //$this->_disableLayout();
 
-        $arrayStatus = array(
-            Aurel_Table_User::STATUS_INACTIF => "Inactif",
-            Aurel_Table_User::STATUS_ACTIF => "Actif"
-        );
+        $arrayStatus = [Aurel_Table_User::STATUS_INACTIF => "Inactif", Aurel_Table_User::STATUS_ACTIF => "Actif"];
         $this->view->selectStatus = $arrayStatus;
         $this->view->selectType = Aurel_Acl::getArrayLibelleResources();
         $this->view->selectDescription = Aurel_Acl::getArrayDescriptionResources();
@@ -153,14 +126,14 @@ class Admin_UsersController extends Admin_AbstractController
         $id_user = $this->getParam("id_user", "999999999999");
         $user = $oUsers->getById($id_user);
 
-        $menu_redacteurs_all = array();
+        $menu_redacteurs_all = [];
         foreach ($this->view->menus as $menu) {
             if (!$menu->annonces && !$menu->agenda) {
                 $lblMenu = "menu_" . $menu->id_menu;
 
                 if ($menu->sous_menus_name) {
-                    $menu_redacteurs_all[$menu->id_menu] = array();
-                    $liste_id = explode(",", $menu->sous_menus_id);
+                    $menu_redacteurs_all[$menu->id_menu] = [];
+                    $liste_id = explode(",", (string) $menu->sous_menus_id);
                     foreach ($liste_id as $key => $id_sous_menu) {
                         $menu_redacteurs_all[$menu->id_menu][$id_sous_menu] = "1";
                     }
@@ -170,13 +143,13 @@ class Admin_UsersController extends Admin_AbstractController
             }
         }
 
-        $tabCoche = array();
+        $tabCoche = [];
         if ($user) {
             foreach ($user->decompose() as $id_right) {
                 $tabCoche[$id_right] = true;
             }
             if (!$user->hasRight(Aurel_Acl::RESSOURCE_ADMIN_ARTICLES) && $user->hasRight(Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR))
-                $user->menus_redacteur = json_decode($user->menus_redacteur, true);
+                $user->menus_redacteur = json_decode((string) $user->menus_redacteur, true, 512, JSON_THROW_ON_ERROR);
             else
                 $user->menus_redacteur = $menu_redacteurs_all;
         }
@@ -197,20 +170,20 @@ class Admin_UsersController extends Admin_AbstractController
         if ($this->_request->isPost()) {
             $this->_disableLayout();
             $this->_disableView();
-            $return = array();
+            $return = [];
             $continue = true;
             $validate = new Zend_Validate_EmailAddress();
             if (!$validate->isValid($formData["email"])) {
                 $continue = false;
                 $return['errors'][] = 'email';
             }
-            if (!$user->id_user && (trim($formData['password']) == "" || trim($formData['password2']) == "")) {
+            if (!$user->id_user && (trim((string) $formData['password']) == "" || trim((string) $formData['password2']) == "")) {
                 $continue = false;
                 $return['errors'][] = 'password';
                 $return['errors'][] = 'password2';
             }
-            if (trim($formData['password']) != "" || trim($formData['password2']) != "") {
-                if (trim($formData['password']) != trim($formData['password2'])) {
+            if (trim((string) $formData['password']) != "" || trim((string) $formData['password2']) != "") {
+                if (trim((string) $formData['password']) != trim((string) $formData['password2'])) {
                     $continue = false;
                     $return['errors'][] = 'password';
                     $return['errors'][] = 'password2';
@@ -218,14 +191,14 @@ class Admin_UsersController extends Admin_AbstractController
             }
             $return['code'] = 'ko';
             if ($continue) {
-                $user->name = stripslashes($formData["name"]);
-                $user->lastname = stripslashes($formData["lastname"]);
-                $user->firstname = stripslashes($formData["firstname"]);
-                $user->email = stripslashes($formData["email"]);
+                $user->name = stripslashes((string) $formData["name"]);
+                $user->lastname = stripslashes((string) $formData["lastname"]);
+                $user->firstname = stripslashes((string) $formData["firstname"]);
+                $user->email = stripslashes((string) $formData["email"]);
                 if (isset($formData["societe"]))
-                    $user->societe = stripslashes($formData["societe"]);
+                    $user->societe = stripslashes((string) $formData["societe"]);
                 if (isset($formData["fonction"]))
-                    $user->fonction = stripslashes($formData["fonction"]);
+                    $user->fonction = stripslashes((string) $formData["fonction"]);
                 $user->status = $formData["status"];
 
                 if (isset($formData["directeur"]) && $user->id_user != $this->_getUser()->id_user) {
@@ -245,22 +218,22 @@ class Admin_UsersController extends Admin_AbstractController
                 $user->type = $sum;
 
                 if (isset($formData['rights']) && $formData['rights'][Aurel_Acl::RESSOURCE_ADMIN_ARTICLES] == "0" && $formData['rights'][Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR] == "1")
-                    $user->menus_redacteur = json_encode($formData['menus_redacteur']);
+                    $user->menus_redacteur = json_encode($formData['menus_redacteur'], JSON_THROW_ON_ERROR);
                 else
                     $user->menus_redacteur = null;
 
                 $user->id_user_modification = $this->_getUser()->id_user;
                 $user->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
 
-                if ($formData["password"] == $formData["password2"] && trim($formData["password"]) != "") {
-                    $user->password = stripslashes($formData["password"]);
+                if ($formData["password"] == $formData["password2"] && trim((string) $formData["password"]) != "") {
+                    $user->password = stripslashes((string) $formData["password"]);
                 }
                 $user->save();
 
                 $return['code'] = 'ok';
             }
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -285,7 +258,7 @@ class Admin_UsersController extends Admin_AbstractController
                 $user->delete();
             }
 
-            $this->redirect($this->view->url(array('action' => 'index', 'id_user' => null)));
+            $this->redirect($this->view->url(['action' => 'index', 'id_user' => null]));
         }
     }
 
@@ -322,8 +295,8 @@ class Admin_UsersController extends Admin_AbstractController
         ];
 
         foreach ($replacement as $key => $value) {
-            $subject = str_replace($key, $value, $subject);
-            $body = str_replace($key, $value, $body);
+            $subject = str_replace($key, $value, (string) $subject);
+            $body = str_replace($key, $value, (string) $body);
         }
 
 
@@ -368,8 +341,8 @@ class Admin_UsersController extends Admin_AbstractController
                 ];
 
                 foreach ($replacement as $key => $value) {
-                    $subject = str_replace($key, $value, $subject);
-                    $body = str_replace($key, $value, $body);
+                    $subject = str_replace($key, $value, (string) $subject);
+                    $body = str_replace($key, $value, (string) $body);
                 }
 
                 $queue = $oQueue->createRow();
@@ -384,7 +357,7 @@ class Admin_UsersController extends Admin_AbstractController
                 $queue->save();
 
                 $return['code'] = 'ok';
-                $url_redirect = $this->view->url(array('action' => 'index', 'id_user' => null));
+                $url_redirect = $this->view->url(['action' => 'index', 'id_user' => null]);
                 $return['url_redirect'] = $url_redirect;
             } else {
                 $users = $oUser->getAllForNewsletter();
@@ -406,8 +379,8 @@ class Admin_UsersController extends Admin_AbstractController
                     ];
 
                     foreach ($replacement as $key => $value) {
-                        $subject = str_replace($key, $value, $subject);
-                        $body = str_replace($key, $value, $body);
+                        $subject = str_replace($key, $value, (string) $subject);
+                        $body = str_replace($key, $value, (string) $body);
                     }
 
                     $queue = $oQueue->createRow();
@@ -423,11 +396,11 @@ class Admin_UsersController extends Admin_AbstractController
                 }
 
                 $return['code'] = 'ok';
-                $url_redirect = $this->view->url(array('action' => 'index', 'id_user' => null));
+                $url_redirect = $this->view->url(['action' => 'index', 'id_user' => null]);
                 $return['url_redirect'] = $url_redirect;
             }
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
 
         $this->view->userInvited = $userInvited;

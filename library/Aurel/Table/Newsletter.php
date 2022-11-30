@@ -11,10 +11,10 @@ class Aurel_Table_Newsletter extends Aurel_Table_Abstract
 	protected $_name = 'newsletter';
 	protected $_rowClass = 'Aurel_Table_Row_Newsletter';
 
-    public const STATUS_INIT = 0;
-    public const STATUS_TOSENDADMIN = 1;
-    public const STATUS_TOSENDMEMBERS = 2;
-    public const STATUS_SENT = 3;
+    final public const STATUS_INIT = 0;
+    final public const STATUS_TOSENDADMIN = 1;
+    final public const STATUS_TOSENDMEMBERS = 2;
+    final public const STATUS_SENT = 3;
 
 	/**
 	* Genere un mot de passe de 8 caractères aléatoirement
@@ -99,7 +99,7 @@ class Aurel_Table_Newsletter extends Aurel_Table_Abstract
 
         if ($articles) {
             $articlesAPublier = $oArticle->getJ7Articles();
-            $tabArticles = array();
+            $tabArticles = [];
             foreach ($articlesAPublier as $article) {
                 $tabArticles[$article->id_menu][$article->id_sous_menu][] = $article;
             }
@@ -107,33 +107,33 @@ class Aurel_Table_Newsletter extends Aurel_Table_Abstract
 
         if ($annonces) {
             $annoncesAPublier = $oArticle->getJ7Annonces();
-            $tabAnnonces = array();
+            $tabAnnonces = [];
             foreach ($annoncesAPublier as $article) {
                 $tabAnnonces[$article->id_menu][$article->id_sous_menu][] = $article;
             }
         }
 
         $menus = $oMenu->getAll();
-        $arrayHtml = array();
-        $arrayHtmlAnnonces = array();
+        $arrayHtml = [];
+        $arrayHtmlAnnonces = [];
         foreach ($menus as $menu) {
             if ($articles) {
-                $arrayHtml[$menu->name]['articles'] = array();
+                $arrayHtml[$menu->name]['articles'] = [];
                 if (isset($tabArticles[$menu->id_menu])) {
                     $arrayHtml[$menu->name]['articles'] = $tabArticles[$menu->id_menu][null];
                 }
             }
             if ($annonces) {
-                $arrayHtmlAnnonces[$menu->name]['articles'] = array();
+                $arrayHtmlAnnonces[$menu->name]['articles'] = [];
                 if (isset($tabAnnonces[$menu->id_menu])) {
                     $arrayHtmlAnnonces[$menu->name]['articles'] = $tabAnnonces[$menu->id_menu][null];
                 }
             }
             if ($menu->sous_menus_id) {
-                $liste_basename = explode(",", $menu->sous_menus_basename);
-                $liste_name = explode(",", $menu->sous_menus_name);
-                $liste_id = explode(",", $menu->sous_menus_id);
-                $liste_id_creation = explode(",", $menu->id_creation);
+                $liste_basename = explode(",", (string) $menu->sous_menus_basename);
+                $liste_name = explode(",", (string) $menu->sous_menus_name);
+                $liste_id = explode(",", (string) $menu->sous_menus_id);
+                $liste_id_creation = explode(",", (string) $menu->id_creation);
 
                 foreach ($liste_id as $key => $id_sous_menu) {
                     if ($articles) {
@@ -253,7 +253,7 @@ class Aurel_Table_Newsletter extends Aurel_Table_Abstract
 						$body .= "<div style='border-bottom:1px solid #323B8C'><div style='width:300px;background-color:#D8DAE9;color:#323B8C;font-weight:bold;padding:0 10px'>{$sous_menus_name}</div></div>";
 						$body .= "<ul style='margin:0 10px 10px 10px;padding:0;list-style-position:inside;'>";
 						foreach($articles as $article){
-							$title = ucfirst(strtolower($article->title));
+							$title = ucfirst(strtolower((string) $article->title));
 							$body .= "<li style='color:#F7931E'><a style='color:#323B8C;text-decoration:none' href='http://{$_SERVER["HTTP_HOST"]}/article/{$article->basename}'>{$title}</a></li>";
 						}
 						$body .= "</ul>";
@@ -278,7 +278,7 @@ class Aurel_Table_Newsletter extends Aurel_Table_Abstract
 						$body .= "<div style='border-bottom:1px solid #f8a899'><div style='width:300px;background-color:#f8a899;color:#333;font-weight:bold;padding:0 10px'>{$sous_menus_name}</div></div>";
 						$body .= "<ul style='margin:0 10px 10px 10px;padding:0;list-style-position:inside;'>";
 						foreach($articles as $article){
-							$title = ucfirst(strtolower($article->title));
+							$title = ucfirst(strtolower((string) $article->title));
 							$body .= "<li style='color:#f1421d'><a style='color:#333;text-decoration:none' href='http://{$_SERVER["HTTP_HOST"]}/annonce/{$article->basename}'>{$title}</a></li>";
 						}
 						$body .= "</ul>";

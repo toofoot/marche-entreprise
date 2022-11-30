@@ -3,6 +3,6 @@
         "shardj/zf1-future": "^1.21"
     },
     "require-dev": {
-        "rector/rector": "^0.12.23"
+        "rector/rector": "*"
     }
 }

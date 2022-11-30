@@ -75,10 +75,10 @@ class Admin_ArticlesController extends Admin_AbstractController {
 
         $dateArchive = Aurel_Date::now()->subDay($this->_config->daysArchiveAnnonce - 1)->setTime("00:00");
 
-        $tabAnnonceAttente = array();
-        $tabAnnonceEnCours = array();
-        $tabAnnonceArchives = array();
-        $tabAnnonceRefuses = array();
+        $tabAnnonceAttente = [];
+        $tabAnnonceEnCours = [];
+        $tabAnnonceArchives = [];
+        $tabAnnonceRefuses = [];
         foreach ($articles as $article) {
             if ($article->state_annonce == Aurel_Table_Article::STATE_ANNONCE_WAITING) {
                 $tabAnnonceAttente[] = $article;
@@ -123,7 +123,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
 
         if ($formData) {
             $status = $formData['status'];
-            $commentaire = stripslashes(trim($formData['commentaire']));
+            $commentaire = stripslashes(trim((string) $formData['commentaire']));
 
             $annonce->state_annonce = $status;
             $annonce->date_validation = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
@@ -157,7 +157,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 
             }
 
-            $this->redirect($this->view->url(array('action' => 'annonces', 'controller' => 'articles'), 'admin', true));
+            $this->redirect($this->view->url(['action' => 'annonces', 'controller' => 'articles'], 'admin', true));
         }
     }
 
@@ -167,7 +167,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $oArticle = new Aurel_Table_Article();
         $order = $this->getParam('order');
 
-        $tabOrdre = explode(',', $order);
+        $tabOrdre = explode(',', (string) $order);
 
         if (is_array($tabOrdre)) {
             $count = count($tabOrdre);
@@ -190,7 +190,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $oArticle = new Aurel_Table_Article();
         $order = $this->getParam('order');
 
-        $tabOrdre = explode(',', $order);
+        $tabOrdre = explode(',', (string) $order);
 
         if (is_array($tabOrdre)) {
             $count = count($tabOrdre);
@@ -213,7 +213,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $oArticle = new Aurel_Table_Article();
         $order = $this->getParam('order');
 
-        $tabOrdre = explode(',', $order);
+        $tabOrdre = explode(',', (string) $order);
 
         if (is_array($tabOrdre)) {
             $count = count($tabOrdre);
@@ -237,7 +237,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $oFile = new Aurel_Table_File();
         $order = $this->getParam('order');
 
-        $tabOrdre = explode(',', $order);
+        $tabOrdre = explode(',', (string) $order);
 
         if (is_array($tabOrdre)) {
             foreach ($tabOrdre as $key => $value) {
@@ -273,16 +273,16 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $oSondage = new Aurel_Table_Sondage();
 
         if ($this->hasParam('url_retour'))
-            $this->view->url_retour = urldecode($this->getParam('url_retour'));
+            $this->view->url_retour = urldecode((string) $this->getParam('url_retour'));
         else
             $this->view->url_retour = "/";
 
         $id_article = $this->getParam('id_article');
-        $tabInscriptions = array();
+        $tabInscriptions = [];
         if ($id_article) {
             $article = $oArticle->getById($this->getParam('id_article'));
-            $article->start_hour = substr($article->start_hour, 0, 5);
-            $article->end_hour = substr($article->end_hour, 0, 5);
+            $article->start_hour = substr((string) $article->start_hour, 0, 5);
+            $article->end_hour = substr((string) $article->end_hour, 0, 5);
 
             if ($article->id_menu)
                 $menu = $oMenu->getById($article->id_menu);
@@ -333,14 +333,14 @@ class Admin_ArticlesController extends Admin_AbstractController {
         }
 
         $sondages = $oSondage->getAll();
-        $tabSondages = array();
+        $tabSondages = [];
         foreach ($sondages as $sondage) {
             $tabSondages[$sondage->id_sondage] = $sondage->name;
         }
         $this->view->sondages = $tabSondages;
 
         $MenusForSelect = $oMenu->getAll();
-        $selectMenus = array();
+        $selectMenus = [];
         foreach ($MenusForSelect as $MenuForSelect) {
             $selectMenus[$MenuForSelect->id_menu] = $MenuForSelect->name;
         }
@@ -350,13 +350,13 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $this->view->sous_menu_selected = isset($sousmenu) ? $sousmenu->id_sous_menu : null;
 
         $SousMenusForSelect = $oSousMenu->getAllByMenu($menu->id_menu);
-        $selectSousMenus = array();
+        $selectSousMenus = [];
         foreach ($SousMenusForSelect as $SousMenuForSelect) {
             $selectSousMenus[$SousMenuForSelect->id_sous_menu] = $SousMenuForSelect->name;
         }
         $this->view->sousmenus = $selectSousMenus;
 
-        $return = array();
+        $return = [];
         $formData = $this->_request->getPost();
         if ($formData) {
             $this->_disableLayout();
@@ -372,9 +372,9 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $article->annonce = 0;
             $article->portrait = (int) $formData['portrait'];
             $article->status = $formData['status'];
-            $article->title = stripslashes($formData['title']);
-            $article->basename = $oArticle->getBasename(stripslashes($formData['title']));
-            $article->content = stripslashes($formData['content']);
+            $article->title = stripslashes((string) $formData['title']);
+            $article->basename = $oArticle->getBasename(stripslashes((string) $formData['title']));
+            $article->content = stripslashes((string) $formData['content']);
 
             //$article->title_soundex = $this->_soundex(stripslashes($formData['title']));
             //$article->content_soundex = $this->_soundex(stripslashes($formData['content']));
@@ -439,12 +439,12 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $article->inscription_quantite_limite = null;
             }
 
-            $article->basename = $oArticle->getBasename(stripslashes($formData['title'])) . "-" . $article->id_article;
+            $article->basename = $oArticle->getBasename(stripslashes((string) $formData['title'])) . "-" . $article->id_article;
             $article->save();
 
             if ($formData['choixType'] == 'youtube' && $formData['linkyoutube'] != "") {
                 $article->picture = null;
-                $youtube = stripslashes($formData['linkyoutube']);
+                $youtube = stripslashes((string) $formData['linkyoutube']);
                 $youtube = str_replace("https://www.youtube.com/watch?v=", "", $youtube);
                 $youtube = str_replace("http://www.youtube.com/watch?v=", "", $youtube);
                 $youtube = str_replace("http://youtu.be/", "", $youtube);
@@ -456,7 +456,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $article->save();
             } elseif ($formData['choixType'] == 'picture' && isset($_FILES) && !empty($_FILES) && is_uploaded_file($_FILES["visuel"]["tmp_name"])) {
                 $oPhoto = new Aurel_Table_Photo();
-                $extension = strtolower(pathinfo($_FILES["visuel"]["name"], PATHINFO_EXTENSION));
+                $extension = strtolower(pathinfo((string) $_FILES["visuel"]["name"], PATHINFO_EXTENSION));
 
                 $upload_dir = UPLOAD_PATH . "/";
                 $this->_check_dir($upload_dir);
@@ -505,10 +505,10 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $return['returncode'] = 'ok';
 
             if ($this->hasParam('url_retour')) {
-                $url_redirect = urldecode($this->getParam('url_retour'));
+                $url_redirect = urldecode((string) $this->getParam('url_retour'));
                 $this->redirect($url_redirect);
             } else
-                $this->redirect($this->view->url(array("basename_article" => $article->basename), 'basename_article', true));
+                $this->redirect($this->view->url(["basename_article" => $article->basename], 'basename_article', true));
         }
         $this->view->event_checked = false;
         if ($article->link_event)
@@ -520,11 +520,11 @@ class Admin_ArticlesController extends Admin_AbstractController {
     }
 
     private function _soundex($string) {
-        $content = strtolower(html_entity_decode(strip_tags($string)));
+        $content = strtolower(html_entity_decode(strip_tags((string) $string)));
         $words = preg_split(
                 '/((^\p{P}+)|(\p{P}*\s+\p{P}*)|(\p{P}+$))/', $content, -1, PREG_SPLIT_NO_EMPTY
         );
-        $soundexWords = array();
+        $soundexWords = [];
         foreach ($words as $word) {
             $soundexWords[] = Aurel_Phonetique::convert($word);
         }
@@ -543,7 +543,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
 
         $this->view->article = $article;
 
-        $return = array();
+        $return = [];
         $formData = $this->_request->getPost();
         if ($formData) {
             $this->_disableLayout();
@@ -567,10 +567,10 @@ class Admin_ArticlesController extends Admin_AbstractController {
             }
 
             if ($this->hasParam('url_redirect')) {
-                $url_redirect = urldecode($this->getParam('url_redirect'));
+                $url_redirect = urldecode((string) $this->getParam('url_redirect'));
                 $this->redirect($url_redirect);
             } else
-                $this->redirect($this->view->url(array("basename_article" => $article->basename), 'basename_article', true));
+                $this->redirect($this->view->url(["basename_article" => $article->basename], 'basename_article', true));
         }
     }
 
@@ -581,12 +581,12 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $oSousMenu = new Aurel_Table_SousMenu();
         if ($id_menu) {
             $SousMenusForSelect = $oSousMenu->getAllByMenu($id_menu);
-            $selectSousMenus = array();
+            $selectSousMenus = [];
             foreach ($SousMenusForSelect as $SousMenuForSelect) {
                 $selectSousMenus[$SousMenuForSelect->id_sous_menu] = $SousMenuForSelect->name;
             }
 
-            echo $this->view->formSelect('id_sous_menu', null, array('class' => 'form-control'), $selectSousMenus);
+            echo $this->view->formSelect('id_sous_menu', null, ['class' => 'form-control'], $selectSousMenus);
         }
     }
 
@@ -600,7 +600,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $article->delete();
         }
 
-        $this->redirect($this->view->url(array('action' => 'trash', 'controller' => 'articles'), 'admin', true));
+        $this->redirect($this->view->url(['action' => 'trash', 'controller' => 'articles'], 'admin', true));
     }
 
     public function restoreAction() {
@@ -613,7 +613,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $oArticle = new Aurel_Table_Article();
         $article = $oArticle->getById($id_article);
 
-        $arrayUrl = array();
+        $arrayUrl = [];
 
         if ($article) {
             if ($article->id_sous_menu) {
@@ -632,7 +632,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $arrayUrl['basename_principal'] = $menu->basename;
             }
 
-            if ($comHash == md5($article->id_article)) {
+            if ($comHash == md5((string) $article->id_article)) {
                 $article->status = Aurel_Table_Article::STATUS_ACTIF;
                 $article->id_user_modification = $this->_getUser()->id_user;
                 $article->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
@@ -655,7 +655,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $oArticle = new Aurel_Table_Article();
         $article = $oArticle->getById($id_article);
 
-        $arrayUrl = array();
+        $arrayUrl = [];
 
         if ($article) {
             if ($article->id_sous_menu) {
@@ -677,12 +677,12 @@ class Admin_ArticlesController extends Admin_AbstractController {
             /* $path = UPLOAD_PATH . "/" . $article->id_article . "/";
               if(is_dir($path))
               $this->rrmdir($path); */
-            if ($comHash == md5($article->id_article)) {
+            if ($comHash == md5((string) $article->id_article)) {
                 if ($this->hasParam('definit') && $this->getParam('definit') == '1') {
                     $photos_dir = UPLOAD_PATH . '/' . $article->id_article;
                     $this->deleteDirectory($photos_dir);
                     $article->delete();
-                    $this->redirect($this->view->url(array('action' => 'trash', 'controller' => 'articles'), 'admin', true));
+                    $this->redirect($this->view->url(['action' => 'trash', 'controller' => 'articles'], 'admin', true));
                 } else {
                     $article->status = Aurel_Table_Article::STATUS_CORBEILLE;
                     $article->id_user_modification = $this->_getUser()->id_user;
@@ -744,12 +744,12 @@ class Admin_ArticlesController extends Admin_AbstractController {
 
         $this->view->article = $article;
 
-        $select = array();
+        $select = [];
         foreach ($this->view->menus as $menu) {
             if ($menu->sous_menus_name) {
-                $liste_basename = explode(",", $menu->sous_menus_basename);
-                $liste_name = explode(",", $menu->sous_menus_name);
-                $liste_id = explode(",", $menu->sous_menus_id);
+                $liste_basename = explode(",", (string) $menu->sous_menus_basename);
+                $liste_name = explode(",", (string) $menu->sous_menus_name);
+                $liste_id = explode(",", (string) $menu->sous_menus_id);
                 foreach ($liste_basename as $key => $basename) {
                     $select[$menu->name]['sous_menu_' . $liste_id[$key]] = $liste_name[$key];
                 }
@@ -775,12 +775,12 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $newArticle->order = 0;
             }
 
-            if (str_contains($copyTo, "sous_menu")) {
-                $id_sous_menu = intval(str_replace("sous_menu_", "", $copyTo));
+            if (str_contains((string) $copyTo, "sous_menu")) {
+                $id_sous_menu = intval(str_replace("sous_menu_", "", (string) $copyTo));
                 $newArticle->id_sous_menu = $id_sous_menu;
                 $newArticle->id_menu = null;
             } else {
-                $id_menu = intval(str_replace("menu_", "", $copyTo));
+                $id_menu = intval(str_replace("menu_", "", (string) $copyTo));
                 $newArticle->id_sous_menu = null;
                 $newArticle->id_menu = $id_menu;
             }
@@ -876,7 +876,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         if ($formData) {
             if ($formData['choixType'] == 'youtube') {
                 $article->picture = null;
-                $youtube = stripslashes($formData['linkyoutube']);
+                $youtube = stripslashes((string) $formData['linkyoutube']);
                 $youtube = str_replace("https://www.youtube.com/watch?v=", "", $youtube);
                 $youtube = str_replace("http://www.youtube.com/watch?v=", "", $youtube);
                 $youtube = str_replace("http://youtu.be/", "", $youtube);
@@ -927,14 +927,14 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $this->_disableLayout();
             $this->_disableView();
 
-            $fileName = strtolower($_FILES['file']['name']);
+            $fileName = strtolower((string) $_FILES['file']['name']);
             $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
             $basename = str_replace("." . $extension, "", $fileName);
             $basename = $oFile->getBasename($basename);
 
             $newFile = $oFile->createRow();
 
-            $fileName = str_replace(",", "&sbquo;", $formData['name']);
+            $fileName = str_replace(",", "&sbquo;", (string) $formData['name']);
             $newFile->name = $fileName;
             $newFile->basename = $basename;
             $newFile->extension = $extension;
@@ -966,7 +966,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $arrayUrl['basename_principal'] = $menu->basename;
             }
             $this->view->arrayUrl = $arrayUrl;
-            echo "<script>window.top.window.uploadEnd(" . json_encode($newFile->toArray()) . ");</script>";
+            echo "<script>window.top.window.uploadEnd(" . json_encode($newFile->toArray(), JSON_THROW_ON_ERROR) . ");</script>";
         }
     }
 
@@ -1028,7 +1028,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $this->_disableView();
             $annonce->delete();
 
-            $url = $this->view->url(array('action' => 'annonces', 'id_annonce' => null));
+            $url = $this->view->url(['action' => 'annonces', 'id_annonce' => null]);
             if ($this->hasParam('return'))
                 $url .= "#" . $this->getParam('return');
             $this->redirect($url);
@@ -1046,7 +1046,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $id_article = $this->getParam('id_article');
         $id_file = $this->getParam('id_file');
         $comHash = $this->getParam('comHash');
-        $arrayUrl = array();
+        $arrayUrl = [];
 
         $oArticle = new Aurel_Table_Article();
         $article = $oArticle->getById($id_article);
@@ -1060,13 +1060,13 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $return['returncode'] = 'ko';
         if ($file) {
             $return['id_file'] = $file->id_file;
-            if ($file->id_article == $article->id_article && $comHash == md5($file->id_file)) {
+            if ($file->id_article == $article->id_article && $comHash == md5((string) $file->id_file)) {
                 $upload_dir = UPLOAD_PATH . "/files/";
                 $pathfile = $upload_dir . $file->basename . "." . $file->extension;
                 $file->delete();
                 $return['returncode'] = 'ok';
             }
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -1088,7 +1088,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $this->_disableView();
             $newsletter->delete();
 
-            $url = $this->view->url(array('action' => 'newsletter', 'controller' => 'articles'), 'admin', true);
+            $url = $this->view->url(['action' => 'newsletter', 'controller' => 'articles'], 'admin', true);
             if ($this->hasParam('return'))
                 $url .= "#" . $this->getParam('return');
             $this->redirect($url);
@@ -1213,7 +1213,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
 
                 $countSend = 0;
                 foreach ($users as $user) {
-                    $bodyHtml = str_replace("#emailEncoded#", md5($user->email), $aEnvoyer->body);
+                    $bodyHtml = str_replace("#emailEncoded#", md5((string) $user->email), (string) $aEnvoyer->body);
 
                     $mail = new Aurel_Mailer();
                     $mail->setFrom($aEnvoyer->from, "Le Petit Charsien");
@@ -1242,7 +1242,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 $aEnvoyer->nb_envoi = $countSend;
                 $aEnvoyer->save();
 
-                echo json_encode($return);
+                echo json_encode($return, JSON_THROW_ON_ERROR);
             }
         }
     }
@@ -1288,11 +1288,11 @@ class Admin_ArticlesController extends Admin_AbstractController {
 
         $countSend = 0;
         foreach ($users as $user) {
-            $bodyHtml = str_replace("#emailEncoded#", md5($user->email), $aEnvoyer->body);
+            $bodyHtml = str_replace("#emailEncoded#", md5((string) $user->email), (string) $aEnvoyer->body);
 
             $mail = new Aurel_Mailer();
             $mail->setFrom($aEnvoyer->from, "Le Petit Charsien");
-            $mail->setSubject(mb_encode_mimeheader($aEnvoyer->subject));
+            $mail->setSubject(mb_encode_mimeheader((string) $aEnvoyer->subject));
             $mail->setBodyHtml($bodyHtml);
             $mail->addTo($user->email);
 
@@ -1316,7 +1316,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $aEnvoyer->nb_envoi = $countSend;
         $aEnvoyer->save();
 
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     public function getManquantsAction() {
@@ -1344,7 +1344,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
 
         $apache_errorlog = file_get_contents($logFile);
         $tab = explode("\n", $apache_errorlog);
-        $logs = array();
+        $logs = [];
         foreach ($tab as $key => $value) {
             if ($value != '') {
                 $dateString = substr($value, 0, 25);
@@ -1379,11 +1379,11 @@ class Admin_ArticlesController extends Admin_AbstractController {
 
             $countSend = $aEnvoyer->nb_envoi;
             foreach ($logs as $log) {
-                $bodyHtml = str_replace("#emailEncoded#", md5($log['email']), $aEnvoyer->body);
+                $bodyHtml = str_replace("#emailEncoded#", md5($log['email']), (string) $aEnvoyer->body);
 
                 $mail = new Aurel_Mailer();
                 $mail->setFrom($aEnvoyer->from, "Le Petit Charsien");
-                $mail->setSubject(mb_encode_mimeheader($aEnvoyer->subject));
+                $mail->setSubject(mb_encode_mimeheader((string) $aEnvoyer->subject));
                 $mail->setBodyHtml($bodyHtml);
                 $mail->addTo($log['email']);
 
@@ -1416,7 +1416,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
                 <p>La newsletter a bien été envoyée</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="' . $this->view->url(array('action' => 'get-manquants')) . '" class="closeModal btn btn-default">Fermer</button>
+                    <a href="' . $this->view->url(['action' => 'get-manquants']) . '" class="closeModal btn btn-default">Fermer</button>
                 </div>';
 
             /* $countSend = 0;
@@ -1449,7 +1449,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
               $aEnvoyer->nb_envoi = $countSend;
               $aEnvoyer->save();
              */
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -1470,14 +1470,14 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $inscriptions = $oInscription->getByArticle($id_article);
         $inscriptionshasuser = $oInscriptionHasUser->getByArticle($id_article, true);
 
-        $tabCategories = array();
-        $tabSumCategories = array();
+        $tabCategories = [];
+        $tabSumCategories = [];
         foreach ($inscriptions as $inscription) {
             $tabCategories[$inscription->id_inscription] = $inscription->name;
             $tabSumCategories[$inscription->id_inscription] = 0;
         }
         if (!$article->inscription_nominative) {
-            $tabInscription = array();
+            $tabInscription = [];
             foreach ($inscriptionshasuser as $inscription) {
                 $tabInscription[$inscription->id_user]['user'] = $inscription;
                 $tabInscription[$inscription->id_user]['comment'] = $inscription->comment;
@@ -1510,8 +1510,8 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $data = "Emetteur Nom;Emetteur Prenom;Emetteur email;";
             $data .= "Catégorie;Nom Participant;Prénom Participant;Commentaire;\n";
             foreach ($inscriptionshasuser as $inscription) {
-                $firstnames = explode('#', $inscription->firstnames);
-                $lastnames = explode('#', $inscription->lastnames);
+                $firstnames = explode('#', (string) $inscription->firstnames);
+                $lastnames = explode('#', (string) $inscription->lastnames);
                 foreach ($firstnames as $key => $firstname) {
                     $data .= "{$inscription->firstname};{$inscription->lastname};{$inscription->email};";
                     $data .= $tabCategories[$inscription->id_inscription] . ";";
@@ -1536,8 +1536,8 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $inscriptions = $oInscription->getAllReservations();
 
         $dateToday = Aurel_Date::now();
-        $tabSortie = array();
-        $tabSortieHistorique = array();
+        $tabSortie = [];
+        $tabSortieHistorique = [];
         foreach ($inscriptions as $inscription) {
             $start_date = new Aurel_Date($inscription->start_date, Aurel_Date::MYSQL_DATE);
 
@@ -1584,11 +1584,11 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $inscriptionshasuser = $oInscriptionHasUser->getByArticle($id_article, true);
 
         if ($this->hasParam('url_retour'))
-            $this->view->url_retour = urldecode($this->getParam('url_retour'));
+            $this->view->url_retour = urldecode((string) $this->getParam('url_retour'));
         else
-            $this->view->url_retour = $this->view->url(array('basename_article' => $article->basename), 'basename_article', true);
+            $this->view->url_retour = $this->view->url(['basename_article' => $article->basename], 'basename_article', true);
 
-        $tabInscription = array();
+        $tabInscription = [];
         $sumTotal = 0;
         foreach ($inscriptionshasuser as $inscription) {
             $tabInscription[$inscription->id_user]['user'] = $inscription->firstname . ' ' . $inscription->lastname;
@@ -1621,7 +1621,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $logger = new Zend_Log();
             $logger->addWriter($redacteur);
 
-            $return = array();
+            $return = [];
             $oUser = new Aurel_Table_User();
             foreach ($formData['envoi'] as $id_user => $bool) {
                 if ($bool == "1") {
@@ -1664,7 +1664,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
 			</div>';
 
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -1681,9 +1681,9 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $annonceur = $oUser->getById($annonce->id_user_creation);
 
         if ($this->hasParam('url_retour'))
-            $this->view->url_retour = urldecode($this->getParam('url_retour'));
+            $this->view->url_retour = urldecode((string) $this->getParam('url_retour'));
         else
-            $this->view->url_retour = $this->view->url(array('basename_article' => $annonce->basename), 'basename_article', true);
+            $this->view->url_retour = $this->view->url(['basename_article' => $annonce->basename], 'basename_article', true);
 
         $dir = LOG_PATH . DIRECTORY_SEPARATOR . 'email_annonceur';
         if (!is_dir($dir))
@@ -1703,7 +1703,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
             $logger = new Zend_Log();
             $logger->addWriter($redacteur);
 
-            $return = array();
+            $return = [];
 
             $mail = new Aurel_Mailer("utf-8");
             $mail->setBodyHtmlWithDesign($body, $subject)
@@ -1740,7 +1740,7 @@ class Admin_ArticlesController extends Admin_AbstractController {
 			</div>';
 
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -1773,9 +1773,9 @@ class Admin_ArticlesController extends Admin_AbstractController {
         $menus = $oMenu->getAll();
         $sous_menus = $oSousMenu->getAll();
 
-        $totalRedacteur = array();
-        $totalMenu = array();
-        $totalSousMenu = array();
+        $totalRedacteur = [];
+        $totalMenu = [];
+        $totalSousMenu = [];
         foreach ($reporting as $report) {
             $totalRedacteur[$report->email] = isset($totalRedacteur[$report->email]) ? $totalRedacteur[$report->email] + $report->count : $report->count;
             $totalMenu[$report->email][$report->menu_name] = isset($totalMenu[$report->email]) && isset($totalMenu[$report->email][$report->menu_name]) ? $totalMenu[$report->email][$report->menu_name] + $report->count : $report->count;

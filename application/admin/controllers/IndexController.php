@@ -43,7 +43,7 @@ class Admin_IndexController extends Admin_AbstractController
                 $invitation->save();
 
                 $return['code'] = 'ok';
-                $url_redirect = $this->view->url(array('action' => 'invitations', 'id_invitation' => null));
+                $url_redirect = $this->view->url(['action' => 'invitations', 'id_invitation' => null]);
                 $return['url_redirect'] = $url_redirect;
             } else {
                 $invitations = $oInvitation->getToRelance();
@@ -57,11 +57,11 @@ class Admin_IndexController extends Admin_AbstractController
                 }
 
                 $return['code'] = 'ok';
-                $url_redirect = $this->view->url(array('action' => 'invitations', 'id_invitation' => null));
+                $url_redirect = $this->view->url(['action' => 'invitations', 'id_invitation' => null]);
                 $return['url_redirect'] = $url_redirect;
             }
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
 
         $this->view->invitation = $invitation;
@@ -98,7 +98,7 @@ class Admin_IndexController extends Admin_AbstractController
             'refresh' => $ready->count() == 0
         ];
 
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -112,9 +112,9 @@ class Admin_IndexController extends Admin_AbstractController
             $this->view->message = "Vous devez vous connecter pour accéder à cette page";
 
         if ($this->hasParam('url_redirect'))
-            $url_redirect = urldecode($this->getParam('url_redirect'));
+            $url_redirect = urldecode((string) $this->getParam('url_redirect'));
         else
-            $url_redirect = $this->view->url(array(), 'default', true);
+            $url_redirect = $this->view->url([], 'default', true);
 
         $auth = Zend_Auth::getInstance();
         if ($this->_request->isPost()) {
@@ -213,9 +213,9 @@ class Admin_IndexController extends Admin_AbstractController
         );
 
         if ($this->hasParam('url_redirect'))
-            $url_redirect = urldecode($this->getParam('url_redirect'));
+            $url_redirect = urldecode((string) $this->getParam('url_redirect'));
         else
-            $url_redirect = $this->view->url(array(), 'default', true);
+            $url_redirect = $this->view->url([], 'default', true);
 
         $this->redirect($url_redirect);
     }
@@ -277,7 +277,7 @@ class Admin_IndexController extends Admin_AbstractController
 
             include('SimpleImage.php');
             if (is_uploaded_file($_FILES["imgDefaultArticle"]["tmp_name"])) {
-                $extension = pathinfo($_FILES["imgDefaultArticle"]["name"], PATHINFO_EXTENSION);
+                $extension = pathinfo((string) $_FILES["imgDefaultArticle"]["name"], PATHINFO_EXTENSION);
                 $pathFileTmp = BASE_PATH . "/www/images/TMPno-photo." . $extension;
                 $pathFileArticle = BASE_PATH . "/www/images/no-photo.jpg";
                 if (move_uploaded_file($_FILES["imgDefaultArticle"]["tmp_name"], $pathFileTmp)) {

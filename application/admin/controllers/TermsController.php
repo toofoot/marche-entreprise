@@ -33,9 +33,9 @@ class Admin_TermsController extends Admin_AbstractController
     		$this->_disableLayout();
     		$this->_disableView();
     		
-    		file_put_contents(CONFIG_PATH . '/terms.txt', stripslashes($formData['content']));
+    		file_put_contents(CONFIG_PATH . '/terms.txt', stripslashes((string) $formData['content']));
     		
-    		echo json_encode(array("returncode"=>"ok","message"=>"Enregistrement effectué"));
+    		echo json_encode(["returncode"=>"ok", "message"=>"Enregistrement effectué"]);
     	}
     }
 }

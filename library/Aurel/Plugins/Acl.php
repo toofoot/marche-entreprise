@@ -25,14 +25,14 @@ class Aurel_Plugins_Acl extends Zend_Controller_Plugin_Abstract {
         if (!$acl->isAllowed($role, $module . "_" . $controller, $action)) {
 
             if ($module == 'admin' && ( $role == Aurel_Acl::ROLE_GUEST || $role == Aurel_Acl::ROLE_MEMBRE )) {
-                $url_encode = urlencode($_SERVER["REQUEST_URI"]);
+                $url_encode = urlencode((string) $_SERVER["REQUEST_URI"]);
                 $url_redirect = "/admin/index/login?url_redirect=$url_encode&pageForbidden=1";
 
                 $this->getResponse()->setRedirect($url_redirect);
                 $this->getResponse()->sendHeaders();
                 die();
             } elseif ($controller == 'compte' && $role == 'guest') {
-                $url_encode = urlencode($_SERVER["REQUEST_URI"]);
+                $url_encode = urlencode((string) $_SERVER["REQUEST_URI"]);
                 $url_redirect = "/compte/login?url_redirect=$url_encode&pageForbidden=1";
 
                 $this->getResponse()->setRedirect($url_redirect);
@@ -42,7 +42,7 @@ class Aurel_Plugins_Acl extends Zend_Controller_Plugin_Abstract {
                 throw new Zend_Acl_Exception("Ressource {$module}_{$controller}/{$action} non autorisé for {$role}");
             exit;
         } elseif (($role == Aurel_Acl::ROLE_GUEST || $role == Aurel_Acl::ROLE_MEMBRE) && $this->_request->getParam('adminConnect')) {
-            $url_encode = urlencode($_SERVER["REQUEST_URI"]);
+            $url_encode = urlencode((string) $_SERVER["REQUEST_URI"]);
             $url_redirect = "/admin/index/login?url_redirect=$url_encode&pageForbidden=1";
 
             $this->getResponse()->setRedirect($url_redirect);

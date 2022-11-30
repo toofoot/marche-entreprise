@@ -86,8 +86,8 @@ class CompteController extends Aurel_Controller_Abstract
         ];
 
         foreach ($replacement as $key => $value) {
-            $subject = str_replace($key, $value, $subject);
-            $body = str_replace($key, $value, $body);
+            $subject = str_replace($key, $value, (string) $subject);
+            $body = str_replace($key, $value, (string) $body);
         }
 
 
@@ -130,18 +130,18 @@ class CompteController extends Aurel_Controller_Abstract
                     $return['message']['email'] = "Il existe déjà un utilisateur avec l'adresse e-mail indiquée.";
                 }
             }
-            if (trim($formData['firstname']) == "") {
+            if (trim((string) $formData['firstname']) == "") {
                 $continue = false;
                 $return['errors'][] = 'firstname';
                 $return['message']['firstname'] = "Ce champ est obligatoire.";
             }
-            if (trim($formData['lastname']) == "") {
+            if (trim((string) $formData['lastname']) == "") {
                 $continue = false;
                 $return['errors'][] = 'lastname';
                 $return['message']['lastname'] = "Ce champ est obligatoire.";
             }
-            if (trim($formData['password']) != "" || trim($formData['password2']) != "") {
-                if (trim($formData['password']) != trim($formData['password2'])) {
+            if (trim((string) $formData['password']) != "" || trim((string) $formData['password2']) != "") {
+                if (trim((string) $formData['password']) != trim((string) $formData['password2'])) {
                     $continue = false;
                     $return['errors'][] = 'password';
                     $return['errors'][] = 'password2';
@@ -152,26 +152,26 @@ class CompteController extends Aurel_Controller_Abstract
             $user = $this->_getUser();
             $return['code'] = 'ko';
             if ($continue) {
-                $user->lastname = stripslashes($formData["lastname"]);
-                $user->firstname = stripslashes($formData["firstname"]);
-                $user->email = stripslashes($formData["email"]);
+                $user->lastname = stripslashes((string) $formData["lastname"]);
+                $user->firstname = stripslashes((string) $formData["firstname"]);
+                $user->email = stripslashes((string) $formData["email"]);
                 if (isset($formData["societe"]))
-                    $user->societe = stripslashes($formData["societe"]);
+                    $user->societe = stripslashes((string) $formData["societe"]);
                 if (isset($formData["fonction"]))
-                    $user->fonction = stripslashes($formData["fonction"]);
+                    $user->fonction = stripslashes((string) $formData["fonction"]);
 
                 $user->id_user_modification = $this->_getUser()->id_user;
                 $user->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
 
-                if ($formData["password"] == $formData["password2"] && trim($formData["password"]) != "") {
-                    $user->password = stripslashes($formData["password"]);
+                if ($formData["password"] == $formData["password2"] && trim((string) $formData["password"]) != "") {
+                    $user->password = stripslashes((string) $formData["password"]);
                 }
                 $user->save();
 
                 $return['code'] = 'ok';
             }
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -183,9 +183,9 @@ class CompteController extends Aurel_Controller_Abstract
         $auth = Zend_Auth::getInstance();
 
         if ($this->hasParam('url_redirect'))
-            $url_redirect = urldecode($this->getParam('url_redirect'));
+            $url_redirect = urldecode((string) $this->getParam('url_redirect'));
         else
-            $url_redirect = $this->view->url(array(), 'default', true);
+            $url_redirect = $this->view->url([], 'default', true);
 
         $this->view->emailLogin = $this->getParam('emailLogin');
         if ($this->_request->isPost()) {
@@ -220,7 +220,7 @@ class CompteController extends Aurel_Controller_Abstract
                         if (isset($formData["remember"]) && $formData["remember"] == "1") {
                             setcookie(
                                 'Auth',
-                                $user->id_user,
+                                (string) $user->id_user,
                                 ['expires' => time() + 3600 * 24 * 365, 'path' => '/', 'domain' => $cookie_domain, 'secure' => $this->isSecure(), 'httponly' => true]
                             );
                         }
@@ -235,11 +235,11 @@ class CompteController extends Aurel_Controller_Abstract
 
                         $sessionAnnonce = new Zend_Session_Namespace('annonce');
                         if ($this->hasParam('after') && $this->getParam('after') == 'valid-annonce' && isset($sessionAnnonce->formData))
-                            $this->redirect($this->view->url(array('action' => 'add-annonce', 'valid' => true), 'action', true));
+                            $this->redirect($this->view->url(['action' => 'add-annonce', 'valid' => true], 'action', true));
                         elseif ($this->hasParam('after') && $this->getParam('after') == 'valid-participation' && isset($sessionAnnonce->formData))
-                            $this->redirect($this->view->url(array('action' => 'participer', 'valid' => true), 'action', true));
+                            $this->redirect($this->view->url(['action' => 'participer', 'valid' => true], 'action', true));
                         elseif ($this->hasParam('after') && $this->getParam('after') == 'valid-annuaire' && isset($sessionAnnonce->formData)) {
-                            $url_validation = urldecode($this->getParam('url_validation'));
+                            $url_validation = urldecode((string) $this->getParam('url_validation'));
                             $this->redirect($url_validation);
                         } else
                             $this->redirect($url_redirect);
@@ -270,9 +270,9 @@ class CompteController extends Aurel_Controller_Abstract
         $auth = Zend_Auth::getInstance();
 
         if ($this->hasParam('url_redirect'))
-            $url_redirect = urldecode($this->getParam('url_redirect'));
+            $url_redirect = urldecode((string) $this->getParam('url_redirect'));
         else
-            $url_redirect = $this->view->url(array(), 'default', true);
+            $url_redirect = $this->view->url([], 'default', true);
 
         if (!$this->hasParam('h')) {
             $this->redirect('/');
@@ -361,9 +361,9 @@ class CompteController extends Aurel_Controller_Abstract
         );
 
         if ($this->hasParam('url_redirect'))
-            $url_redirect = urldecode($this->getParam('url_redirect'));
+            $url_redirect = urldecode((string) $this->getParam('url_redirect'));
         else
-            $url_redirect = $this->view->url(array(), 'default', true);
+            $url_redirect = $this->view->url([], 'default', true);
 
         $this->redirect($url_redirect);
     }
@@ -428,7 +428,7 @@ class CompteController extends Aurel_Controller_Abstract
             $return['code'] = 'ko';
 
             if (isset($formData["tel"]) && $formData["tel"] != "")
-                $user->tel = stripslashes($formData["tel"]);
+                $user->tel = stripslashes((string) $formData["tel"]);
             else
                 $user->tel = null;
 
@@ -452,9 +452,9 @@ class CompteController extends Aurel_Controller_Abstract
 
         $annonces = $oAnnonces->getAllAnnoncesByUser($this->_getUser()->id_user);
 
-        $tabAnnonceAttente = array();
-        $tabAnnonceEnCours = array();
-        $tabAnnonceArchives = array();
+        $tabAnnonceAttente = [];
+        $tabAnnonceEnCours = [];
+        $tabAnnonceArchives = [];
         $dateArchive = Aurel_Date::now()->subDay($this->_config->daysArchiveAnnonce - 1)->setTime("00:00");
         $dateRefused = Aurel_Date::now()->subDay(6)->setTime("00:00");
 
@@ -482,7 +482,7 @@ class CompteController extends Aurel_Controller_Abstract
         if ($menu_annonce) {
             $sous_menus = $oSousMenu->getAllByMenu($menu_annonce->id_menu);
 
-            $tab = array();
+            $tab = [];
             foreach ($sous_menus as $sous) {
                 $tab[$sous->id_sous_menu] = $sous->name;
             }
@@ -499,7 +499,7 @@ class CompteController extends Aurel_Controller_Abstract
         $input = $this->getParam('input');
         $value = $this->getParam('value');
 
-        $return = array();
+        $return = [];
         $return['error'] = false;
 
         switch ($input) {
@@ -523,7 +523,7 @@ class CompteController extends Aurel_Controller_Abstract
                         }
                         if ($userCompare && $user != $userCompare || !$userCompare) {
                             $return['error'] = true;
-                            $return['message'] = "Un compte est déjà créé avec cette adresse email. <a class='connect btn btn-danger btn-xs' href='" . $this->view->url(array('action' => 'login'), 'compte', true) . "'>Connectez-vous</a>";
+                            $return['message'] = "Un compte est déjà créé avec cette adresse email. <a class='connect btn btn-danger btn-xs' href='" . $this->view->url(['action' => 'login'], 'compte', true) . "'>Connectez-vous</a>";
                         }
                     }
                 }
@@ -572,7 +572,7 @@ class CompteController extends Aurel_Controller_Abstract
                 break;
         }
 
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     public function passwordAction()
@@ -584,19 +584,19 @@ class CompteController extends Aurel_Controller_Abstract
         $formData = $this->_request->getPost();
         if ($this->_request->isPost()) {
             $continue = true;
-            if (trim($formData['password']) == "" || trim($formData['password2']) == "") {
+            if (trim((string) $formData['password']) == "" || trim((string) $formData['password2']) == "") {
                 $continue = false;
                 $return['errors'][] = 'password';
                 $return['errors'][] = 'password2';
-                if (trim($formData['password']) == "")
+                if (trim((string) $formData['password']) == "")
                     $return['message'] = "Tous les champs sont obligatoires";
             }
             
             $return['code'] = 'ko';
             if ($continue) {
                 $return['code'] = 'ok';
-                if ($formData["password"] == $formData["password2"] && trim($formData["password"]) != "") {
-                    $this->_getUser()->password = stripslashes($formData["password"]);
+                if ($formData["password"] == $formData["password2"] && trim((string) $formData["password"]) != "") {
+                    $this->_getUser()->password = stripslashes((string) $formData["password"]);
 
                     $session = new Zend_Session_Namespace('inscription');
                     $session->message = "Votre mot de passe a été créé";
@@ -607,7 +607,7 @@ class CompteController extends Aurel_Controller_Abstract
             $return['redirect_url'] = '/';
             $return['redirect'] = true;
         }
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     public function registerAction()
@@ -639,7 +639,7 @@ class CompteController extends Aurel_Controller_Abstract
                     $auth = Zend_Auth::getInstance();
                     $auth->getStorage()->write($new_user->id_user);
                     if ($this->hasParam('url_redirect'))
-                        $url_redirect = urldecode($this->getParam('url_redirect'));
+                        $url_redirect = urldecode((string) $this->getParam('url_redirect'));
                     else
                         $url_redirect = '/';
                     $this->redirect($url_redirect);
@@ -657,11 +657,11 @@ class CompteController extends Aurel_Controller_Abstract
             if ($new_user) {
                 $this->view->user = $new_user;
 
-                if ($new_user->password && trim($new_user->password) != '') {
+                if ($new_user->password && trim((string) $new_user->password) != '') {
                     $auth = Zend_Auth::getInstance();
                     $auth->getStorage()->write($new_user->id_user);
                     if ($this->hasParam('url_redirect'))
-                        $url_redirect = urldecode($this->getParam('url_redirect'));
+                        $url_redirect = urldecode((string) $this->getParam('url_redirect'));
                     else
                         $url_redirect = '/';
                     $this->redirect($url_redirect);
@@ -674,12 +674,12 @@ class CompteController extends Aurel_Controller_Abstract
             if ($new_user) {
                 Zend_Auth::getInstance()->clearIdentity();
                 $this->view->user = $new_user;
-                if ($new_user->password && trim($new_user->password) != '') {
+                if ($new_user->password && trim((string) $new_user->password) != '') {
                     $auth = Zend_Auth::getInstance();
                     $auth->getStorage()->write($new_user->id_user);
 
                     if ($this->hasParam('url_redirect'))
-                        $url_redirect = urldecode($this->getParam('url_redirect'));
+                        $url_redirect = urldecode((string) $this->getParam('url_redirect'));
                     else
                         $url_redirect = '/';
                     $this->redirect($url_redirect);
@@ -711,40 +711,40 @@ class CompteController extends Aurel_Controller_Abstract
             if ($user && !$new_user || $user && $new_user && $user->id_user != $new_user->id_user) {
                 $continue = false;
                 $return['errors'][] = 'email';
-                $return['message']['email'] = "Un compte est déjà créé avec cette adresse email. <a class='connect btn btn-danger btn-xs' href='" . $this->view->url(array('action' => 'login'), 'compte', true) . "'>Connectez-vous</a>";
+                $return['message']['email'] = "Un compte est déjà créé avec cette adresse email. <a class='connect btn btn-danger btn-xs' href='" . $this->view->url(['action' => 'login'], 'compte', true) . "'>Connectez-vous</a>";
             }
 
-            if (trim($formData['password']) == "" || trim($formData['password2']) == "") {
+            if (trim((string) $formData['password']) == "" || trim((string) $formData['password2']) == "") {
                 $continue = false;
                 $return['errors'][] = 'password';
                 $return['errors'][] = 'password2';
-                if (trim($formData['password']) == "")
+                if (trim((string) $formData['password']) == "")
                     $return['message']['password'] = "Ce champ est obligatoire";
-                if (trim($formData['password2']) == "")
+                if (trim((string) $formData['password2']) == "")
                     $return['message']['password2'] = "Ce champ est obligatoire";
             }
-            if (trim($formData['societe']) == "") {
+            if (trim((string) $formData['societe']) == "") {
                 $continue = false;
                 $return['errors'][] = 'societe';
                 $return['message']['societe'] = "Ce champ est obligatoire";
             }
-            if (trim($formData['fonction']) == "") {
+            if (trim((string) $formData['fonction']) == "") {
                 $continue = false;
                 $return['errors'][] = 'fonction';
                 $return['message']['fonction'] = "Ce champ est obligatoire";
             }
-            if (trim($formData['lastname']) == "") {
+            if (trim((string) $formData['lastname']) == "") {
                 $continue = false;
                 $return['errors'][] = 'lastname';
                 $return['message']['lastname'] = "Ce champ est obligatoire";
             }
-            if (trim($formData['firstname']) == "") {
+            if (trim((string) $formData['firstname']) == "") {
                 $continue = false;
                 $return['errors'][] = 'firstname';
                 $return['message']['firstname'] = "Ce champ est obligatoire";
             }
-            if (trim($formData['password']) != "" || trim($formData['password2']) != "") {
-                if (trim($formData['password']) != trim($formData['password2'])) {
+            if (trim((string) $formData['password']) != "" || trim((string) $formData['password2']) != "") {
+                if (trim((string) $formData['password']) != trim((string) $formData['password2'])) {
                     $continue = false;
                     $return['errors'][] = 'password';
                     $return['errors'][] = 'password2';
@@ -761,11 +761,11 @@ class CompteController extends Aurel_Controller_Abstract
                 }
 
                 $user->name = '';
-                $user->lastname = stripslashes($formData["lastname"]);
-                $user->firstname = stripslashes($formData["firstname"]);
-                $user->email = stripslashes($formData["email"]);
-                $user->fonction = stripslashes($formData["fonction"]);
-                $user->societe = stripslashes($formData["societe"]);
+                $user->lastname = stripslashes((string) $formData["lastname"]);
+                $user->firstname = stripslashes((string) $formData["firstname"]);
+                $user->email = stripslashes((string) $formData["email"]);
+                $user->fonction = stripslashes((string) $formData["fonction"]);
+                $user->societe = stripslashes((string) $formData["societe"]);
 
                 $user->masque_tel = $formData["masque_tel"];
                 $user->newsletter = $formData["newsletter"];
@@ -777,10 +777,10 @@ class CompteController extends Aurel_Controller_Abstract
                 $user->date_creation = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
                 $user->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
 
-                if ($formData["password"] == $formData["password2"] && trim($formData["password"]) != "") {
-                    $user->password = stripslashes($formData["password"]);
+                if ($formData["password"] == $formData["password2"] && trim((string) $formData["password"]) != "") {
+                    $user->password = stripslashes((string) $formData["password"]);
                 }
-                $user->hash = md5($formData["email"]);
+                $user->hash = md5((string) $formData["email"]);
                 $user->save();
 
                 $user->id_user_modification = $user->id_user;
@@ -814,19 +814,19 @@ class CompteController extends Aurel_Controller_Abstract
                 $return['code'] = 'ok';
                 $sessionAnnonce = new Zend_Session_Namespace('annonce');
                 if ($this->hasParam('after') && $this->getParam('after') == 'valid-annonce' && isset($sessionAnnonce->formData))
-                    $url_redirect = $this->view->url(array('action' => 'add-annonce', 'valid' => true), 'action', true);
+                    $url_redirect = $this->view->url(['action' => 'add-annonce', 'valid' => true], 'action', true);
                 elseif ($this->hasParam('after') && $this->getParam('after') == 'valid-participation' && isset($sessionAnnonce->formData))
-                    $this->redirect($this->view->url(array('action' => 'participer', 'valid' => true), 'action', true));
+                    $this->redirect($this->view->url(['action' => 'participer', 'valid' => true], 'action', true));
                 elseif ($this->hasParam('after') && $this->getParam('after') == 'valid-annuaire' && isset($sessionAnnonce->formData)) {
-                    $url_redirect = urldecode($this->getParam('url_redirect'));
+                    $url_redirect = urldecode((string) $this->getParam('url_redirect'));
                 } elseif ($this->hasParam('url_redirect'))
-                    $url_redirect = urldecode($this->getParam('url_redirect'));
+                    $url_redirect = urldecode((string) $this->getParam('url_redirect'));
                 else
-                    $url_redirect = $this->view->url(array(), 'default', true);
+                    $url_redirect = $this->view->url([], 'default', true);
                 $return['url_redirect'] = $url_redirect;
             }
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         } elseif ($this->_isAjax()) {
             $this->render('register-modal');
         }
@@ -920,7 +920,7 @@ class CompteController extends Aurel_Controller_Abstract
     {
         if ($this->hasParam('open_modal') && $this->getParam('open_modal') == '1' && $this->hasParam('id_article')) {
             $id_article = $this->getParam('id_article');
-            $this->view->modal_url = $this->view->url(array('action' => 'participer', 'id_article' => $id_article, 'url_retour' => urlencode($this->view->url(array('open_modal' => null, 'id_article' => null)))), 'action', true);
+            $this->view->modal_url = $this->view->url(['action' => 'participer', 'id_article' => $id_article, 'url_retour' => urlencode((string) $this->view->url(['open_modal' => null, 'id_article' => null]))], 'action', true);
         }
         $sessionAnnonce = new Zend_Session_Namespace('annonce');
         $this->view->valideParticipation = $sessionAnnonce->valideParticipation;
@@ -932,8 +932,8 @@ class CompteController extends Aurel_Controller_Abstract
         $inscriptions = $oInscription->getByUser($this->_getUser()->id_user);
 
         $dateToday = Aurel_Date::now();
-        $tabSortie = array();
-        $tabSortieHistorique = array();
+        $tabSortie = [];
+        $tabSortieHistorique = [];
         foreach ($inscriptions as $inscription) {
             $start_date = new Aurel_Date($inscription->start_date, Aurel_Date::MYSQL_DATE);
 
@@ -1000,7 +1000,7 @@ class CompteController extends Aurel_Controller_Abstract
                 $user = $oUser->getByEmail($formData['email']);
 
                 if ($user) {
-                    $url = 'http://' . $_SERVER['HTTP_HOST'] . "/compte/passoublie?comHash=" . md5($user->email);
+                    $url = 'http://' . $_SERVER['HTTP_HOST'] . "/compte/passoublie?comHash=" . md5((string) $user->email);
                     $body = "<h4>Oubli de votre mot de passe</h4>" . "\n\t" .
                         "Veuillez suivre ce lien pour modifier votre mot de passe : <a href='$url'>$url</a><br/><br/>" . "\n\t" .
                         "En cas de difficultés, allez à l'adresse suivante : $url<br/><br/><br/>" . "\n\t";
@@ -1033,7 +1033,7 @@ class CompteController extends Aurel_Controller_Abstract
                 } elseif ($formData['password'] != $formData['password2']) {
                     $this->view->message = 'Les 2 mots de passes ne correspondent pas';
                 } elseif ($formData['password'] == $formData['password2']) {
-                    $user->password = stripslashes($formData["password"]);
+                    $user->password = stripslashes((string) $formData["password"]);
                     $user->save();
 
                     $this->view->connectButton = true;
@@ -1075,7 +1075,7 @@ class CompteController extends Aurel_Controller_Abstract
             'refresh' => $ready->count() == 0
         ];
 
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     public function inviteAction()
@@ -1122,11 +1122,11 @@ class CompteController extends Aurel_Controller_Abstract
                 }
 
                 $return['code'] = 'ok';
-                $url_redirect = $this->view->url(array('action' => 'invitations'), 'compte', true);
+                $url_redirect = $this->view->url(['action' => 'invitations'], 'compte', true);
                 $return['url_redirect'] = $url_redirect;
             }
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -1149,7 +1149,7 @@ class CompteController extends Aurel_Controller_Abstract
                 $subject = $this->_config->subject_reinvitation;
                 $body = $this->_config->body_reinvitation;
 
-                $link = "http://marche-entreprises.btob-adidas.com/compte/register?invitation=" . md5($invitation->id_invitation);
+                $link = "http://marche-entreprises.btob-adidas.com/compte/register?invitation=" . md5((string) $invitation->id_invitation);
                 $replacement = [
                     '#INVITEUR_PRENOM#' => $inviteur->firstname,
                     '#INVITEUR_NOM#' => $inviteur->lastname,
@@ -1162,8 +1162,8 @@ class CompteController extends Aurel_Controller_Abstract
                 ];
 
                 foreach ($replacement as $key => $value) {
-                    $subject = str_replace($key, $value, $subject);
-                    $body = str_replace($key, $value, $body);
+                    $subject = str_replace($key, $value, (string) $subject);
+                    $body = str_replace($key, $value, (string) $body);
                 }
 
 
@@ -1182,11 +1182,11 @@ class CompteController extends Aurel_Controller_Abstract
                 $invitation->save();
 
                 $return['code'] = 'ok';
-                $url_redirect = $this->view->url(array('action' => 'invitations'), 'compte', true);
+                $url_redirect = $this->view->url(['action' => 'invitations'], 'compte', true);
                 $return['url_redirect'] = $url_redirect;
             }
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
 
         $this->view->invitation = $invitation;

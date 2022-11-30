@@ -32,7 +32,7 @@ class Aurel_Table_Row_User extends Zend_Db_Table_Row_Abstract implements Zend_Ac
      */
     public function decompose() {
         $somme = $this->type;
-        $result = array();
+        $result = [];
         $i = 0;
         while ($somme != 0) {
             if ($somme % 2 != 0) {
@@ -54,21 +54,19 @@ class Aurel_Table_Row_User extends Zend_Db_Table_Row_Abstract implements Zend_Ac
      * @todo Implement dotSpacedParse().
      */
     public function rights() {
-        $libelles = array(
+        $libelles = [
             Aurel_Acl::RESSOURCE_ADMIN_ARTICLES => "REDACTEUR EN CHEF",
             Aurel_Acl::RESSOURCE_ADMIN_REDACTEUR => "REDACTEUR",
             Aurel_Acl::RESSOURCE_ADMIN_MENUS => "ADMIN RUBRIQUAGE",
             Aurel_Acl::RESSOURCE_ADMIN_HEADER => "ADMIN HEADER",
             Aurel_Acl::RESSOURCE_ADMIN_FOOTER => "ADMIN FOOTER",
             Aurel_Acl::RESSOURCE_ADMIN_ACCESSRAPIDE => "ADMIN ACCES RAPIDE",
-//			Aurel_Acl::RESSOURCE_ADMIN_NEWSLETTER => "ADMIN NEWSLETTER",
-//			Aurel_Acl::RESSOURCE_ADMIN_ANNONCES => "ADMIN ANNONCES",
+            //			Aurel_Acl::RESSOURCE_ADMIN_NEWSLETTER => "ADMIN NEWSLETTER",
+            //			Aurel_Acl::RESSOURCE_ADMIN_ANNONCES => "ADMIN ANNONCES",
             Aurel_Acl::RESSOURCE_ADMIN_MEMBRES => "ADMIN UTILISATEURS",
-//			Aurel_Acl::RESSOURCE_ADMIN_ANNUAIRE => "ADMIN ANNUAIRE",
-//			Aurel_Acl::RESSOURCE_ADMIN_SONDAGE => "ADMIN SONDAGE",
-        );
+        ];
         if (isset($this->type_binaire)) {
-            $length = strlen($this->type_binaire);
+            $length = strlen((string) $this->type_binaire);
             $string = "";
             for ($i = 0; $i < $length; $i++) {
                 $puissance = 2 ** $i;

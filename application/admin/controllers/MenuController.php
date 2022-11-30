@@ -59,8 +59,8 @@ class Admin_MenuController extends Admin_AbstractController
     	if($this->_request->isPost()){
     		$this->_disableLayout();
     		$this->_disableView();
-    		$sousmenu->name = stripslashes($formData["name"]);
-    		$sousmenu->basename = $oMenu->getBasename(stripslashes($formData["name"]));
+    		$sousmenu->name = stripslashes((string) $formData["name"]);
+    		$sousmenu->basename = $oMenu->getBasename(stripslashes((string) $formData["name"]));
 			$sousmenu->id_menu = $menu->id_menu;
     		$sousmenu->id_user_modification = $this->_getUser()->id_user;
 			$sousmenu->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
@@ -107,8 +107,8 @@ class Admin_MenuController extends Admin_AbstractController
     	if($this->_request->isPost()){
     		$this->_disableLayout();
     		$this->_disableView();
-    		$menu->name = stripslashes($formData["name"]);
-    		$menu->basename = $oMenu->getBasename(stripslashes($formData["name"]));
+    		$menu->name = stripslashes((string) $formData["name"]);
+    		$menu->basename = $oMenu->getBasename(stripslashes((string) $formData["name"]));
     		$menu->id_user_modification = $this->_getUser()->id_user;
     		$menu->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
     		$menu->agenda = $formData["agenda"];
@@ -142,13 +142,13 @@ class Admin_MenuController extends Admin_AbstractController
 	    	$oSousMenu = new Aurel_Table_SousMenu();
 	    	$menu = $oSousMenu->getByTitle($this->getParam('basename_secondaire'),$menu->id_menu);
     	}
-    	$return = array();
+    	$return = [];
     	$formData = $this->_request->getPost();
     	if($this->_request->isPost()){
     		$this->_disableLayout();
     		$this->_disableView();
     	
-    		$menu->title = stripslashes($formData['title']);
+    		$menu->title = stripslashes((string) $formData['title']);
     		$menu->save();
     		
     		$return['returncode'] = 'ok';
@@ -171,7 +171,7 @@ class Admin_MenuController extends Admin_AbstractController
     	if($menu){
     		$menu->delete();
     	}
-    	$this->redirect($this->view->url(array(),'accueil',true));
+    	$this->redirect($this->view->url([],'accueil',true));
     }
     
     public function deleteMenuAction(){
@@ -189,7 +189,7 @@ class Admin_MenuController extends Admin_AbstractController
     	if($sousmenu){
     		$sousmenu->delete();
     	}
-    	$this->redirect($this->view->url(array('basename_principal'=>$menu->basename),'basenames',true));
+    	$this->redirect($this->view->url(['basename_principal'=>$menu->basename],'basenames',true));
     }
     
     public function sortAction(){
@@ -198,7 +198,7 @@ class Admin_MenuController extends Admin_AbstractController
     	$oSousMenu = new Aurel_Table_SousMenu();
     	$order = $this->getParam('order');
     	 
-    	$tabOrdre = explode(',',$order);
+    	$tabOrdre = explode(',',(string) $order);
     	 
     	if (is_array($tabOrdre))
     	{
@@ -219,7 +219,7 @@ class Admin_MenuController extends Admin_AbstractController
     	$oMenu = new Aurel_Table_Menu();
     	$order = $this->getParam('order');
     	 
-    	$tabOrdre = explode(',',$order);
+    	$tabOrdre = explode(',',(string) $order);
     	 
     	if (is_array($tabOrdre))
     	{
@@ -248,7 +248,7 @@ class Admin_MenuController extends Admin_AbstractController
     		$menuToFill = $sousmenu;
     	}
     	 
-    	$dataReturn = array();
+    	$dataReturn = [];
     	if (!empty($_FILES)) {
     		$path = UPLOAD_PATH . DIRECTORY_SEPARATOR;
     
@@ -257,7 +257,7 @@ class Admin_MenuController extends Admin_AbstractController
     			unlink($old);
     		}
     
-    		$extension = strtolower(pathinfo($_FILES['cov']['name'], PATHINFO_EXTENSION));
+    		$extension = strtolower(pathinfo((string) $_FILES['cov']['name'], PATHINFO_EXTENSION));
     		$fileName = uniqid(). '.' . $extension;
     		$targetFile =  $path . $fileName;
     		$ret = move_uploaded_file($_FILES['cov']['tmp_name'], $targetFile);
@@ -324,7 +324,7 @@ class Admin_MenuController extends Admin_AbstractController
     		$return['background'] = "url(/images/upload/".$menu->picture.")";
     		$return['background_position'] = $menu->picture_position;
     	}
-    	echo json_encode($return);
+    	echo json_encode($return, JSON_THROW_ON_ERROR);
     }
     
     public function setAccessRapideAction(){
@@ -332,8 +332,7 @@ class Admin_MenuController extends Admin_AbstractController
     	$file = "access_rapide.xml";
     	$config = new Zend_Config_Xml(CONFIG_PATH . "/$file",
     				null,
-    				array('skipExtends'        => true,
-    						'allowModifications' => true));
+    				['skipExtends'        => true, 'allowModifications' => true]);
     	
     	$this->view->configMenu = $config;
     	
@@ -342,10 +341,7 @@ class Admin_MenuController extends Admin_AbstractController
     		$this->_disableLayout();
     		$this->_disableView();
     		 
-    		$config = new Zend_Config(array(
-    				'menu'=>array(),
-    				'sous_menu'=>array(),
-    		),true);
+    		$config = new Zend_Config(['menu'=>[], 'sous_menu'=>[]],true);
     		
     		// Modify a value
     		foreach($formData["active_menu"] as $key => $menu_id){
@@ -358,8 +354,7 @@ class Admin_MenuController extends Admin_AbstractController
     		}
     	
     		// Write the config file
-    		$writer = new Zend_Config_Writer_Xml(array('config'   => $config,
-    				'filename' => CONFIG_PATH . "/$file"));
+    		$writer = new Zend_Config_Writer_Xml(['config'   => $config, 'filename' => CONFIG_PATH . "/$file"]);
     		$writer->write();
     	
     		$this->redirect($this->view->url());

@@ -14,7 +14,7 @@ class Aurel_Table_Row_AnnuaireFiche extends Zend_Db_Table_Row_Abstract
 	
 	public function getIdPhotos($number = null){
 		if($this->id_photos){
-			$list = explode(",", $this->id_photos);
+			$list = explode(",", (string) $this->id_photos);
 			if($number)
 				$list = array_slice($list, 0, $number, true);
 			return $list;

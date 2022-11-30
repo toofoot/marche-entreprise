@@ -11,7 +11,7 @@ class IndexController extends Aurel_Controller_Abstract
 
     protected $_basenamePrincipal = null;
     protected $_basenameSecondaire = null;
-    protected $_articles = array();
+    protected $_articles = [];
     protected $_menu = null;
     protected $_sousmenu = null;
 
@@ -58,10 +58,7 @@ class IndexController extends Aurel_Controller_Abstract
                     $formData = $this->_request->getPost();
                     if ($formData) {
 
-                        $data = array(
-                            'secret' => "6LcZ1hAdAAAAAHLeIY26gVRgTQ5hu_KDSRFrFnpR",
-                            'response' => $formData['g-recaptcha-response']
-                        );
+                        $data = ['secret' => "6LcZ1hAdAAAAAHLeIY26gVRgTQ5hu_KDSRFrFnpR", 'response' => $formData['g-recaptcha-response']];
 
                         $verify = curl_init();
                         curl_setopt($verify, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
@@ -71,7 +68,7 @@ class IndexController extends Aurel_Controller_Abstract
                         curl_setopt($verify, CURLOPT_RETURNTRANSFER, true);
                         $response = curl_exec($verify);
 
-                        $json_response = json_decode($response, true);
+                        $json_response = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
 
                         if ($json_response['success']) {
                             $db = Zend_Registry::get('db');
@@ -149,7 +146,7 @@ class IndexController extends Aurel_Controller_Abstract
                 $this->_disableLayout();
                 $this->_disableView();
 
-                $return = array();
+                $return = [];
                 $return["sent"] = false;
                 $continue = true;
 
@@ -173,13 +170,7 @@ class IndexController extends Aurel_Controller_Abstract
                 if ($continue) {
                     if ($annonce) {
 
-                        $replace = array(
-                            "CATEGORIE_ANNONCE" => $categorie->name,
-                            "TITRE_ANNONCE" => $annonce->title,
-                            "NUM_ANNONCE" => $annonce->id_article,
-                            "MESSAGE_DEMANDEUR" => $formData["text"],
-                            "EMAIL_DEMANDEUR" => $formData["email"],
-                        );
+                        $replace = ["CATEGORIE_ANNONCE" => $categorie->name, "TITRE_ANNONCE" => $annonce->title, "NUM_ANNONCE" => $annonce->id_article, "MESSAGE_DEMANDEUR" => $formData["text"], "EMAIL_DEMANDEUR" => $formData["email"]];
 
                         $subject = "Carbon12011 Licensing, demande de contact. Votre annonce référence #NUM_ANNONCE#";
                         $html = "Catégorie annonce : #CATEGORIE_ANNONCE#\n" .
@@ -208,7 +199,7 @@ class IndexController extends Aurel_Controller_Abstract
                     }
                 }
 
-                echo json_encode($return);
+                echo json_encode($return, JSON_THROW_ON_ERROR);
             }
         }
     }
@@ -228,7 +219,7 @@ class IndexController extends Aurel_Controller_Abstract
             $this->_disableView();
             $annonce->delete();
 
-            $url = $this->view->url(array('action' => 'annonces'), 'compte', true);
+            $url = $this->view->url(['action' => 'annonces'], 'compte', true);
             if ($this->hasParam('return'))
                 $url .= "#" . $this->getParam('return');
             $this->redirect($url);
@@ -292,7 +283,7 @@ class IndexController extends Aurel_Controller_Abstract
 
               } */
 
-            $url = $this->view->url(array('action' => 'annonces'), 'compte', true);
+            $url = $this->view->url(['action' => 'annonces'], 'compte', true);
             if ($this->hasParam('return'))
                 $url .= "#" . $this->getParam('return');
             $this->redirect($url);
@@ -314,7 +305,7 @@ class IndexController extends Aurel_Controller_Abstract
         if ($menu_annonce) {
             $sous_menus = $oSousMenu->getAllByMenu($menu_annonce->id_menu);
 
-            $tab = array('0' => '--- Choisir la catégorie ---');
+            $tab = ['0' => '--- Choisir la catégorie ---'];
             foreach ($sous_menus as $sous) {
                 if ($sous->sous_menu_annonce) {
                     $tab[$sous->id_sous_menu] = $sous->name;
@@ -331,7 +322,7 @@ class IndexController extends Aurel_Controller_Abstract
         if ($id_annonce) {
             $article = $oArticle->getById($id_annonce);
             $photos = $article->getPhotos();
-            $tabPhotos = array();
+            $tabPhotos = [];
             $i = 1;
             foreach ($photos as $photo) {
                 $tabPhotos[$i] = $photo;
@@ -367,7 +358,7 @@ class IndexController extends Aurel_Controller_Abstract
             if ($formData) {
                 $sessionAnnonce->unsetAll();
                 $continu = true;
-                $errors = array();
+                $errors = [];
                 if ($formData['categorie'] == '0') {
                     $continu = false;
                     $errors['categorie'] = 'Veuillez selectionner une catégorie.';
@@ -385,10 +376,10 @@ class IndexController extends Aurel_Controller_Abstract
                     $sous_menu = $oSousMenu->getById($formData['categorie']);
                     $article->id_user_creation = $this->_getUser()->id_user;
                     $article->id_sous_menu = $formData['categorie'];
-                    $article->title = stripslashes($formData['title']);
-                    $article->basename = $oArticle->getBasename(stripslashes($formData['title']));
-                    $article->content = stripslashes($formData['content']);
-                    $article->prix = stripslashes($formData['prix']);
+                    $article->title = stripslashes((string) $formData['title']);
+                    $article->basename = $oArticle->getBasename(stripslashes((string) $formData['title']));
+                    $article->content = stripslashes((string) $formData['content']);
+                    $article->prix = stripslashes((string) $formData['prix']);
                     if (isset($formData['masque_tel']))
                         $article->masque_tel = $formData['masque_tel'];
                     else
@@ -402,7 +393,7 @@ class IndexController extends Aurel_Controller_Abstract
 
                     $id_article = $article->id_article;
 
-                    $article->basename = $oArticle->getBasename(stripslashes($formData['title'])) . "-" . $id_article;
+                    $article->basename = $oArticle->getBasename(stripslashes((string) $formData['title'])) . "-" . $id_article;
 
                     $this->_check_dir($upload_dir);
                     $upload_dir .= $id_article . "/";
@@ -415,7 +406,7 @@ class IndexController extends Aurel_Controller_Abstract
                             if (isset($tabPhotos) && isset($tabPhotos[$key]) && $file != $tabPhotos[$key]->id_photo)
                                 $tabPhotos[$key]->delete();
 
-                            $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                            $extension = strtolower(pathinfo((string) $file, PATHINFO_EXTENSION));
 
                             $new = $oPhoto->createRow();
                             $new->extension = $extension;
@@ -492,11 +483,11 @@ class IndexController extends Aurel_Controller_Abstract
                     } catch (Exception) {
                     }
 
-                    $this->redirect($this->view->url(array('basename_article' => $article->basename), 'basename_annonce', true));
+                    $this->redirect($this->view->url(['basename_article' => $article->basename], 'basename_annonce', true));
                 } else {
                     $sessionAnnonce->formData = $formData;
                     $sessionAnnonce->errors = $errors;
-                    $this->redirect($this->view->url(array('action' => 'add-annonce'), 'action', true));
+                    $this->redirect($this->view->url(['action' => 'add-annonce'], 'action', true));
                 }
             }
         }
@@ -516,7 +507,7 @@ class IndexController extends Aurel_Controller_Abstract
         $oUser = new Aurel_Table_User();
 
         $continu = true;
-        $errors = array();
+        $errors = [];
 
         if (isset($formData['categorie'])) { // Annonce
             if ($formData['categorie'] == '0') {
@@ -573,14 +564,14 @@ class IndexController extends Aurel_Controller_Abstract
         if ($continu) {
             $user = $oUser->getByEmail($email);
 
-            $return = array();
+            $return = [];
             $return['user'] = false;
             $return['email'] = $email;
             if ($user) {
                 $return['user'] = true;
             }
         }
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     public function rssAction()
@@ -591,30 +582,25 @@ class IndexController extends Aurel_Controller_Abstract
         $oArticle = new Aurel_Table_Article();
         $articles = $oArticle->getAll(null, null, true);
 
-        $entries = array();
+        $entries = [];
         foreach ($articles as $article) {
             $route = $article->annonce ? "basename_annonce" : "basename_article";
             $date = new Aurel_Date($article->date_creation);
 
-            $entry = array(
-                'title' => $article->title,
-                'link' => "http://www.lepetitcharsien.com" . $this->view->url(array('basename_article' => $article->basename), $route, true),
-                'description' => $this->view->cesure(strip_tags($article->content), 55),
-                'lastUpdate' => $date->get(Aurel_Date::TIMESTAMP)
-            );
+            $entry = ['title' => $article->title, 'link' => "http://www.lepetitcharsien.com" . $this->view->url(['basename_article' => $article->basename], $route, true), 'description' => $this->view->cesure(strip_tags((string) $article->content), 55), 'lastUpdate' => $date->get(Aurel_Date::TIMESTAMP)];
 
             array_push($entries, $entry);
         }
 
-        $rss = array(
+        $rss = [
             'title' => "Carbon12011 Licensing",
             'link' => "http://www.lepetitcharsien.com",
             'description' => "",
             //'description'   => $config->site->description,
             'charset' => "UTF-8",
             'language' => 'fr',
-            'entries' => $entries
-        );
+            'entries' => $entries,
+        ];
 
         $feed = Zend_Feed::importArray($rss, 'rss');
         $rssFeed = $feed->saveXML();
@@ -635,7 +621,7 @@ class IndexController extends Aurel_Controller_Abstract
         $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
         $this->view->headMeta()
-            ->appendProperty('og:title', strip_tags($title->toString()))
+            ->appendProperty('og:title', strip_tags((string) $title->toString()))
             ->appendProperty('og:type', 'website')
             ->appendProperty('og:image', '')
             ->appendProperty('og:url', $url)
@@ -658,29 +644,26 @@ class IndexController extends Aurel_Controller_Abstract
         $this->view->articles2 = $paginator2;
 
         $file = "access_rapide.xml";
-        $configMenu = new Zend_Config_Xml(CONFIG_PATH . "/$file", null, array(
-            'skipExtends' => true,
-            'allowModifications' => true
-        ));
+        $configMenu = new Zend_Config_Xml(CONFIG_PATH . "/$file", null, ['skipExtends' => true, 'allowModifications' => true]);
 
-        $access_rapide = array();
+        $access_rapide = [];
         foreach ($this->view->menus as $menu) {
             if ($menu->sous_menus_name) {
-                $liste_basename = explode(",", $menu->sous_menus_basename);
-                $liste_name = explode(",", $menu->sous_menus_name);
-                $liste_id = explode(",", $menu->sous_menus_id);
+                $liste_basename = explode(",", (string) $menu->sous_menus_basename);
+                $liste_name = explode(",", (string) $menu->sous_menus_name);
+                $liste_id = explode(",", (string) $menu->sous_menus_id);
 
                 foreach ($liste_basename as $key => $basename) {
                     $lblSousMenu = "sous_menu_" . $liste_id[$key];
 
                     if ($configMenu->sous_menu->$lblSousMenu) {
-                        $access_rapide[$this->view->url(array('basename_principal' => $menu->basename, 'basename_secondaire' => $liste_basename[$key]), 'basenames', true)] = mb_strtoupper($liste_name[$key]);
+                        $access_rapide[$this->view->url(['basename_principal' => $menu->basename, 'basename_secondaire' => $liste_basename[$key]], 'basenames', true)] = mb_strtoupper($liste_name[$key]);
                     }
                 }
             } else {
                 $lblMenu = "menu_" . $menu->id_menu;
                 if ($configMenu->menu->$lblMenu) {
-                    $access_rapide[$this->view->url(array('basename_principal' => $menu->basename), 'basenames', true)] = strtoupper($menu->name);
+                    $access_rapide[$this->view->url(['basename_principal' => $menu->basename], 'basenames', true)] = strtoupper((string) $menu->name);
                 }
             }
         }
@@ -708,7 +691,7 @@ class IndexController extends Aurel_Controller_Abstract
         $return['html'] = $this->view->render('index/articles-in-accueil.phtml');
         $return['pagination'] = $this->view->paginationControl($paginator, 'elastic', 'index/control.phtml');
 
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     public function accueilannoncesAction()
@@ -742,7 +725,7 @@ class IndexController extends Aurel_Controller_Abstract
         $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
         $this->view->headMeta()
-            ->appendProperty('og:title', strip_tags($title->toString()))
+            ->appendProperty('og:title', strip_tags((string) $title->toString()))
             ->appendProperty('og:type', 'article')
             ->appendProperty('og:image', '')
             ->appendProperty('og:url', $url)
@@ -772,7 +755,7 @@ class IndexController extends Aurel_Controller_Abstract
         $return['html'] = $this->view->render('index/annonces-in-accueil.phtml');
         $return['pagination'] = $this->view->paginationControl($paginator, 'elastic', 'index/control-annonces.phtml');
 
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     public function annoncesAction()
@@ -813,7 +796,7 @@ class IndexController extends Aurel_Controller_Abstract
         $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
         $this->view->headMeta()
-            ->appendProperty('og:title', strip_tags($title->toString()))
+            ->appendProperty('og:title', strip_tags((string) $title->toString()))
             ->appendProperty('og:type', 'article')
             ->appendProperty('og:image', '')
             ->appendProperty('og:url', $url)
@@ -822,7 +805,7 @@ class IndexController extends Aurel_Controller_Abstract
             ->appendProperty('og:locale', 'fr_FR')
             ->appendProperty('og:site_name', 'La joie au 21');
 
-        $newTabArticles = array();
+        $newTabArticles = [];
         $compteur = 0;
         $hasOlder = false;
         foreach ($this->_articles as $article) {
@@ -832,7 +815,7 @@ class IndexController extends Aurel_Controller_Abstract
         $this->view->articles = $newTabArticles;
         $idLastArticle = array_key_last($newTabArticles);
         reset($newTabArticles);
-        $this->view->urlLink = $this->view->url(array('id_last_article' => $idLastArticle));
+        $this->view->urlLink = $this->view->url(['id_last_article' => $idLastArticle]);
         $this->view->textLink = "Lire les articles plus anciens, publiés précédemment";
         $this->view->hasOlder = $hasOlder;
 
@@ -844,7 +827,7 @@ class IndexController extends Aurel_Controller_Abstract
             $return['ids'] = array_keys($newTabArticles);
             $return['textLink'] = $this->view->textLink;
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -907,7 +890,7 @@ class IndexController extends Aurel_Controller_Abstract
             $this->view->menu = $this->_menu;
             if (!$this->_menu->news && $this->_articles->count() == 1) {
                 $article = $this->_articles->current();
-                $this->redirect($this->view->url(array('basename_article' => $article->basename), 'basename_article'));
+                $this->redirect($this->view->url(['basename_article' => $article->basename], 'basename_article'));
             }
 
             $title = $this->view->headTitle($this->view->title, "PREPEND");
@@ -919,7 +902,7 @@ class IndexController extends Aurel_Controller_Abstract
             $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
             $this->view->headMeta()
-                ->appendProperty('og:title', strip_tags($title->toString()))
+                ->appendProperty('og:title', strip_tags((string) $title->toString()))
                 ->appendProperty('og:type', 'article')
                 ->appendProperty('og:image', '')
                 ->appendProperty('og:url', $url)
@@ -928,7 +911,7 @@ class IndexController extends Aurel_Controller_Abstract
                 ->appendProperty('og:locale', 'fr_FR')
                 ->appendProperty('og:site_name', 'La joie au 21');
 
-            $newTabArticles = array();
+            $newTabArticles = [];
             $compteur = 0;
             $hasOlder = false;
             if (!$this->hasParam('id_last_article')) {
@@ -966,7 +949,7 @@ class IndexController extends Aurel_Controller_Abstract
             $this->view->articles = $newTabArticles;
             $idLastArticle = array_key_last($newTabArticles);
             reset($newTabArticles);
-            $this->view->urlLink = $this->view->url(array('id_last_article' => $idLastArticle));
+            $this->view->urlLink = $this->view->url(['id_last_article' => $idLastArticle]);
             $this->view->textLink = "Lire les articles plus anciens, publiés précédemment";
             $this->view->hasOlder = $hasOlder;
 
@@ -978,10 +961,10 @@ class IndexController extends Aurel_Controller_Abstract
                 $return['ids'] = array_keys($newTabArticles);
                 $return['textLink'] = $this->view->textLink;
 
-                echo json_encode($return);
+                echo json_encode($return, JSON_THROW_ON_ERROR);
             }
         } else {
-            $this->redirect($this->view->url(array(), 'basenames', true));
+            $this->redirect($this->view->url([], 'basenames', true));
         }
     }
 
@@ -995,7 +978,7 @@ class IndexController extends Aurel_Controller_Abstract
 
         $passe = $oArticle->getPasse();
 
-        $newTabArticles = array();
+        $newTabArticles = [];
         $compteur = 0;
         $hasOlder = false;
         if (!$this->hasParam('id_last_article')) {
@@ -1033,7 +1016,7 @@ class IndexController extends Aurel_Controller_Abstract
         $this->view->passe = $newTabArticles;
         $idLastArticle = array_key_last($newTabArticles);
         reset($newTabArticles);
-        $this->view->urlLink = $this->view->url(array('id_last_article' => $idLastArticle));
+        $this->view->urlLink = $this->view->url(['id_last_article' => $idLastArticle]);
         $this->view->textLink = "Voir les événements plus anciens";
         $this->view->hasOlder = $hasOlder;
 
@@ -1045,7 +1028,7 @@ class IndexController extends Aurel_Controller_Abstract
             $return['ids'] = array_keys($newTabArticles);
             $return['textLink'] = $this->view->textLink;
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -1094,10 +1077,10 @@ class IndexController extends Aurel_Controller_Abstract
             $url = $http . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
             $this->view->headMeta()
-                ->appendProperty('og:title', strip_tags($title->toString()))
+                ->appendProperty('og:title', strip_tags((string) $title->toString()))
                 ->appendProperty('og:type', 'article')
                 ->appendProperty('og:url', $url)
-                ->appendProperty('og:description', substr(strip_tags($article->content), 0, 300))
+                ->appendProperty('og:description', substr(strip_tags((string) $article->content), 0, 300))
                 ->appendProperty('og:locale', 'fr_FR')
                 ->appendProperty('og:site_name', 'La joie au 21');
 
@@ -1157,12 +1140,12 @@ class IndexController extends Aurel_Controller_Abstract
                 $oInscriptionHasUser = new Aurel_Table_InscriptionHasUser();
 
                 $inscriptions = $oInscription->getByArticle($article->id_article);
-                $tabLibelle = array();
+                $tabLibelle = [];
                 foreach ($inscriptions as $inscription) {
                     $tabLibelle[$inscription->id_inscription] = $inscription->name;
                 }
                 $inscriptionshasuser = $oInscriptionHasUser->getByUserAndArticle($this->_getUser()->id_user, $article->id_article);
-                $tabQuantites = array();
+                $tabQuantites = [];
                 foreach ($inscriptionshasuser as $inscriptionhasuser) {
                     $tabQuantites[$inscriptionhasuser->id_inscription] = $inscriptionhasuser->quantite;
                 }
@@ -1233,7 +1216,7 @@ class IndexController extends Aurel_Controller_Abstract
             $oUser = new Aurel_Table_User();
             $userObject = $oUser->getByEncodedEmail($user);
             if ($userObject) {
-                $newsletter = str_replace("#emailEncoded#", $user, $newsletter->body);
+                $newsletter = str_replace("#emailEncoded#", $user, (string) $newsletter->body);
             }
         }
 
@@ -1285,27 +1268,14 @@ class IndexController extends Aurel_Controller_Abstract
             $validate = new Zend_Validate_EmailAddress();
             $validate->setMessage("%value% n'est pas une adresse email valide", Zend_Validate_EmailAddress::INVALID_FORMAT);
 
-            $filters = array(
-                '*' => array('StringTrim')
-            );
-            $validators = array(
-                'prenom' => array(),
-                'nom' => array(),
-                'adresse' => array(),
-                'objet' => array(),
-                'message' => array(),
-                'email' => array($validate),
-                'email2' => array($validate)
-            );
-            $options = array(
-                'missingMessage' => "'%field%' est obligatoire",
-                'notEmptyMessage' => "'%field%' est obligatoire"
-            );
-            $return = array();
+            $filters = ['*' => ['StringTrim']];
+            $validators = ['prenom' => [], 'nom' => [], 'adresse' => [], 'objet' => [], 'message' => [], 'email' => [$validate], 'email2' => [$validate]];
+            $options = ['missingMessage' => "'%field%' est obligatoire", 'notEmptyMessage' => "'%field%' est obligatoire"];
+            $return = [];
             $input = new Zend_Filter_Input($filters, $validators, $formData, $options);
             if ($input->hasInvalid() || $input->hasMissing()) {
                 $messageSortie = '';
-                $elementsError = array();
+                $elementsError = [];
                 foreach ($input->getMessages() as $elt => $type) {
                     $elementsError[$elt] = true;
                     foreach ($type as $sortie) {
@@ -1328,32 +1298,32 @@ class IndexController extends Aurel_Controller_Abstract
             } elseif ($formData['email'] != $formData['email2']) {
                 $return['returncode'] = 'ko';
                 $return['error'] = 'Les 2 adresses email ne sont pas identiques';
-                $return['elementsError'] = array('email', 'email2');
+                $return['elementsError'] = ['email', 'email2'];
             } else {
                 $oMail = new Aurel_Table_Mail();
 
                 $new = $oMail->createRow();
-                $new->prenom = stripslashes($formData['prenom']);
-                $new->nom = stripslashes($formData['nom']);
-                $new->adresse = stripslashes($formData['adresse']);
-                $new->email = stripslashes($formData['email']);
-                $new->objet = stripslashes($formData['objet']);
-                $new->message = stripslashes($formData['message']);
+                $new->prenom = stripslashes((string) $formData['prenom']);
+                $new->nom = stripslashes((string) $formData['nom']);
+                $new->adresse = stripslashes((string) $formData['adresse']);
+                $new->email = stripslashes((string) $formData['email']);
+                $new->objet = stripslashes((string) $formData['objet']);
+                $new->message = stripslashes((string) $formData['message']);
                 $new->status = Aurel_Table_Mail::STATUS_INIT;
                 $new->date_creation = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
                 $new->comHash = md5(uniqid());
 
                 $new->save();
 
-                $link = "http://" . $_SERVER['HTTP_HOST'] . $this->view->url(array('action' => 'confirm-mail', 'controller' => 'index'), 'action', true) . "?c=" . $new->comHash;
+                $link = "http://" . $_SERVER['HTTP_HOST'] . $this->view->url(['action' => 'confirm-mail', 'controller' => 'index'], 'action', true) . "?c=" . $new->comHash;
 
                 $body = "Vous avez utilisé le formulaire de contact sur le site Chars Horizon 2020 :\n\n";
-                $body .= "<strong>Prenom :</strong>\n" . stripslashes($formData['prenom']) . "\n";
-                $body .= "<strong>Nom :</strong>\n" . stripslashes($formData['nom']) . "\n";
-                $body .= "<strong>Adresse :</strong>\n" . stripslashes($formData['adresse']) . "\n";
-                $body .= "<strong>Email :</strong>\n" . stripslashes($formData['email']) . "\n";
-                $body .= "<strong>Objet :</strong>\n" . stripslashes($formData['objet']) . "\n";
-                $body .= "<strong>Message :</strong>\n" . stripslashes($formData['message']) . "\n\n";
+                $body .= "<strong>Prenom :</strong>\n" . stripslashes((string) $formData['prenom']) . "\n";
+                $body .= "<strong>Nom :</strong>\n" . stripslashes((string) $formData['nom']) . "\n";
+                $body .= "<strong>Adresse :</strong>\n" . stripslashes((string) $formData['adresse']) . "\n";
+                $body .= "<strong>Email :</strong>\n" . stripslashes((string) $formData['email']) . "\n";
+                $body .= "<strong>Objet :</strong>\n" . stripslashes((string) $formData['objet']) . "\n";
+                $body .= "<strong>Message :</strong>\n" . stripslashes((string) $formData['message']) . "\n\n";
                 $body .= "Veuillez confirmer l'envoi de ce message en cliquant sur ce lien :\n";
                 $body .= "<a href='$link'>$link</a>:\n";
 
@@ -1380,7 +1350,7 @@ class IndexController extends Aurel_Controller_Abstract
 
                 $return['link'] = $link;
             }
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
             //$this->redirect($this->view->url(array(),'contact',true));
         }
     }
@@ -1468,12 +1438,12 @@ class IndexController extends Aurel_Controller_Abstract
         $upload_dir .= "tmp/";
         $this->_check_dir($upload_dir);
 
-        $return = array();
+        $return = [];
         $return['returncode'] = 'ko';
 
         if ($_FILES['images']['error'] == 0) {
             $pic = $_FILES['images'];
-            $extension = strtolower(pathinfo($pic['name'], PATHINFO_EXTENSION));
+            $extension = strtolower(pathinfo((string) $pic['name'], PATHINFO_EXTENSION));
 
             $name = uniqid() . '.' . $extension;
             $upload_path = $upload_dir . $name;
@@ -1507,7 +1477,7 @@ class IndexController extends Aurel_Controller_Abstract
                 $return['src'] = "/images/upload/tmp/smallthumb" . $name;
             }
         }
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     public function cancelInscriptionAction()
@@ -1530,9 +1500,9 @@ class IndexController extends Aurel_Controller_Abstract
             }
         }
         if ($this->hasParam('url_retour'))
-            $url_retour = urldecode($this->getParam('url_retour'));
+            $url_retour = urldecode((string) $this->getParam('url_retour'));
         else
-            $url_retour = $this->view->url(array('basename_article' => $article->basename), 'basename_article', true);
+            $url_retour = $this->view->url(['basename_article' => $article->basename], 'basename_article', true);
 
         $this->redirect($url_retour);
     }
@@ -1560,11 +1530,11 @@ class IndexController extends Aurel_Controller_Abstract
         $article = $oArticle->getById($id_article);
         $inscriptions = $oInscription->getByArticle($id_article);
 
-        $tabQuantites = array();
-        $tabLibelles = array();
+        $tabQuantites = [];
+        $tabLibelles = [];
         if ($article->inscription_nominative) {
-            $tabFirstname = array();
-            $tabLastname = array();
+            $tabFirstname = [];
+            $tabLastname = [];
         }
         foreach ($inscriptions as $inscription) {
             $tabQuantites[$inscription->id_inscription] = 0;
@@ -1577,8 +1547,8 @@ class IndexController extends Aurel_Controller_Abstract
                 $tabQuantites[$inscriptionhasuser->id_inscription] = $inscriptionhasuser->quantite;
                 $comment = $inscriptionhasuser->comment;
                 if ($article->inscription_nominative) {
-                    $tabFirstname[$inscriptionhasuser->id_inscription] = explode("#", $inscriptionhasuser->firstnames);
-                    $tabLastname[$inscriptionhasuser->id_inscription] = explode("#", $inscriptionhasuser->lastnames);
+                    $tabFirstname[$inscriptionhasuser->id_inscription] = explode("#", (string) $inscriptionhasuser->firstnames);
+                    $tabLastname[$inscriptionhasuser->id_inscription] = explode("#", (string) $inscriptionhasuser->lastnames);
                 }
             }
         }
@@ -1595,7 +1565,7 @@ class IndexController extends Aurel_Controller_Abstract
         }
 
         $max = $solde ?? 10;
-        $tabChiffre = array();
+        $tabChiffre = [];
         for ($i = 0; $i <= $max; $i++) {
             $tabChiffre[$i] = $i;
         }
@@ -1617,7 +1587,7 @@ class IndexController extends Aurel_Controller_Abstract
             $this->_disableLayout();
             $this->_disableView();
 
-            $return = array();
+            $return = [];
             $continu = true;
             $sum = array_sum($formData['quantite']);
             if ($sum == 0) {
@@ -1711,23 +1681,23 @@ class IndexController extends Aurel_Controller_Abstract
                 $sessionAnnonce->setExpirationHops(1);
 
                 if ($this->hasParam('url_retour'))
-                    $url_retour = urldecode($this->getParam('url_retour'));
+                    $url_retour = urldecode((string) $this->getParam('url_retour'));
                 else
-                    $url_retour = $this->view->url(array('basename_article' => $article->basename), 'basename_article', true);
+                    $url_retour = $this->view->url(['basename_article' => $article->basename], 'basename_article', true);
 
                 $return['url_redirect'] = $url_retour;
                 if (!$this->_isAjax())
                     $this->redirect($url_retour);
             }
 
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
     public function syntheseInscriptionAction()
     {
         if ($this->hasParam('admin')) {
-            $url_encode = urlencode($_SERVER["REQUEST_URI"]);
+            $url_encode = urlencode((string) $_SERVER["REQUEST_URI"]);
             $url_redirect = "/admin/index/login/url_redirect/$url_encode?pageForbidden=1";
 
             $this->redirect($url_redirect);
@@ -1746,18 +1716,18 @@ class IndexController extends Aurel_Controller_Abstract
         $inscriptionshasuser = $oInscriptionHasUser->getByArticle($id_article);
 
         if ($this->hasParam('url_retour')) {
-            $this->view->url_retour = urldecode($this->getParam('url_retour'));
+            $this->view->url_retour = urldecode((string) $this->getParam('url_retour'));
         } else
-            $this->view->url_retour = $this->view->url(array('basename_article' => $article->basename), 'basename_article', true);
+            $this->view->url_retour = $this->view->url(['basename_article' => $article->basename], 'basename_article', true);
 
-        $tabCategories = array();
-        $tabSumCategories = array();
+        $tabCategories = [];
+        $tabSumCategories = [];
         foreach ($inscriptions as $inscription) {
             $tabCategories[$inscription->id_inscription] = $inscription->name;
             $tabSumCategories[$inscription->id_inscription] = 0;
         }
 
-        $tabInscription = array();
+        $tabInscription = [];
         $sumTotal = 0;
         foreach ($inscriptionshasuser as $inscription) {
             $sumTotal += $inscription->quantite;
@@ -1775,7 +1745,7 @@ class IndexController extends Aurel_Controller_Abstract
         $id_article = $this->getParam('id_article');
         $id_inscription = $this->getParam('id_inscription');
         $return = $this->getParam('return');
-        $this->view->return = $return && $return == '1' ? $this->view->url(array('action' => 'synthese-inscription', 'id_inscription' => null, 'return' => null)) : null;
+        $this->view->return = $return && $return == '1' ? $this->view->url(['action' => 'synthese-inscription', 'id_inscription' => null, 'return' => null]) : null;
 
         $oArticle = new Aurel_Table_Article();
         $oInscription = new Aurel_Table_Inscription();
@@ -1787,16 +1757,16 @@ class IndexController extends Aurel_Controller_Abstract
         $inscriptionshasuser = $oInscriptionHasUser->getByArticleAndInscription($id_article, $id_inscription, true);
 
         $sum = 0;
-        $lastnames = array();
-        $firstnames = array();
-        $emetteurs = array();
-        $tabFinal = array();
+        $lastnames = [];
+        $firstnames = [];
+        $emetteurs = [];
+        $tabFinal = [];
         foreach ($inscriptionshasuser as $inscriptionhasuser) {
             $sum += $inscriptionhasuser->quantite;
 
             if ($article->inscription_nominative) {
-                $tabFirstname = explode("#", $inscriptionhasuser->firstnames);
-                $tabLastname = explode("#", $inscriptionhasuser->lastnames);
+                $tabFirstname = explode("#", (string) $inscriptionhasuser->firstnames);
+                $tabLastname = explode("#", (string) $inscriptionhasuser->lastnames);
 
                 foreach ($tabFirstname as $firstname) {
                     $firstnames[] = $firstname;
@@ -1864,27 +1834,27 @@ class IndexController extends Aurel_Controller_Abstract
 
     function beforeSave(Aurel_Table_Row_Article $article)
     {
-        $content = strtolower(html_entity_decode(strip_tags($article->content)));
+        $content = strtolower(html_entity_decode(strip_tags((string) $article->content)));
         $words = preg_split(
             '/((^\p{P}+)|(\p{P}*\s+\p{P}*)|(\p{P}+$))/',
             $content,
             -1,
             PREG_SPLIT_NO_EMPTY
         );
-        $soundexWords = array();
+        $soundexWords = [];
         foreach ($words as $word) {
             $soundexWords[] = Aurel_Phonetique::convert($word);
         }
         $article->content_soundex = implode(' ', $soundexWords);
 
-        $title = strtolower(html_entity_decode(strip_tags($article->title)));
+        $title = strtolower(html_entity_decode(strip_tags((string) $article->title)));
         $words = preg_split(
             '/((^\p{P}+)|(\p{P}*\s+\p{P}*)|(\p{P}+$))/',
             $title,
             -1,
             PREG_SPLIT_NO_EMPTY
         );
-        $soundexWords = array();
+        $soundexWords = [];
         foreach ($words as $word) {
             $soundexWords[] = Aurel_Phonetique::convert($word);
         }
@@ -1930,7 +1900,7 @@ class IndexController extends Aurel_Controller_Abstract
 
         $oAccessCode = new Aurel_Table_AccessCode();
 
-        $url_redirect = urldecode($this->getParam('url_redirect'));
+        $url_redirect = urldecode((string) $this->getParam('url_redirect'));
 
         $formData = $this->getRequest()->getPost();
         if ($formData) {
@@ -1974,7 +1944,7 @@ class IndexController extends Aurel_Controller_Abstract
             }
         }
 
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
 

@@ -30,12 +30,14 @@ abstract class Aurel_Table_Abstract extends Zend_Db_Table_Abstract
      */
 	protected function _getByIdCached($id)
     {
+        $cache = null;
+        $cacheId = null;
         return $this->get($id);
     	$cache = $this->_getCache();
         $cacheId = $this->_name . '_row_' . $id;
         if(!$ret = $cache->load($cacheId)) {
             $ret = $this->get($id);
-            $cache->save($ret, $cacheId,array(),3600);
+            $cache->save($ret, $cacheId,[],3600);
         } else {
             // pour reconecter a la base de donn�e
             $ret->setTable($this);

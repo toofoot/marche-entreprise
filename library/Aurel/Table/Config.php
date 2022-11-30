@@ -86,7 +86,7 @@ class Config
      * Undocumented variable
      *
      */
-    private array $data = array();
+    private array $data = [];
 
     /**
      * Undocumented function

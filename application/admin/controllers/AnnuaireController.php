@@ -41,7 +41,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 				$this->_disableLayout();
 				$this->_disableView();
 	
-				$return = array();
+				$return = [];
 				$return["sent"] = false;
 				$continue = true;
 	
@@ -64,8 +64,8 @@ class Admin_AnnuaireController extends Admin_AbstractController
 	
 				if($continue){
 					if($annuaire_fiche){
-						$subject = "LE PETIT CHARSIEN, nouvel email de " . stripslashes($formData["email"]);
-						$html = stripslashes($formData["text"]);
+						$subject = "LE PETIT CHARSIEN, nouvel email de " . stripslashes((string) $formData["email"]);
+						$html = stripslashes((string) $formData["text"]);
 	
 						$mail = new Aurel_Mailer('utf-8');
 	
@@ -83,7 +83,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 					}
 				}
 	
-				echo json_encode($return);
+				echo json_encode($return, JSON_THROW_ON_ERROR);
 			}
 		}
 	}
@@ -97,7 +97,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 			$annuaire_categorie->delete();
 		}
 		
-		$this->redirect($this->view->url(array('action'=>'categories','controller'=>'annuaire'),'admin',true));
+		$this->redirect($this->view->url(['action'=>'categories', 'controller'=>'annuaire'],'admin',true));
 	}
 	
 	public function deleteFicheAction(){
@@ -119,10 +119,10 @@ class Admin_AnnuaireController extends Admin_AbstractController
 			}
 		}
 		if($this->hasParam('url_retour')){
-			$url_retour = urldecode($this->getParam('url_retour'));
+			$url_retour = urldecode((string) $this->getParam('url_retour'));
 			$this->redirect($url_retour);
 		} else 
-			$this->redirect($this->view->url(array('action'=>'index','controller'=>'annuaire'),'admin',true));
+			$this->redirect($this->view->url(['action'=>'index', 'controller'=>'annuaire'],'admin',true));
 	}
 	
 	public function restoreFicheAction(){
@@ -137,7 +137,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 			$annuaire_fiche->status = Aurel_Table_AnnuaireFiche::STATUS_ACTIF;
 			$annuaire_fiche->save();
 		}
-		$this->redirect($this->view->url(array('action'=>'index','controller'=>'annuaire'),'admin',true));
+		$this->redirect($this->view->url(['action'=>'index', 'controller'=>'annuaire'],'admin',true));
 	}
 	
 	public function deleteSousCategorieAction(){
@@ -151,7 +151,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 			$annuaire_sous_categorie->delete();
 		}
 		
-		$this->redirect($this->view->url(array('action'=>'categories','controller'=>'annuaire','id_annuaire_categorie'=>$id_annuaire_categorie),'admin',true));
+		$this->redirect($this->view->url(['action'=>'categories', 'controller'=>'annuaire', 'id_annuaire_categorie'=>$id_annuaire_categorie],'admin',true));
 	}
 	
 	public function indexAction(){
@@ -177,11 +177,11 @@ class Admin_AnnuaireController extends Admin_AbstractController
 			$this->view->tous = true;
 		}
 		
-		$arrayCategorie = array();
+		$arrayCategorie = [];
 		foreach($categories as $categorie){
 			$arrayCategorie[$categorie->id_annuaire_categorie]['categorie'] = $categorie;
-			$liste_basename_sous_categories = explode(",",$categorie->sous_categorie_basename);
-			$liste_sous_categories = explode(",",$categorie->sous_categorie_name);
+			$liste_basename_sous_categories = explode(",",(string) $categorie->sous_categorie_basename);
+			$liste_sous_categories = explode(",",(string) $categorie->sous_categorie_name);
 			foreach($liste_sous_categories as $key => $sous_categorie){
 				$arrayCategorie[$categorie->id_annuaire_categorie]['sous_categories'][$liste_basename_sous_categories[$key]] = $sous_categorie;
 			}
@@ -222,7 +222,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
                 $annuaire_fiche->date_validation = null;
                 $annuaire_fiche->save();
 
-                $url_retour = urldecode($this->getParam('url_retour'));
+                $url_retour = urldecode((string) $this->getParam('url_retour'));
                 $this->redirect($url_retour);
             }
         }
@@ -235,26 +235,22 @@ class Admin_AnnuaireController extends Admin_AbstractController
 		
 		$categories = $oAnnuaireCategorie->getAll();
 		
-		$arrayCategorie = array("-1"=>"Choisir la catégorie");
+		$arrayCategorie = ["-1"=>"Choisir la catégorie"];
 		foreach($categories as $categorie){
-			$liste_id_sous_categories = explode(",",$categorie->sous_categorie_id);
-			$liste_sous_categories = explode(",",$categorie->sous_categorie_name);
+			$liste_id_sous_categories = explode(",",(string) $categorie->sous_categorie_id);
+			$liste_sous_categories = explode(",",(string) $categorie->sous_categorie_name);
 			foreach($liste_sous_categories as $key => $sous_categorie){
 				$arrayCategorie[$categorie->name][$liste_id_sous_categories[$key]] = $sous_categorie;
 			}
 		}
 		$this->view->selectCategorie = $arrayCategorie;
 		
-		$this->view->url_retour = $this->view->url(array('controller'=>'annuaire'),'admin',true);
+		$this->view->url_retour = $this->view->url(['controller'=>'annuaire'],'admin',true);
 		if($this->hasParam('url_retour')){
-			$this->view->url_retour = urldecode($this->getParam('url_retour'));
+			$this->view->url_retour = urldecode((string) $this->getParam('url_retour'));
 		}
 		
-		$arrayStatus = array(
-			Aurel_Table_AnnuaireFiche::STATUS_INACTIF => "Hors ligne",
-			Aurel_Table_AnnuaireFiche::STATUS_ACTIF => "En ligne",
-			Aurel_Table_AnnuaireFiche::STATUS_WAITING => "En attente"
-		);
+		$arrayStatus = [Aurel_Table_AnnuaireFiche::STATUS_INACTIF => "Hors ligne", Aurel_Table_AnnuaireFiche::STATUS_ACTIF => "En ligne", Aurel_Table_AnnuaireFiche::STATUS_WAITING => "En attente"];
 		$this->view->selectStatus = $arrayStatus;
 		
 		$id_annuaire_fiche = $this->getParam("id_annuaire_fiche","999999999999");
@@ -262,7 +258,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 		
 		if($annuaire_fiche){
 			$photos = $annuaire_fiche->getPhotos();
-			$tabPhotos = array();
+			$tabPhotos = [];
 			$i = 1;
 			foreach($photos as $photo){
 				$tabPhotos[$i] = $photo;
@@ -270,7 +266,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 			}
 			$this->view->tabPhotos = $tabPhotos;
 		} else {
-			$tabPhotos = array();
+			$tabPhotos = [];
 			
     		$annuaire_fiche = $oAnnuaireFiche->createRow();
     		$annuaire_fiche->id_user_creation = $this->_getUser()->id_user;
@@ -290,7 +286,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
     	if($this->_request->isPost()){
     		$this->_disableLayout();
     		$this->_disableView();
-    		$return = array();
+    		$return = [];
     		$continue = true;
     		if($formData["id_annuaire_sous_categorie"] == "-1"){
     			$continue = false;
@@ -312,45 +308,45 @@ class Admin_AnnuaireController extends Admin_AbstractController
     		
     		$return['code'] = 'ko';
     		if($continue){
-    			$annuaire_fiche->nom_etablissement = stripslashes($formData["nom_etablissement"]);
+    			$annuaire_fiche->nom_etablissement = stripslashes((string) $formData["nom_etablissement"]);
     			if(!empty($formData["contact_nom"]))
-    			    $annuaire_fiche->contact_nom = stripslashes($formData["contact_nom"]);
+    			    $annuaire_fiche->contact_nom = stripslashes((string) $formData["contact_nom"]);
                 else
                     $annuaire_fiche->contact_nom = null;
     			if(!empty($formData["contact_prenom"]))
-    			    $annuaire_fiche->contact_prenom = stripslashes($formData["contact_prenom"]);
+    			    $annuaire_fiche->contact_prenom = stripslashes((string) $formData["contact_prenom"]);
                 else
                     $annuaire_fiche->contact_prenom = null;
     			if(!empty($formData["adresse_1"]))
-    			    $annuaire_fiche->adresse_1 = stripslashes($formData["adresse_1"]);
+    			    $annuaire_fiche->adresse_1 = stripslashes((string) $formData["adresse_1"]);
                 else
                     $annuaire_fiche->adresse_1 = null;
     			if(!empty($formData["adresse_2"]))
-    			    $annuaire_fiche->adresse_2 = stripslashes($formData["adresse_2"]);
+    			    $annuaire_fiche->adresse_2 = stripslashes((string) $formData["adresse_2"]);
                 else
                     $annuaire_fiche->adresse_2 = null;
     			if(!empty($formData["code_postal"]))
-    			    $annuaire_fiche->code_postal = stripslashes($formData["code_postal"]);
+    			    $annuaire_fiche->code_postal = stripslashes((string) $formData["code_postal"]);
                 else
                     $annuaire_fiche->code_postal = null;
     			if(!empty($formData["ville"]))
-    			    $annuaire_fiche->ville = stripslashes($formData["ville"]);
+    			    $annuaire_fiche->ville = stripslashes((string) $formData["ville"]);
                 else
                     $annuaire_fiche->ville = null;
     			if(!empty($formData["tel_1"]))
-    			    $annuaire_fiche->tel_1 = stripslashes($formData["tel_1"]);
+    			    $annuaire_fiche->tel_1 = stripslashes((string) $formData["tel_1"]);
                 else
                     $annuaire_fiche->tel_1 = null;
     			if(!empty($formData["tel_2"]))
-    			    $annuaire_fiche->tel_2 = stripslashes($formData["tel_2"]);
+    			    $annuaire_fiche->tel_2 = stripslashes((string) $formData["tel_2"]);
                 else
                     $annuaire_fiche->tel_2 = null;
     			if(!empty($formData["mail"]))
-    			    $annuaire_fiche->mail = stripslashes($formData["mail"]);
+    			    $annuaire_fiche->mail = stripslashes((string) $formData["mail"]);
                 else
                     $annuaire_fiche->mail = null;
     			if(!empty($formData["website"])){
-    				$website = stripslashes($formData["website"]);
+    				$website = stripslashes((string) $formData["website"]);
     				if(!str_contains($website, "http"))
     					$website = "http://" . $website;
     				$annuaire_fiche->website = $website;
@@ -358,18 +354,18 @@ class Admin_AnnuaireController extends Admin_AbstractController
                 else
                     $annuaire_fiche->website = null;
     			if(!empty($formData["horaires"]))
-    			    $annuaire_fiche->horaires = stripslashes($formData["horaires"]);
+    			    $annuaire_fiche->horaires = stripslashes((string) $formData["horaires"]);
                 else
                     $annuaire_fiche->horaires = null;
     			if(!empty($formData["descriptif"]))
-    			    $annuaire_fiche->descriptif = stripslashes($formData["descriptif"]);
+    			    $annuaire_fiche->descriptif = stripslashes((string) $formData["descriptif"]);
                 else
                     $annuaire_fiche->descriptif = null;
     			if(!empty($formData["status"]))
-    			    $annuaire_fiche->status = stripslashes($formData["status"]);
+    			    $annuaire_fiche->status = stripslashes((string) $formData["status"]);
                 else
                     $annuaire_fiche->status = null;
-    			$annuaire_fiche->id_annuaire_sous_categorie = stripslashes($formData["id_annuaire_sous_categorie"]);
+    			$annuaire_fiche->id_annuaire_sous_categorie = stripslashes((string) $formData["id_annuaire_sous_categorie"]);
     			 
     			$annuaire_fiche->id_user_modification = $this->_getUser()->id_user;
     			$annuaire_fiche->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
@@ -389,7 +385,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
     					if(isset($tabPhotos) && isset($tabPhotos[$key]) && $file != $tabPhotos[$key]->id_photo)
     						$tabPhotos[$key]->delete();
     			
-    					$extension = strtolower(pathinfo($file,PATHINFO_EXTENSION));
+    					$extension = strtolower(pathinfo((string) $file,PATHINFO_EXTENSION));
     						
     					$new = $oPhoto->createRow();
     					$new->extension = $extension;
@@ -431,10 +427,10 @@ class Admin_AnnuaireController extends Admin_AbstractController
     			$oAnnuaireSousCategorie = new Aurel_Table_AnnuaireSousCategorie();
     			$annuaire_sous_categorie = $oAnnuaireSousCategorie->getById($annuaire_fiche->id_annuaire_sous_categorie);
     			
-    			$return['url_redirect'] = $this->view->url(array('action'=>'index','controller'=>'annuaire','basename'=>$annuaire_sous_categorie->basename),'admin',true);
+    			$return['url_redirect'] = $this->view->url(['action'=>'index', 'controller'=>'annuaire', 'basename'=>$annuaire_sous_categorie->basename],'admin',true);
     		}
     		 
-    		echo json_encode($return);
+    		echo json_encode($return, JSON_THROW_ON_ERROR);
     	}
 	}
 	
@@ -459,8 +455,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
     	
     	$file = new Zend_Config_Xml(CONFIG_PATH . "/strings.xml",
     			null,
-    			array('skipExtends'        => true,
-    					'allowModifications' => true));
+    			['skipExtends'        => true, 'allowModifications' => true]);
     	
     	if($file->start_date_access){
     		$start_date_access = new Aurel_Date($file->start_date_access);
@@ -479,7 +474,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
     		$file->password = null;
     		$file->start_date_access = null;
     		$file->end_date_access = null;
-            $file->password = stripslashes($formData["password"]);
+            $file->password = stripslashes((string) $formData["password"]);
     		if($file->active_access){
 	    		if($formData["start_date_access"]){
 	    			$start_date_access = new Aurel_Date($formData["start_date_access"]);
@@ -493,7 +488,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
     		
     		include('SimpleImage.php');
     		if(is_uploaded_file($_FILES["imgDefaultFiche"]["tmp_name"])){
-    			$extension = pathinfo($_FILES["imgDefaultFiche"]["name"],PATHINFO_EXTENSION);
+    			$extension = pathinfo((string) $_FILES["imgDefaultFiche"]["name"],PATHINFO_EXTENSION);
     			$pathFileTmp = BASE_PATH . "/www/images/TMPno-photo-fiche." . $extension;
     			$pathFileArticle = BASE_PATH . "/www/images/no-photo-fiche.jpg";
     			if(move_uploaded_file($_FILES["imgDefaultFiche"]["tmp_name"], $pathFileTmp)){
@@ -507,8 +502,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
     		}
     		 
     		// Write the config file
-    		$writer = new Zend_Config_Writer_Xml(array('config'   => $file,
-    				'filename' => CONFIG_PATH . "/strings.xml"));
+    		$writer = new Zend_Config_Writer_Xml(['config'   => $file, 'filename' => CONFIG_PATH . "/strings.xml"]);
     		$writer->write();
     		
     		$session->message = "Données enregistrées";
@@ -536,17 +530,17 @@ class Admin_AnnuaireController extends Admin_AbstractController
 		if($this->_request->isPost()){
 			$this->_disableLayout();
 			$this->_disableView();
-			$return = array();
+			$return = [];
 			
-			$annuaire_categorie->name = stripslashes($formData["name"]);
-			$annuaire_categorie->basename = $oAnnuaireCategorie->getBasename(stripslashes($formData["name"]));
+			$annuaire_categorie->name = stripslashes((string) $formData["name"]);
+			$annuaire_categorie->basename = $oAnnuaireCategorie->getBasename(stripslashes((string) $formData["name"]));
 			if(isset($formData["color_code"]))
-				$annuaire_categorie->color_code = stripslashes($formData["color_code"]);
+				$annuaire_categorie->color_code = stripslashes((string) $formData["color_code"]);
 			$annuaire_categorie->id_user_modification = $this->_getUser()->id_user;
 			$annuaire_categorie->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
 			$annuaire_categorie->save();
 			
-			$this->redirect($this->view->url(array('action'=>'categories')));
+			$this->redirect($this->view->url(['action'=>'categories']));
 		}
 	}
 	
@@ -572,16 +566,16 @@ class Admin_AnnuaireController extends Admin_AbstractController
 		if($this->_request->isPost()){
 			$this->_disableLayout();
 			$this->_disableView();
-			$return = array();
+			$return = [];
 				
 			$annuaire_sous_categorie->id_annuaire_categorie = $id_annuaire_categorie;
-			$annuaire_sous_categorie->name = stripslashes($formData["name"]);
-			$annuaire_sous_categorie->basename = $oAnnuaireCategorie->getBasename(stripslashes($formData["name"]));
+			$annuaire_sous_categorie->name = stripslashes((string) $formData["name"]);
+			$annuaire_sous_categorie->basename = $oAnnuaireCategorie->getBasename(stripslashes((string) $formData["name"]));
 			$annuaire_sous_categorie->id_user_modification = $this->_getUser()->id_user;
 			$annuaire_sous_categorie->date_modification = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
 			$annuaire_sous_categorie->save();
 				
-			$this->redirect($this->view->url(array('action'=>'categories','id_annuaire_categorie'=>$id_annuaire_categorie)));
+			$this->redirect($this->view->url(['action'=>'categories', 'id_annuaire_categorie'=>$id_annuaire_categorie]));
 		}
 	}
 	
@@ -603,7 +597,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 		 
 		$order = $this->getParam('order');
 		 
-		$tabOrdre = explode(',',$order);
+		$tabOrdre = explode(',',(string) $order);
 		 
 		if (is_array($tabOrdre))
 		{
@@ -625,7 +619,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 		 
 		$order = $this->getParam('order');
 		 
-		$tabOrdre = explode(',',$order);
+		$tabOrdre = explode(',',(string) $order);
 		 
 		if (is_array($tabOrdre))
 		{
@@ -649,12 +643,12 @@ class Admin_AnnuaireController extends Admin_AbstractController
 		$upload_dir .= "tmp/";
 		$this->_check_dir($upload_dir);
 		 
-		$return = array();
+		$return = [];
 		$return['returncode'] = 'ko';
 		 
 		if($_FILES['images']['error'] == 0 ){
 			$pic = $_FILES['images'];
-			$extension = strtolower(pathinfo($pic['name'],PATHINFO_EXTENSION));
+			$extension = strtolower(pathinfo((string) $pic['name'],PATHINFO_EXTENSION));
 	
 			$name = uniqid().'.'.$extension;
 			$upload_path = $upload_dir . $name;
@@ -688,7 +682,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
 				$return['src'] = "/images/upload/tmp/smallthumb" . $name;
 			}
 		}
-		echo json_encode($return);
+		echo json_encode($return, JSON_THROW_ON_ERROR);
 	}
 	
 	public function toggleFicheAction(){
@@ -716,7 +710,7 @@ class Admin_AnnuaireController extends Admin_AbstractController
             $return['sommes'] = $sommes;
 		}
 		
-		echo json_encode($return);
+		echo json_encode($return, JSON_THROW_ON_ERROR);
 	}
 
     public function downloadsAction(){

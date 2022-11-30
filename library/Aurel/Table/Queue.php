@@ -12,9 +12,9 @@ class Aurel_Table_Queue extends Aurel_Table_Abstract
     protected $_name = 'queue';
     protected $_rowClass = 'Aurel_Table_Row_Queue';
 
-    public const STATUS_INIT = 0;
-    public const STATUS_READYTOSEND = 1;
-    public const STATUS_SENT = 2;
+    final public const STATUS_INIT = 0;
+    final public const STATUS_READYTOSEND = 1;
+    final public const STATUS_SENT = 2;
 
     public function getAll()
     {

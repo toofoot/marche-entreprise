@@ -16,8 +16,8 @@ class Admin_SondageController extends Admin_AbstractController
 
         $dateToday = Aurel_Date::now();
         $dateToday->setTime("00:00:00");
-        $tabSortie = array();
-        $tabSortieHistorique = array();
+        $tabSortie = [];
+        $tabSortieHistorique = [];
         foreach($sondages as $sondage){
             $end_date = $sondage->getDate('end_date');
 
@@ -67,9 +67,9 @@ class Admin_SondageController extends Admin_AbstractController
                 $sondage->save();
 
             if(!$id_sondage){
-                $this->_redirect($this->view->url(array('id_sondage'=>$sondage->id_sondage)));
+                $this->_redirect($this->view->url(['id_sondage'=>$sondage->id_sondage]));
             } else {
-                $this->_redirect($this->view->url(array('id_sondage'=>null,'action'=>'index')));
+                $this->_redirect($this->view->url(['id_sondage'=>null, 'action'=>'index']));
             }
         }
 
@@ -88,13 +88,7 @@ class Admin_SondageController extends Admin_AbstractController
         $id_sondage_question = $this->getParam('id_sondage_question');
         $id_sondage = $this->getParam('id_sondage');
 
-        $select = array(
-            "-1" => "-- Choisir le type de la question --",
-            Aurel_Table_SondageQuestion::TYPE_CHECKBOX => "Choix multiples (Cases à cocher)",
-            Aurel_Table_SondageQuestion::TYPE_RADIO => "Choix unique parmi plusieurs propositions (Case d'option)",
-            Aurel_Table_SondageQuestion::TYPE_SELECT => "Choix unique parmi plusieurs propositions (Menu déroulant)",
-            Aurel_Table_SondageQuestion::TYPE_TEXT => "Réponse libre",
-        );
+        $select = ["-1" => "-- Choisir le type de la question --", Aurel_Table_SondageQuestion::TYPE_CHECKBOX => "Choix multiples (Cases à cocher)", Aurel_Table_SondageQuestion::TYPE_RADIO => "Choix unique parmi plusieurs propositions (Case d'option)", Aurel_Table_SondageQuestion::TYPE_SELECT => "Choix unique parmi plusieurs propositions (Menu déroulant)", Aurel_Table_SondageQuestion::TYPE_TEXT => "Réponse libre"];
 
         if ($id_sondage_question) {
             $sondage_question = $oSondageQuestion->getById($id_sondage_question);
@@ -104,7 +98,7 @@ class Admin_SondageController extends Admin_AbstractController
             $sondage_question->date_creation = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
             $sondage_question->id_sondage = $id_sondage;
         }
-        $tabOptions = array();
+        $tabOptions = [];
         $optionsLibre = null;
         if ($sondage_question->id_sondage_question && $sondage_question->type != Aurel_Table_SondageQuestion::TYPE_TEXT) {
             $options = $sondage_question->getOptions();
@@ -126,7 +120,7 @@ class Admin_SondageController extends Admin_AbstractController
             $this->_disableView();
 
             $continue = true;
-            $return = array();
+            $return = [];
             if($formData["type"] == "-1"){
                 $continue = false;
                 $return["errors"][] = "#type";
@@ -192,8 +186,8 @@ class Admin_SondageController extends Admin_AbstractController
                                 $option->type = Aurel_Table_SondageOption::REPONSE_LIBRE;
                             }
                         } else {
-                            if(str_contains($key,'id_')){
-                                $id = str_replace('id_','',$key);
+                            if(str_contains((string) $key,'id_')){
+                                $id = str_replace('id_','',(string) $key);
                                 $option = $oSondageOption->getById($id);
                             } else {
                                 $option = $oSondageOption->createRow();
@@ -213,7 +207,7 @@ class Admin_SondageController extends Admin_AbstractController
                 $return['id_sondage_question'] = $sondage_question->id_sondage_question;
                 $return['question'] = $this->view->render("sondage/show-question.phtml");
             }
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -228,12 +222,12 @@ class Admin_SondageController extends Admin_AbstractController
             $this->_disableLayout();
             $this->_disableView();
 
-            $return = array();
+            $return = [];
             if($question){
                 $return['id_sondage_question'] = $question->id_sondage_question;
                 $question->delete();
             }
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -263,7 +257,7 @@ class Admin_SondageController extends Admin_AbstractController
         }
         $data .= "\n";
 
-        $tab = array();
+        $tab = [];
         foreach($synthese as $row){
             $date = new Aurel_Date($row->date,Aurel_Date::MYSQL_DATETIME);
             $tab[$row->sessid]['date'] = $date;
@@ -298,7 +292,7 @@ class Admin_SondageController extends Admin_AbstractController
         $oSondageQuestion = new Aurel_Table_SondageQuestion();
         $order = $this->getParam('order');
 
-        $tabOrdre = explode(',',$order);
+        $tabOrdre = explode(',',(string) $order);
 
         if (is_array($tabOrdre))
         {

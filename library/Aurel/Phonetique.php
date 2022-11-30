@@ -81,15 +81,9 @@ class Aurel_Phonetique
 
     public static function convert($sIn)
     {
-        $accents = array('É' => 'E', 'È' => 'E', 'Ë' => 'E', 'Ê' => 'E', 'Á' => 'A', 'À' => 'A', 'Ä' => 'A', 'Â' => 'A',
-            'Å' => 'A', 'Ã' => 'A', 'Æ' => 'E', 'Ï' => 'I', 'Î' => 'I', 'Ì' => 'I', 'Í' => 'I',
-            'Ô' => 'O', 'Ö' => 'O', 'Ò' => 'O', 'Ó' => 'O', 'Õ' => 'O', 'Ø' => 'O', 'Œ' => 'OEU',
-            'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ñ' => 'N', 'Ç' => 'S', '¿' => 'E');
+        $accents = ['É' => 'E', 'È' => 'E', 'Ë' => 'E', 'Ê' => 'E', 'Á' => 'A', 'À' => 'A', 'Ä' => 'A', 'Â' => 'A', 'Å' => 'A', 'Ã' => 'A', 'Æ' => 'E', 'Ï' => 'I', 'Î' => 'I', 'Ì' => 'I', 'Í' => 'I', 'Ô' => 'O', 'Ö' => 'O', 'Ò' => 'O', 'Ó' => 'O', 'Õ' => 'O', 'Ø' => 'O', 'Œ' => 'OEU', 'Ú' => 'U', 'Ù' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ñ' => 'N', 'Ç' => 'S', '¿' => 'E'];
 
-        $min2maj = array('é' => 'É', 'è' => 'È', 'ë' => 'Ë', 'ê' => 'Ê', 'á' => 'Á', 'â' => 'Â', 'à' => 'À', 'Ä' => 'A',
-            'Â' => 'A', 'å' => 'Å', 'ã' => 'Ã', 'æ' => 'Æ', 'ï' => 'Ï', 'î' => 'Î', 'ì' => 'Ì', 'í' => 'Í',
-            'ô' => 'Ô', 'ö' => 'Ö', 'ò' => 'Ò', 'ó' => 'Ó', 'õ' => 'Õ', 'ø' => 'Ø', 'œ' => 'Œ',
-            'ú' => 'Ú', 'ù' => 'Ù', 'û' => 'Û', 'ü' => 'Ü', 'ç' => 'Ç', 'ñ' => 'Ñ', 'ß' => 'S');
+        $min2maj = ['é' => 'É', 'è' => 'È', 'ë' => 'Ë', 'ê' => 'Ê', 'á' => 'Á', 'â' => 'Â', 'à' => 'À', 'Ä' => 'A', 'Â' => 'A', 'å' => 'Å', 'ã' => 'Ã', 'æ' => 'Æ', 'ï' => 'Ï', 'î' => 'Î', 'ì' => 'Ì', 'í' => 'Í', 'ô' => 'Ô', 'ö' => 'Ö', 'ò' => 'Ò', 'ó' => 'Ó', 'õ' => 'Õ', 'ø' => 'Ø', 'œ' => 'Œ', 'ú' => 'Ú', 'ù' => 'Ù', 'û' => 'Û', 'ü' => 'Ü', 'ç' => 'Ç', 'ñ' => 'Ñ', 'ß' => 'S'];
 
 
 //$sIn = utf8_decode($sIn);						// Selon votre implémentation, vous aurez besoin de décoder ce qui arrive pour les caractères spéciaux
@@ -152,17 +146,15 @@ class Aurel_Phonetique
         $sIn = preg_replace('`([^TRH])UIL(AR|E)(.+)`', '$1UI$2$3', $sIn);
         $sIn = preg_replace('`([G])UIL([AEO])`', '$1UI$2', $sIn);
         $sIn = preg_replace('`([NSPM])AIL([AEO])`', '$1AI$2', $sIn);
-        $convMIn = array("DILAI", "DILON", "DILER", "DILEM", "RILON", "TAILE", "GAILET", "AILAI", "AILAR",
-            "OUILA", "EILAI", "EILAR", "EILER", "EILEM", "REILET", "EILET", "AILOL");
-        $convMOut = array("DIAI", "DION", "DIER", "DIEM", "RION", "TAIE", "GAIET", "AIAI", "AIAR",
-            "OUIA", "AIAI", "AIAR", "AIER", "AIEM", "RAIET", "EIET", "AIOL");
+        $convMIn = ["DILAI", "DILON", "DILER", "DILEM", "RILON", "TAILE", "GAILET", "AILAI", "AILAR", "OUILA", "EILAI", "EILAR", "EILER", "EILEM", "REILET", "EILET", "AILOL"];
+        $convMOut = ["DIAI", "DION", "DIER", "DIEM", "RION", "TAIE", "GAIET", "AIAI", "AIAR", "OUIA", "AIAI", "AIAR", "AIER", "AIEM", "RAIET", "EIET", "AIOL"];
         $sIn = str_replace($convMIn, $convMOut, $sIn);
         $sIn = preg_replace('`([^AEIOUY])(SC|S)IEM([EA])`', '$1$2IAM$3', $sIn);    // IEM -> IAM
         $sIn = preg_replace('`^(SC|S)IEM([EA])`', '$1IAM$2', $sIn);                // IEM -> IAM
 
 // MP MB -> NP NB
-        $convMIn = array('OMB', 'AMB', 'OMP', 'AMP', 'IMB', 'EMP', 'GEMB', 'EMB', 'UMBL', 'CIEN');
-        $convMOut = array('ONB', 'ANB', 'ONP', 'ANP', 'INB', 'ANP', 'JANB', 'ANB', 'INBL', 'SIAN');
+        $convMIn = ['OMB', 'AMB', 'OMP', 'AMP', 'IMB', 'EMP', 'GEMB', 'EMB', 'UMBL', 'CIEN'];
+        $convMOut = ['ONB', 'ANB', 'ONP', 'ANP', 'INB', 'ANP', 'JANB', 'ANB', 'INBL', 'SIAN'];
         $sIn = str_replace($convMIn, $convMOut, $sIn);
 
 // Sons en K
@@ -183,30 +175,18 @@ class Aurel_Phonetique
         $sIn = preg_replace('`OMANIK`', 'OMANICH', $sIn);    // cas particulier 	2/2
         $sIn = preg_replace('`ACHY([^D])`', 'AKI$1', $sIn);
         $sIn = preg_replace('`([AEIOU])C([BDFGJKLMNPQRTVWXZ])`', '$1K$2', $sIn); // voyelle, C, consonne sauf H
-        $convPrIn = array('EUCHA', 'YCHIA', 'YCHA', 'YCHO', 'YCHED', 'ACHEO', 'RCHEO', 'RCHES',
-            'ECHN', 'OCHTO', 'CHORA', 'CHONDR', 'CHORE', 'MACHM', 'BRONCHO', 'LICHOS', 'LICHOC');
-        $convPrOut = array('EKA', 'IKIA', 'IKA', 'IKO', 'IKED', 'AKEO', 'RKEO', 'RKES',
-            'EKN', 'OKTO', 'KORA', 'KONDR', 'KORE', 'MAKM', 'BRONKO', 'LIKOS', 'LIKOC');
+        $convPrIn = ['EUCHA', 'YCHIA', 'YCHA', 'YCHO', 'YCHED', 'ACHEO', 'RCHEO', 'RCHES', 'ECHN', 'OCHTO', 'CHORA', 'CHONDR', 'CHORE', 'MACHM', 'BRONCHO', 'LICHOS', 'LICHOC'];
+        $convPrOut = ['EKA', 'IKIA', 'IKA', 'IKO', 'IKED', 'AKEO', 'RKEO', 'RKES', 'EKN', 'OKTO', 'KORA', 'KONDR', 'KORE', 'MAKM', 'BRONKO', 'LIKOS', 'LIKOC'];
         $sIn = str_replace($convPrIn, $convPrOut, $sIn);
 
 // Weuh (perfectible)
-        $convPrIn = array('WA', 'WO', 'WI', 'WHI', 'WHY', 'WHA', 'WHO');
-        $convPrOut = array('OI', 'O', 'OUI', 'OUI', 'OUI', 'OUA', 'OU');
+        $convPrIn = ['WA', 'WO', 'WI', 'WHI', 'WHY', 'WHA', 'WHO'];
+        $convPrOut = ['OI', 'O', 'OUI', 'OUI', 'OUI', 'OUA', 'OU'];
         $sIn = str_replace($convPrIn, $convPrOut, $sIn);
 
         // Gueu, Gneu, Jeu et quelques autres
-        $convPrIn = array('GNES', 'GNET', 'GNER', 'GNE', 'GI', 'GNI', 'GNA', 'GNOU', 'GNUR', 'GY', 'OUGAIN',
-            'AGEOL', 'AGEOT', 'GEOLO', 'GEOM', 'GEOP', 'GEOG', 'GEOS', 'GEORG', 'GEOR', 'NGEOT', 'UGEOT', 'GEOT', 'GEOD', 'GEOC', 'GEO', 'GEA', 'GE',
-            'QU', 'Q', 'CY', 'CI', 'CN', 'ICM', 'CEAT', 'CE',
-            'CR', 'CO', 'CUEI', 'CU', 'VENCA', 'CA', 'CS', 'CLEN', 'CL', 'CZ', 'CTIQ',
-            'CTIF', 'CTIC', 'CTIS', 'CTIL', 'CTIO', 'CTI', 'CTU', 'CTE', 'CTO', 'CTR', 'CT', 'PH', 'TH',
-            'OW', 'LH', 'RDL', 'CHLO', 'CHR', 'PTIA');
-        $convPrOut = array('NIES', 'NIET', 'NIER', 'NE', 'JI', 'NI', 'NIA', 'NIOU', 'NIUR', 'JI', 'OUGIN',
-            'AJOL', 'AJOT', 'JEOLO', 'JEOM', 'JEOP', 'JEOG', 'JEOS', 'JORJ', 'JEOR', 'NJOT', 'UJOT', 'JEOT', 'JEOD', 'JEOC', 'JO', 'JA', 'JE',
-            'K', 'K', 'SI', 'SI', 'KN', 'IKM', 'SAT', 'SE',
-            'KR', 'KO', 'KEI', 'KU', 'VANSA', 'KA', 'KS', 'KLAN', 'KL', 'KZ', 'KTIK',
-            'KTIF', 'KTIS', 'KTIS', 'KTIL', 'KSIO', 'KTI', 'KTU', 'KTE', 'KTO', 'KTR', 'KT', 'F', 'T',
-            'OU', 'L', 'RL', 'KLO', 'KR', 'PSIA');
+        $convPrIn = ['GNES', 'GNET', 'GNER', 'GNE', 'GI', 'GNI', 'GNA', 'GNOU', 'GNUR', 'GY', 'OUGAIN', 'AGEOL', 'AGEOT', 'GEOLO', 'GEOM', 'GEOP', 'GEOG', 'GEOS', 'GEORG', 'GEOR', 'NGEOT', 'UGEOT', 'GEOT', 'GEOD', 'GEOC', 'GEO', 'GEA', 'GE', 'QU', 'Q', 'CY', 'CI', 'CN', 'ICM', 'CEAT', 'CE', 'CR', 'CO', 'CUEI', 'CU', 'VENCA', 'CA', 'CS', 'CLEN', 'CL', 'CZ', 'CTIQ', 'CTIF', 'CTIC', 'CTIS', 'CTIL', 'CTIO', 'CTI', 'CTU', 'CTE', 'CTO', 'CTR', 'CT', 'PH', 'TH', 'OW', 'LH', 'RDL', 'CHLO', 'CHR', 'PTIA'];
+        $convPrOut = ['NIES', 'NIET', 'NIER', 'NE', 'JI', 'NI', 'NIA', 'NIOU', 'NIUR', 'JI', 'OUGIN', 'AJOL', 'AJOT', 'JEOLO', 'JEOM', 'JEOP', 'JEOG', 'JEOS', 'JORJ', 'JEOR', 'NJOT', 'UJOT', 'JEOT', 'JEOD', 'JEOC', 'JO', 'JA', 'JE', 'K', 'K', 'SI', 'SI', 'KN', 'IKM', 'SAT', 'SE', 'KR', 'KO', 'KEI', 'KU', 'VANSA', 'KA', 'KS', 'KLAN', 'KL', 'KZ', 'KTIK', 'KTIF', 'KTIS', 'KTIS', 'KTIL', 'KSIO', 'KTI', 'KTU', 'KTE', 'KTO', 'KTR', 'KT', 'F', 'T', 'OU', 'L', 'RL', 'KLO', 'KR', 'PSIA'];
         $sIn = str_replace($convPrIn, $convPrOut, $sIn);
 
         $sIn = preg_replace('`GU([^RLMBSTPZN])`', 'G$1', $sIn); // Gueu !
@@ -215,10 +195,8 @@ class Aurel_Phonetique
 
 
         // TI -> SI v2.0
-        $convPrIn = array('BUTIE', 'BUTIA', 'BATIA', 'ANTIEL', 'RETION', 'ENTIEL', 'ENTIAL', 'ENTIO', 'ENTIAI', 'UJETION', 'ATIEM', 'PETIEN',
-            'CETIE', 'OFETIE', 'IPETI', 'LBUTION', 'BLUTION', 'LETION', 'LATION', 'SATIET');
-        $convPrOut = array('BUSIE', 'BUSIA', 'BASIA', 'ANSIEL', 'RESION', 'ENSIEL', 'ENSIAL', 'ENSIO', 'ENSIAI', 'UJESION', 'ASIAM', 'PESIEN',
-            'CESIE', 'OFESIE', 'IPESI', 'LBUSION', 'BLUSION', 'LESION', 'LASION', 'SASIET');
+        $convPrIn = ['BUTIE', 'BUTIA', 'BATIA', 'ANTIEL', 'RETION', 'ENTIEL', 'ENTIAL', 'ENTIO', 'ENTIAI', 'UJETION', 'ATIEM', 'PETIEN', 'CETIE', 'OFETIE', 'IPETI', 'LBUTION', 'BLUTION', 'LETION', 'LATION', 'SATIET'];
+        $convPrOut = ['BUSIE', 'BUSIA', 'BASIA', 'ANSIEL', 'RESION', 'ENSIEL', 'ENSIAL', 'ENSIO', 'ENSIAI', 'UJESION', 'ASIAM', 'PESIEN', 'CESIE', 'OFESIE', 'IPESI', 'LBUSION', 'BLUSION', 'LESION', 'LASION', 'SASIET'];
         $sIn = str_replace($convPrIn, $convPrOut, $sIn);
         $sIn = preg_replace('`(.+)ANTI(AL|O)`', '$1ANSI$2', $sIn); // sauf antialcoolique, antialbumine, antialarmer, ...
         $sIn = preg_replace('`(.+)INUTI([^V])`', '$1INUSI$2', $sIn); // sauf inutilité, inutilement, diminutive, ...
@@ -235,10 +213,8 @@ class Aurel_Phonetique
         $sIn = str_replace("SH", "CH", $sIn);                // ou pas!
 
         // NASALES
-        $convNasIn = array('OMT', 'IMB', 'IMP', 'UMD', 'TIENT', 'RIENT', 'DIENT', 'IEN',
-            'YMU', 'YMO', 'YMA', 'YME', 'YMI', 'YMN', 'YM', 'AHO', 'FAIM', 'DAIM', 'SAIM', 'EIN', 'AINS');
-        $convNasOut = array('ONT', 'INB', 'INP', 'OND', 'TIANT', 'RIANT', 'DIANT', 'IN',
-            'IMU', 'IMO', 'IMA', 'IME', 'IMI', 'IMN', 'IN', 'AO', 'FIN', 'DIN', 'SIN', 'AIN', 'INS');
+        $convNasIn = ['OMT', 'IMB', 'IMP', 'UMD', 'TIENT', 'RIENT', 'DIENT', 'IEN', 'YMU', 'YMO', 'YMA', 'YME', 'YMI', 'YMN', 'YM', 'AHO', 'FAIM', 'DAIM', 'SAIM', 'EIN', 'AINS'];
+        $convNasOut = ['ONT', 'INB', 'INP', 'OND', 'TIANT', 'RIANT', 'DIANT', 'IN', 'IMU', 'IMO', 'IMA', 'IME', 'IMI', 'IMN', 'IN', 'AO', 'FIN', 'DIN', 'SIN', 'AIN', 'INS'];
         $sIn = str_replace($convNasIn, $convNasOut, $sIn);
         // AIN -> IN v2.0
         $sIn = preg_replace('`AIN$`', 'IN', $sIn);
@@ -263,8 +239,8 @@ class Aurel_Phonetique
         $sIn = preg_replace('`([VSBSTNRLPM])E[IY]([ACDFRJLGZ])`', '$1AI$2', $sIn);
 
         // Histoire d'Ô
-        $convNasIn = array('EAU', 'EU', 'Y', 'EOI', 'JEA', 'OIEM', 'OUANJ', 'OUA', 'OUENJ');
-        $convNasOut = array('O', 'E', 'I', 'OI', 'JA', 'OIM', 'OUENJ', 'OI', 'OUANJ');
+        $convNasIn = ['EAU', 'EU', 'Y', 'EOI', 'JEA', 'OIEM', 'OUANJ', 'OUA', 'OUENJ'];
+        $convNasOut = ['O', 'E', 'I', 'OI', 'JA', 'OIM', 'OUENJ', 'OI', 'OUANJ'];
         $sIn = str_replace($convNasIn, $convNasOut, $sIn);
         $sIn = preg_replace('`AU([^E])`', 'O$1', $sIn); // AU sans E qui suit
 
@@ -333,8 +309,8 @@ class Aurel_Phonetique
         $sIn = preg_replace('`(.)\1`', '$1', $sIn);                // supression des répétitions (suite à certains remplacements)
 
     // cas particuliers, bah au final, je n'en ai qu'un ici
-        $convPartIn = array('FUEL');
-        $convPartOut = array('FIOUL');
+        $convPartIn = ['FUEL'];
+        $convPartOut = ['FIOUL'];
         $sIn = str_replace($convPartIn, $convPartOut, $sIn);
 
     // Ce sera le seul code retourné à une seule lettre!

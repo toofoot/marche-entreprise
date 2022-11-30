@@ -34,7 +34,7 @@ class SondageController extends Aurel_Controller_Abstract {
         if ($sondage->login_required && $sondage->several_answers && $this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE)) {
             $responses = $oSondageReponseQuestion->getBySondageAndUser($sondage->id_sondage, $this->_getUser()->id_user);
 
-            $tabResponses = array();
+            $tabResponses = [];
             foreach ($responses as $response) {
                 $tabResponses[$response->sessid][$response->id_sondage_question][$response->id_sondage_option] = $response;
             }
@@ -49,7 +49,7 @@ class SondageController extends Aurel_Controller_Abstract {
         } elseif ($sondage->login_required && !$sondage->several_answers && $this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE)) {
             $responses = $oSondageReponseQuestion->getBySondageAndUser($sondage->id_sondage, $this->_getUser()->id_user);
 
-            $tabResponses = array();
+            $tabResponses = [];
             foreach ($responses as $response) {
                 $tabResponses[$response->id_sondage_question][$response->id_sondage_option] = $response;
             }
@@ -76,8 +76,8 @@ class SondageController extends Aurel_Controller_Abstract {
             $sessid = uniqid();
             $date = Aurel_Date::now();
 
-            $return = array();
-            $id_errors = array();
+            $return = [];
+            $id_errors = [];
             $continue = true;
             if ($this->hasParam('sessid')) {
                 $sessid = $this->getParam('sessid');
@@ -169,7 +169,7 @@ class SondageController extends Aurel_Controller_Abstract {
                 }
                 $return['returncode'] = true;
             }
-            echo json_encode($return);
+            echo json_encode($return, JSON_THROW_ON_ERROR);
         } elseif ($this->hasParam('sessid')) {
             $this->render('questionnaire');
         }
@@ -192,7 +192,7 @@ class SondageController extends Aurel_Controller_Abstract {
         if ($sondage->several_answers && $this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE)) {
             $responses = $oSondageReponseQuestion->getBySondageAndUser($sondage->id_sondage, $this->_getUser()->id_user);
 
-            $tabResponses = array();
+            $tabResponses = [];
             foreach ($responses as $response) {
                 $tabResponses[$response->sessid][$response->id_sondage_question] = $response;
             }

@@ -28,16 +28,16 @@ class Aurel_Table_Menu extends Aurel_Table_Abstract
 	public function getAll($admin = false){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('m'=>'menu'))
-		->joinLeft(array('s'=>'sous_menu'), 'm.id_menu = s.id_menu',array('sous_menus_basename'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT s.basename ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)'),'sous_menus_name'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT s.name ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)'),'sous_menus_id'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT s.id_sous_menu ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)'),'id_creation'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT concat(s.id_sous_menu,\':\',s.id_user_creation) ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)'),'sous_menu_annonces'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT concat(s.id_sous_menu,\':\',s.sous_menu_annonce) ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)')))
+		->from(['m'=>'menu'])
+		->joinLeft(['s'=>'sous_menu'], 'm.id_menu = s.id_menu',['sous_menus_basename'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT s.basename ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)'), 'sous_menus_name'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT s.name ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)'), 'sous_menus_id'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT s.id_sous_menu ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)'), 'id_creation'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT concat(s.id_sous_menu,\':\',s.id_user_creation) ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)'), 'sous_menu_annonces'=>new Zend_Db_Expr('GROUP_CONCAT(DISTINCT concat(s.id_sous_menu,\':\',s.sous_menu_annonce) ORDER BY `s`.`order` ASC,`s`.`id_sous_menu` DESC)')])
 		->order('m.order ASC')
 		->order('s.order ASC')
 		->group('m.id_menu');
 		
 		if(!$admin){
 			$select
-			->joinLeft(array('a1'=>'article'), 'a1.id_sous_menu = s.id_sous_menu', array("sous_menus_articles"=>new Zend_Db_Expr("GROUP_CONCAT(distinct a1.id_article)")))
-			->joinLeft(array('a2'=>'article'), 'a2.id_menu = s.id_menu', array("menus_articles"=>new Zend_Db_Expr("GROUP_CONCAT(distinct a2.id_article)")))
+			->joinLeft(['a1'=>'article'], 'a1.id_sous_menu = s.id_sous_menu', ["sous_menus_articles"=>new Zend_Db_Expr("GROUP_CONCAT(distinct a1.id_article)")])
+			->joinLeft(['a2'=>'article'], 'a2.id_menu = s.id_menu', ["menus_articles"=>new Zend_Db_Expr("GROUP_CONCAT(distinct a2.id_article)")])
 			;
 		}
 		
@@ -52,11 +52,11 @@ class Aurel_Table_Menu extends Aurel_Table_Abstract
 	
 	public function getBasename($strToClean)
 	{
-		$strToClean = html_entity_decode($strToClean);
+		$strToClean = html_entity_decode((string) $strToClean);
 		$strToClean = mb_strtolower($strToClean, 'UTF-8');
 		$strToClean = str_replace(
-				array('à','â','ä','á','ã','å','î','ï','ì','í','ô','ö','ò','ó','õ','ø','ù','û','ü','ú','é','è','ê','ë','ç','ÿ','ñ',),
-				array('a','a','a','a','a','a','i','i','i','i','o','o','o','o','o','o','u','u','u','u','e','e','e','e','c','y','n',),
+				['à', 'â', 'ä', 'á', 'ã', 'å', 'î', 'ï', 'ì', 'í', 'ô', 'ö', 'ò', 'ó', 'õ', 'ø', 'ù', 'û', 'ü', 'ú', 'é', 'è', 'ê', 'ë', 'ç', 'ÿ', 'ñ'],
+				['a', 'a', 'a', 'a', 'a', 'a', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'e', 'e', 'e', 'e', 'c', 'y', 'n'],
 				$strToClean
 		);
 		$strToClean = preg_replace("#[^A-Z0-9\_]#i", "-", $strToClean);

@@ -31,9 +31,9 @@ class Aurel_Table_Inscription extends Aurel_Table_Abstract
 	public function getByUser($id_user){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('i'=>'inscription'))
-		->joinInner(array('a'=>'article'), 'a.id_article = i.id_article', array('a.title','a.start_date','a.basename'))
-		->joinInner(array('ihu'=>'inscription_has_user'), 'ihu.id_inscription = i.id_inscription', array('*'))
+		->from(['i'=>'inscription'])
+		->joinInner(['a'=>'article'], 'a.id_article = i.id_article', ['a.title', 'a.start_date', 'a.basename'])
+		->joinInner(['ihu'=>'inscription_has_user'], 'ihu.id_inscription = i.id_inscription', ['*'])
 		->where('id_user = ?',$id_user);
 		return $this->fetchAll($select);
 	}
@@ -41,9 +41,9 @@ class Aurel_Table_Inscription extends Aurel_Table_Abstract
 	public function getAllReservations(){
 		$select = $this->select()
 		->setIntegrityCheck(false)
-		->from(array('i'=>'inscription'))
-		->joinInner(array('a'=>'article'), 'a.id_article = i.id_article', array('a.title','a.start_date','a.basename','a.id_user_creation','a.inscription_quantite_limite'))
-		->joinInner(array('ihu'=>'inscription_has_user'), 'ihu.id_inscription = i.id_inscription', array('*'));
+		->from(['i'=>'inscription'])
+		->joinInner(['a'=>'article'], 'a.id_article = i.id_article', ['a.title', 'a.start_date', 'a.basename', 'a.id_user_creation', 'a.inscription_quantite_limite'])
+		->joinInner(['ihu'=>'inscription_has_user'], 'ihu.id_inscription = i.id_inscription', ['*']);
 		return $this->fetchAll($select);
 	}
 }

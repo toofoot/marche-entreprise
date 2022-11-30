@@ -12,7 +12,7 @@ while ($queue = $oQueue->getOneReadyToSend()) {
     $subject = $queue->subject;
     $body = $queue->body;
 
-    $link = "http://marche-entreprises.btob-adidas.com/compte/register?invitation=" . md5($queue->id_queue);
+    $link = "http://marche-entreprises.btob-adidas.com/compte/register?invitation=" . md5((string) $queue->id_queue);
 
     $user = null;
     if ($queue->id_user) {
@@ -30,7 +30,7 @@ while ($queue = $oQueue->getOneReadyToSend()) {
 
         $queue->status = Aurel_Table_Queue::STATUS_SENT;
         $queue->date_sent = Aurel_Date::now()->get(Aurel_Date::MYSQL_DATETIME);
-    } catch (Exception $e) {
+    } catch (Exception) {
 
         $queue->status = Aurel_Table_Queue::STATUS_INIT;
     }

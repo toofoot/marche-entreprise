@@ -44,9 +44,9 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
         $this->view->actionName = $actionName = $this->_request->getActionName();
 
         if ($this->_getAcl()->isAllowed(Aurel_Acl::ROLE_GUEST, $moduleName . "_" . $controllerName, $actionName)) {
-            $this->view->logout_url_redirect = urlencode($_SERVER["REQUEST_URI"]);
+            $this->view->logout_url_redirect = urlencode((string) $_SERVER["REQUEST_URI"]);
         } else {
-            $this->view->logout_url_redirect = urlencode($this->view->url(array(), 'default', true));
+            $this->view->logout_url_redirect = urlencode((string) $this->view->url([], 'default', true));
         }
 
 
@@ -54,11 +54,11 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
         Zend_Registry::set("config", $config);
         $this->view->config = $this->_config = $config;
 
-        $this->view->url_redirect = $this->hasParam('url_redirect') ? urldecode($this->getParam('url_redirect')) : $this->view->url();
+        $this->view->url_redirect = $this->hasParam('url_redirect') ? urldecode((string) $this->getParam('url_redirect')) : $this->view->url();
         // Scripts JS
         $this->view->headScript()
-                ->appendFile("https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js", "text/javascript", array('conditional' => 'lt IE 9'))
-                ->appendFile("https://oss.maxcdn.com/respond/1.4.2/respond.min.js", "text/javascript", array('conditional' => 'lt IE 9'))
+                ->appendFile("https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js", "text/javascript", ['conditional' => 'lt IE 9'])
+                ->appendFile("https://oss.maxcdn.com/respond/1.4.2/respond.min.js", "text/javascript", ['conditional' => 'lt IE 9'])
                 ->appendFile('/javascript/jquery-1.11.0.js');
 
         //if($this->_getAcl()->isAllowed(Zend_Registry::get('role'),Aurel_Acl::RESSOURCE_ADMIN)){
@@ -137,7 +137,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
 
         $user = $this->_getUser();
         if ($user instanceof Aurel_Table_Row_User)
-            $this->view->menus_redacteur = json_decode($user->menus_redacteur, true);
+            $this->view->menus_redacteur = json_decode((string) $user->menus_redacteur, true, 512, JSON_THROW_ON_ERROR);
         $this->view->user = $this->view->me = $user;
 
 
@@ -151,7 +151,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                 $this->view->show_popup = false;
             }
 
-            if ($this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"]) && !str_contains($_SERVER["REQUEST_URI"], 'admin') && !str_contains($_SERVER["REQUEST_URI"], 'login') && !str_contains($_SERVER["REQUEST_URI"], 'passoublie') && !str_contains($_SERVER["REQUEST_URI"], 'desinscription') && !$this->hasParam('invitation')) {
+            if ($this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"]) && !str_contains((string) $_SERVER["REQUEST_URI"], 'admin') && !str_contains((string) $_SERVER["REQUEST_URI"], 'login') && !str_contains((string) $_SERVER["REQUEST_URI"], 'passoublie') && !str_contains((string) $_SERVER["REQUEST_URI"], 'desinscription') && !$this->hasParam('invitation')) {
                 $emailGet = $this->getParam('email',null);
                 //var_dump($emailGet);die();
                 if (isset($emailGet)) {
@@ -163,7 +163,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                         $this->_helper->layout->setLayout('access_code');
                         $this->view->popup_login = true;
                         $this->view->email_login = $email;
-                    } elseif (!str_contains($_SERVER["REQUEST_URI"], 'compte/register')) {
+                    } elseif (!str_contains((string) $_SERVER["REQUEST_URI"], 'compte/register')) {
                         $query_string = $_SERVER['QUERY_STRING'];
                         $this->redirect('/compte/register?' . $query_string);
                     }
@@ -179,7 +179,7 @@ abstract class Aurel_Controller_Abstract extends Zend_Controller_Action {
                     if ($user) {
                         $this->view->popup_login = true;
                         $this->view->email_login = $email;
-                    } elseif (!str_contains($_SERVER["REQUEST_URI"], 'compte/register')) {
+                    } elseif (!str_contains((string) $_SERVER["REQUEST_URI"], 'compte/register')) {
                         $query_string = $_SERVER['QUERY_STRING'];
                         $this->redirect('/compte/register?' . $query_string);
                     }

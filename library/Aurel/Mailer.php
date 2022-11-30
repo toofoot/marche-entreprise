@@ -58,8 +58,8 @@ class Aurel_Mailer extends Zend_Mail
         }
 
 
-        $footer_email = str_replace('#HASH#', $hash, $footer_email);
-        $body = str_replace('#HASH#', $hash, $body);
+        $footer_email = str_replace('#HASH#', $hash, (string) $footer_email);
+        $body = str_replace('#HASH#', $hash, (string) $body);
 
         $html = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' . "\n";
         $html .= "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";

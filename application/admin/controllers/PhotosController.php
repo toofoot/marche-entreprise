@@ -42,7 +42,7 @@ class Admin_PhotosController extends Admin_AbstractController {
         $langCode = $_GET['langCode'];
 
         $upload_dir = UPLOAD_PATH . "/";
-        $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
 
         if (array_key_exists('upload', $_FILES) && $_FILES['upload']['error'] == 0) {
 
@@ -124,7 +124,7 @@ class Admin_PhotosController extends Admin_AbstractController {
         $oArticle = new Aurel_Table_Article();
 
         $upload_dir = UPLOAD_PATH . "/";
-        $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
 
         if (array_key_exists('pic', $_FILES) && $_FILES['pic']['error'] == 0) {
             $formData = $this->_request->getPost();
@@ -234,7 +234,7 @@ class Admin_PhotosController extends Admin_AbstractController {
 
         $order = $this->getParam('order');
 
-        $tabOrdre = explode(',', $order);
+        $tabOrdre = explode(',', (string) $order);
 
         if (is_array($tabOrdre)) {
             foreach ($tabOrdre as $key => $value) {
@@ -275,14 +275,14 @@ class Admin_PhotosController extends Admin_AbstractController {
             throw new Zend_Exception();
         }
         $formData = $this->_request->getPost();
-        $return = array();
+        $return = [];
         if ($formData) {
             $sup = current($formData['sup']);
             $serie->cover = $sup;
             $serie->save();
             $return['cover'] = $sup;
         }
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -299,7 +299,7 @@ class Admin_PhotosController extends Admin_AbstractController {
 
         $oPhoto = new Aurel_Table_Photo();
         $formData = $this->_request->getPost();
-        $return = array();
+        $return = [];
         $return['returncode'] = 'ko';
         $return['formdata'] = $formData;
         if ($formData) {
@@ -322,7 +322,7 @@ class Admin_PhotosController extends Admin_AbstractController {
 
             $return['returncode'] = 'ok';
         }
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -331,8 +331,8 @@ class Admin_PhotosController extends Admin_AbstractController {
      * @param string $str
      * @return void
      */
-    private function exit_status($str) {
-        echo json_encode(array('status' => $str));
+    private function exit_status($str): never {
+        echo json_encode(['status' => $str], JSON_THROW_ON_ERROR);
         exit;
     }
 
@@ -364,9 +364,9 @@ class Admin_PhotosController extends Admin_AbstractController {
         $this->_disableLayout();
         $this->_disableView();
 
-        $return = array();
+        $return = [];
         if (!empty($_FILES) && !empty($_FILES['photo'])) {
-            $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+            $extension = strtolower(pathinfo((string) $_FILES['photo']['name'], PATHINFO_EXTENSION));
             $page = $this->getParam('page');
             if ($page == "home") {
                 $upload_dir = UPLOAD_PATH . "/";
@@ -413,7 +413,7 @@ class Admin_PhotosController extends Admin_AbstractController {
             }
         }
 
-        echo json_encode($return);
+        echo json_encode($return, JSON_THROW_ON_ERROR);
     }
 
 }

@@ -16,10 +16,10 @@ class Aurel_View_Helper_Cesure extends Zend_View_Helper_Abstract
      * @return Zend_Acl
      */
     public function cesure($string,$nbCar = 17) {
-    	$cesure = wordwrap($string, $nbCar, "#CESURE#");
+    	$cesure = wordwrap((string) $string, $nbCar, "#CESURE#");
     	$array = explode("#CESURE#", $cesure);
     	$first_ligne = $array[0];
-    	$reste = str_replace($first_ligne, "", $string);
+    	$reste = str_replace($first_ligne, "", (string) $string);
     	$return = $array[0] . "<br/>\n" . $reste;
         return $return;
     }
