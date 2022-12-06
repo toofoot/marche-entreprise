@@ -7,8 +7,8 @@
 */
 class Aurel_Table_SondageOption extends Aurel_Table_Abstract
 {
-    final public const REPONSE_INT = 0;
-    final public const REPONSE_LIBRE = 1;
+    public const REPONSE_INT = 0;
+    public const REPONSE_LIBRE = 1;
 
 	/**
 	 * The table name.

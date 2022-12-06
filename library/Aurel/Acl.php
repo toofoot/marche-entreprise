@@ -8,45 +8,45 @@ class Aurel_Acl extends Zend_Acl {
 	/**
 	 * ROLES
 	 */
-	final public const ROLE_GUEST = 'guest';
-	final public const ROLE_MEMBRE = 'membre';
-	final public const ROLE_ADMIN = 'admin';
+	public const ROLE_GUEST = 'guest';
+	public const ROLE_MEMBRE = 'membre';
+	public const ROLE_ADMIN = 'admin';
 	
 	/** 
 	 * PAGES
 	 */
-	final public const PAGE_DEFAULT_ERROR = 'default_error';
-	final public const PAGE_DEFAULT_INDEX = 'default_index';
-	final public const PAGE_DEFAULT_COMPTE = 'default_compte';
-	final public const PAGE_DEFAULT_ANNUAIRE = 'default_annuaire';
-	final public const PAGE_DEFAULT_SONDAGE = 'default_sondage';
-	final public const PAGE_ADMIN_ARTICLES = 'admin_articles';
-	final public const PAGE_ADMIN_INDEX = 'admin_index';
-	final public const PAGE_ADMIN_MENU = 'admin_menu';
-	final public const PAGE_ADMIN_PHOTOS = 'admin_photos';
-	final public const PAGE_ADMIN_TERMS = 'admin_terms';
-	final public const PAGE_ADMIN_USERS = 'admin_users';
-	final public const PAGE_ADMIN_ANNUAIRE = 'admin_annuaire';
-	final public const PAGE_ADMIN_SONDAGE = 'admin_sondage';
+	public const PAGE_DEFAULT_ERROR = 'default_error';
+	public const PAGE_DEFAULT_INDEX = 'default_index';
+	public const PAGE_DEFAULT_COMPTE = 'default_compte';
+	public const PAGE_DEFAULT_ANNUAIRE = 'default_annuaire';
+	public const PAGE_DEFAULT_SONDAGE = 'default_sondage';
+	public const PAGE_ADMIN_ARTICLES = 'admin_articles';
+	public const PAGE_ADMIN_INDEX = 'admin_index';
+	public const PAGE_ADMIN_MENU = 'admin_menu';
+	public const PAGE_ADMIN_PHOTOS = 'admin_photos';
+	public const PAGE_ADMIN_TERMS = 'admin_terms';
+	public const PAGE_ADMIN_USERS = 'admin_users';
+	public const PAGE_ADMIN_ANNUAIRE = 'admin_annuaire';
+	public const PAGE_ADMIN_SONDAGE = 'admin_sondage';
 
 	/**
 	 * RESSOURCES
 	 */
-	final public const RESSOURCE_GUEST = 'guest';
-	final public const RESSOURCE_MEMBRE = 'membre';
-	final public const RESSOURCE_ADMIN = 'admin';
+	public const RESSOURCE_GUEST = 'guest';
+	public const RESSOURCE_MEMBRE = 'membre';
+	public const RESSOURCE_ADMIN = 'admin';
 	
-	final public const RESSOURCE_ADMIN_REDACTEUR = 1;
-	final public const RESSOURCE_ADMIN_ARTICLES = 2;
+	public const RESSOURCE_ADMIN_REDACTEUR = 1;
+	public const RESSOURCE_ADMIN_ARTICLES = 2;
 //	const RESSOURCE_ADMIN_NEWSLETTER = 4;
 //	const RESSOURCE_ADMIN_ANNONCES = 8;
-	final public const RESSOURCE_ADMIN_MEMBRES = 16;
-	final public const RESSOURCE_ADMIN_HEADER = 32;
-	final public const RESSOURCE_ADMIN_FOOTER = 64;
-	final public const RESSOURCE_ADMIN_ACCESSRAPIDE = 128;
-	final public const RESSOURCE_ADMIN_MENUS = 256;
+	public const RESSOURCE_ADMIN_MEMBRES = 16;
+	public const RESSOURCE_ADMIN_HEADER = 32;
+	public const RESSOURCE_ADMIN_FOOTER = 64;
+	public const RESSOURCE_ADMIN_ACCESSRAPIDE = 128;
+	public const RESSOURCE_ADMIN_MENUS = 256;
 //	const RESSOURCE_ADMIN_ANNUAIRE = 512;
-	final public const RESSOURCE_ADMIN_SONDAGE = 1024;
+	public const RESSOURCE_ADMIN_SONDAGE = 1024;
 
 	var $_array_page = [
      self::RESSOURCE_ADMIN_REDACTEUR => [self::PAGE_ADMIN_ARTICLES, self::PAGE_ADMIN_PHOTOS],

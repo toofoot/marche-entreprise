@@ -12,8 +12,8 @@ class Aurel_Table_User extends Aurel_Table_Abstract
     protected $_name = 'user';
     protected $_rowClass = 'Aurel_Table_Row_User';
 
-    final public const STATUS_ACTIF = 1;
-    final public const STATUS_INACTIF = 2;
+    public const STATUS_ACTIF = 1;
+    public const STATUS_INACTIF = 2;
 
     /**
      * Genere un mot de passe de 8 caractères aléatoirement

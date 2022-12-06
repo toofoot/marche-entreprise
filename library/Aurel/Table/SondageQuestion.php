@@ -8,12 +8,12 @@
  */
 class Aurel_Table_SondageQuestion extends Aurel_Table_Abstract {
 
-    final public const TYPE_CHECKBOX = 0;
-    final public const TYPE_RADIO = 1;
-    final public const TYPE_TEXT = 2;
-    final public const TYPE_SELECT = 3;
-    final public const TYPE_RADIO_INLINE = 4;
-    final public const TYPE_TITLE = 5;
+    public const TYPE_CHECKBOX = 0;
+    public const TYPE_RADIO = 1;
+    public const TYPE_TEXT = 2;
+    public const TYPE_SELECT = 3;
+    public const TYPE_RADIO_INLINE = 4;
+    public const TYPE_TITLE = 5;
 
     /**
      * The table name.

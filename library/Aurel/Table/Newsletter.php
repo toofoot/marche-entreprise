@@ -11,10 +11,10 @@ class Aurel_Table_Newsletter extends Aurel_Table_Abstract
 	protected $_name = 'newsletter';
 	protected $_rowClass = 'Aurel_Table_Row_Newsletter';
 
-    final public const STATUS_INIT = 0;
-    final public const STATUS_TOSENDADMIN = 1;
-    final public const STATUS_TOSENDMEMBERS = 2;
-    final public const STATUS_SENT = 3;
+    public const STATUS_INIT = 0;
+    public const STATUS_TOSENDADMIN = 1;
+    public const STATUS_TOSENDMEMBERS = 2;
+    public const STATUS_SENT = 3;
 
 	/**
 	* Genere un mot de passe de 8 caractères aléatoirement

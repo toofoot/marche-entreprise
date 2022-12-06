@@ -9,12 +9,12 @@
 class Aurel_Table_Invitation extends Aurel_Table_Abstract
 {
 
-    final public const TYPE_INIT = 0;
-    final public const TYPE_READYTOSEND = 1;
-    final public const TYPE_READYTORESEND = 5;
-    final public const TYPE_SENT = 2;
-    final public const TYPE_RESENT = 3;
-    final public const TYPE_VALIDATED = 4;
+    public const TYPE_INIT = 0;
+    public const TYPE_READYTOSEND = 1;
+    public const TYPE_READYTORESEND = 5;
+    public const TYPE_SENT = 2;
+    public const TYPE_RESENT = 3;
+    public const TYPE_VALIDATED = 4;
 
     /**
      * The table name.
