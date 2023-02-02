@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "shardj/zf1-future",
-            "version": "1.21.4",
+            "version": "1.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Shardj/zf1-future.git",
-                "reference": "7b57530525f48c173a7cf61f5cdfb7d652f3c5d8"
+                "reference": "5446af3466d1fc3faa32a708af2cdc9baf9fc11a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Shardj/zf1-future/zipball/7b57530525f48c173a7cf61f5cdfb7d652f3c5d8",
-                "reference": "7b57530525f48c173a7cf61f5cdfb7d652f3c5d8",
+                "url": "https://api.github.com/repos/Shardj/zf1-future/zipball/5446af3466d1fc3faa32a708af2cdc9baf9fc11a",
+                "reference": "5446af3466d1fc3faa32a708af2cdc9baf9fc11a",
                 "shasum": ""
             },
             "require": {
@@ -29,9 +29,9 @@
                 "zendframework/zendframework1": ">=1.12.20"
             },
             "require-dev": {
-                "php-parallel-lint/php-parallel-lint": "1.0.0",
-                "phpunit/dbunit": "1.3.*",
-                "zf1s/phpunit": "3.7.39"
+                "php-parallel-lint/php-parallel-lint": "^1.3",
+                "phpunit/phpunit": "^9",
+                "rector/rector": "^0.14.8"
             },
             "suggest": {
                 "ext-mbstring": "Multibyte strings handling"
@@ -62,9 +62,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Shardj/zf1-future/issues",
-                "source": "https://github.com/Shardj/zf1-future/tree/release-1.21.4"
+                "source": "https://github.com/Shardj/zf1-future/tree/release-1.22.0"
             },
-            "time": "2022-09-22T11:00:12+00:00"
+            "time": "2023-01-16T12:07:29+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -232,16 +232,16 @@
     "packages-dev": [
         {
             "name": "phpstan/phpstan",
-            "version": "1.9.2",
+            "version": "1.9.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "d6fdf01c53978b6429f1393ba4afeca39cc68afa"
+                "reference": "e5fcc96289cf737304286a9b505fbed091f02e58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d6fdf01c53978b6429f1393ba4afeca39cc68afa",
-                "reference": "d6fdf01c53978b6429f1393ba4afeca39cc68afa",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e5fcc96289cf737304286a9b505fbed091f02e58",
+                "reference": "e5fcc96289cf737304286a9b505fbed091f02e58",
                 "shasum": ""
             },
             "require": {
@@ -271,7 +271,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.9.2"
+                "source": "https://github.com/phpstan/phpstan/tree/1.9.14"
             },
             "funding": [
                 {
@@ -287,25 +287,25 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-10T09:56:11+00:00"
+            "time": "2023-01-19T10:47:09+00:00"
         },
         {
             "name": "rector/rector",
-            "version": "0.15.0",
+            "version": "0.15.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "fbfbe499d0fedfac7fe2fed1a55a00bd08f19c91"
+                "reference": "000bfb6f7974449399f39e1a210458395b75c887"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/fbfbe499d0fedfac7fe2fed1a55a00bd08f19c91",
-                "reference": "fbfbe499d0fedfac7fe2fed1a55a00bd08f19c91",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/000bfb6f7974449399f39e1a210458395b75c887",
+                "reference": "000bfb6f7974449399f39e1a210458395b75c887",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2|^8.0",
-                "phpstan/phpstan": "^1.9.2"
+                "phpstan/phpstan": "^1.9.7"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -335,7 +335,7 @@
             "description": "Instant Upgrade and Automated Refactoring of any PHP code",
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.15.0"
+                "source": "https://github.com/rectorphp/rector/tree/0.15.10"
             },
             "funding": [
                 {
@@ -343,7 +343,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-12-04T22:40:18+00:00"
+            "time": "2023-01-21T14:30:16+00:00"
         }
     ],
     "aliases": [],
