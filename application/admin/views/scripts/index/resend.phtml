@@ -109,7 +109,6 @@
 
         $('#message').keyup(function() {
             var $value = $(this).val().replace(/\r?\n/g, '<br>');
-            x
             $('#apercuIframe').prop('src', '/compte/preview/<?php if ($this->invitation) : ?>invitation/<?= $this->invitation->id_invitation;
                                                                                                     endif; ?>?message=' + $value);
         });
