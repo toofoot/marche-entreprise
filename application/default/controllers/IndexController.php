@@ -1049,8 +1049,23 @@ class IndexController extends Aurel_Controller_Abstract
      */
     public function pronostiquesAction()
     {
-        if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE) && $this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"])) {
+        $client = new Zend_Http_Client('https://pronostiques.btob-adidas.com/api');
+        $client->setMethod('POST');
+        $client->setParameterPost([
+           'method' => 'login',
+            'datas' => $this->_getUser()->toArray()
+        ]);
+
+        $client->request();
+
+        $response = json_decode($client->getLastResponse()->getBody(), true);
+
+        if (!$this->_getAcl()->isAllowed($this->_role, Aurel_Acl::RESSOURCE_MEMBRE) && $this->_config->connexion_access_code && !isset($_COOKIE["access_code_ok"]) && !isset($response['token'])) {
+
             $this->_helper->layout->setLayout('access_code');
+        } elseif(!empty($response['response']['token'])) {
+            $this->view->token = $response['response']['token'];
+            $this->_helper->layout->setLayout('main_iframe');
         } else {
             $this->_helper->layout->setLayout('main_iframe');
         }
