@@ -1051,9 +1051,12 @@ class IndexController extends Aurel_Controller_Abstract
     {
         $client = new Zend_Http_Client('https://pronostiques.btob-adidas.com/api');
         $client->setMethod('POST');
+        $array = $this->_getUser()->toArray();
+        $array['id_user'] = sha1($this->_getUser()->id_user);
+
         $client->setParameterPost([
-           'method' => 'login',
-            'datas' => $this->_getUser()->toArray()
+            'method' => 'login',
+            'datas' => $array
         ]);
 
         $client->request();
